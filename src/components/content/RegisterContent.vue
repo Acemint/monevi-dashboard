@@ -61,13 +61,14 @@
                   <div class="row">
                     <div class="form-group col-6">
                       <label>Periode</label>
-                      <select class="form-control selectric">
+                      <select v-model="periodYear" class="form-control selectric">
                         <option>2022</option>
+                        <option>2023</option>
                       </select>
                     </div>
                     <div class="form-group col-6">
                       <label>Role</label>
-                      <select class="form-control selectric">
+                      <select v-model="role" class="form-control selectric">
                         <option>Ketua</option>
                         <option>Bendahara</option>
                       </select>
@@ -101,7 +102,6 @@
 <script lang="ts">
 import { MoneviAPI } from '@/api/methods/monevi-api';
 import type { Region, Organization } from '@/api/model/monevi-model';
-import { GET_REGIONS_PATH, MONEVI_BASE_URL } from '@/api/path/path';
 
 const monevi_api = new MoneviAPI();
 let regions: Array<Region>;
@@ -127,7 +127,15 @@ export default {
 
     async submit(event: Event) {
       event.preventDefault();
-      console.log(this.nim, this.password, this.fullName, this.email);
+      await monevi_api.registerStudent(this.nim, 
+        this.fullName,
+        this.email,
+        this.password,
+        1,
+        this.periodYear,
+        this.regionSelection,
+        this.organizationSelection, 
+        this.role)
     }
   },
 
@@ -139,6 +147,8 @@ export default {
       fullName: "",
       email: "",
       password: "",
+      periodYear: 0,
+      role: "",
       regionSelection: "",
       organizationSelection: ""
     }

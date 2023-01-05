@@ -9,3 +9,14 @@ export type Organization = {
     abbreviation: string,
     regionNames: Array<string>
 }
+
+export type UserAccount = {
+    id: string,
+    nim: string,
+    fullName: string,
+    email: string,
+    role: string,
+    periodMonth: number,
+    periodYear: number,
+    lockedAccount: boolean
+}

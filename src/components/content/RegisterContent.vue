@@ -103,15 +103,11 @@
 import { MoneviAPI } from '@/api/methods/monevi-api';
 import type { Region, Organization } from '@/api/model/monevi-model';
 
-const monevi_api = new MoneviAPI();
-let regions: Array<Region>;
-let organizations: Array<Organization>;
-
 export default {
   
   methods: {
     async getRegions(event: any = null) {
-      await monevi_api.getRegions()
+      await this.monevi_api.getRegions()
       .then(response => {
         this.regions = response;
       });
@@ -119,7 +115,7 @@ export default {
     
     async getOrganizations(event: any) {
       let options: HTMLOptionsCollection = event.target.options;
-      await monevi_api.getOrganizations(options[options.selectedIndex].value)
+      await this.monevi_api.getOrganizations(options[options.selectedIndex].value)
       .then(response => {
         this.organizations = response;
       })
@@ -127,7 +123,7 @@ export default {
 
     async submit(event: Event) {
       event.preventDefault();
-      await monevi_api.registerStudent(this.nim, 
+      await this.monevi_api.registerStudent(this.nim, 
         this.fullName,
         this.email,
         this.password,
@@ -141,8 +137,9 @@ export default {
 
   data: function() {
     return {
-      regions,
-      organizations,
+      monevi_api: new MoneviAPI(),
+      regions: new Array<Region>(),
+      organizations: new Array<Organization>(),
       nim: "",
       fullName: "",
       email: "",

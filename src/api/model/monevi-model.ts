@@ -20,3 +20,11 @@ export type UserAccount = {
     periodYear: number,
     lockedAccount: boolean
 }
+
+export type BaseErrorResponse = {
+    
+    errorCode: string,
+    errorMessage: string,
+    errorFields: Map<string, string | undefined>
+
+}

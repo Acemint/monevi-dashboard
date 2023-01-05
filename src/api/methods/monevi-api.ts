@@ -1,6 +1,6 @@
 import MoneviAxios from '@/api/configuration/monevi-axios';
 import { GET_ORGANIZATIONS_PATH, GET_REGIONS_PATH, REGISTER_STUDENT_PATH } from "@/api/path/path";
-import type { Region, Organization, UserAccount } from '@/api/model/monevi-model';
+import type { Region, Organization, UserAccount, BaseErrorResponse } from '@/api/model/monevi-model';
 
 class MoneviAPI {
 
@@ -10,8 +10,9 @@ class MoneviAPI {
             .then(response => {
                 return response.data.values;
             })
-            .catch(errorResponse => {
-                console.log(errorResponse);
+            .catch(error => {
+                const baseError: BaseErrorResponse = error.response.data;
+                console.log(baseError);
             });
     };
 
@@ -32,8 +33,9 @@ class MoneviAPI {
             .then(response => {
                 return response.data.values;
             })
-            .catch(errorResponse => {
-                console.log(errorResponse);
+            .catch(error => {
+                const baseError: BaseErrorResponse = error.response.data;
+                console.log(baseError);
             });
     };
 
@@ -52,11 +54,11 @@ class MoneviAPI {
                 role: role.toUpperCase()
             })
             .then(response => {
-                console.log(response);
                 return response.data.values;
             })
-            .catch(errorResponse => {
-                console.log(errorResponse);
+            .catch(error => {
+                const baseError: BaseErrorResponse = error.response.data;
+                console.log(baseError);
             });
     }
 }

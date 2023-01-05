@@ -1,6 +1,7 @@
 import MoneviAxios from '@/api/configuration/monevi-axios';
-import { GET_ORGANIZATIONS_PATH, GET_REGIONS_PATH, REGISTER_STUDENT_PATH } from "@/api/path/path";
+import { GET_ORGANIZATIONS_PATH, GET_REGIONS_PATH, LOGIN_PATH, REGISTER_STUDENT_PATH } from "@/api/path/path";
 import type { Region, Organization, UserAccount, BaseErrorResponse } from '@/api/model/monevi-model';
+import { MoneviEnumConverter } from '@/api/methods/monevi-enum-converter';
 
 class MoneviAPI {
 
@@ -40,7 +41,6 @@ class MoneviAPI {
     };
 
     async registerStudent(nim: string, fullName: string, email: string, password: string, periodMonth: number, periodYear: number, regionName: string, organizationName: string, role: string): Promise<UserAccount> {
-        console.log(nim, fullName, email, password, periodMonth, periodYear, regionName, organizationName, role);
         return MoneviAxios
             .post(REGISTER_STUDENT_PATH, {
                 nim: nim,
@@ -50,7 +50,7 @@ class MoneviAPI {
                 periodMonth: periodMonth,
                 periodYear: periodYear,
                 organizationName: organizationName,
-                regionName: regionName,
+                regionName: MoneviEnumConverter.convertUserAccountRole(regionName),
                 role: role.toUpperCase()
             })
             .then(response => {

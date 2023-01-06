@@ -13,10 +13,10 @@
                         </div>
 
                         <div class="card-body">
-                            <form method="POST" action="#" class="needs-validation" novalidate="false">
+                            <form v-on:submit="submit">
                                 <div class="form-group">
                                     <label for="email">Email</label>
-                                    <input id="email" type="email" class="form-control" name="email" tabindex="1"
+                                    <input v-model="username" id="email" type="email" class="form-control" name="email" tabindex="1"
                                         required autofocus>
                                     <div class="invalid-feedback">
                                         Please fill in your email
@@ -32,7 +32,7 @@
                                             </a>
                                         </div>
                                     </div>
-                                    <input id="password" type="password" class="form-control" name="password"
+                                    <input v-model="password" id="password" type="password" class="form-control" name="password"
                                         tabindex="2" required>
                                     <div class="invalid-feedback">
                                         please fill in your password
@@ -67,3 +67,29 @@
         </div>
     </section>
 </template>
+
+<script lang="ts">
+import { MoneviAPI } from '@/api/methods/monevi-api';
+
+export default {
+
+    methods: {
+        async submit(event: Event) {
+            event.preventDefault();
+            await this.monevi_api.login(this.username, this.password)
+                .then(data => {
+                    this.$router.push('/dashboard');
+                });
+        }
+    },
+
+    data: function() {
+        return {
+            monevi_api: new MoneviAPI(),
+            username: "",
+            password: ""
+        }
+    }
+}
+
+</script>

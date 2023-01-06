@@ -21,6 +21,16 @@ export type UserAccount = {
     lockedAccount: boolean
 }
 
+export type MoneviToken = {
+    id: string,
+    username: string,
+    email: string,
+    role: string,
+    accessToken: string,
+    type: string,
+    organizationRegionId: string,
+}
+
 export type BaseErrorResponse = {
     
     errorCode: string,

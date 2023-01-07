@@ -4,7 +4,8 @@
         <nav class="navbar navbar-expand-lg main-navbar">
             <form class="form-inline mr-auto">
                 <ul class="navbar-nav mr-3">
-                    <li><a href="#" data-toggle="sidebar" class="nav-link nav-link-lg"><i class="fas fa-bars"></i></a>
+                    <li>
+                        <a href="#" data-toggle="sidebar" class="nav-link nav-link-lg"><i class="fas fa-bars"></i></a>
                     </li>
                 </ul>
             </form>
@@ -29,7 +30,15 @@
                 <div class="sidebar-brand sidebar-brand-sm">
                     <router-link to="/"><img src="@/assets/img/logo.svg" style="height: 19px;"></router-link>
                 </div>
-                <TreasurerMenu />
+                <TreasurerMenu 
+                    v-bind:name="name"
+                    v-if="role === 'ROLE_TREASURER'" />
+                <ChairmanMenu 
+                    v-bind:name="name"
+                    v-if="role === 'ROLE_CHAIRMAN'" />
+                <SupervisorMenu 
+                    v-bind:name="name"
+                    v-if="role === 'ROLE_SUPERVISOR'" />
             </aside>
         </div>
     </div>
@@ -37,14 +46,16 @@
 
 <script lang="ts">
 import { MoneviAPI } from '@/api/methods/monevi-api';
-import MainMenu from './MainMenu.vue';
+import ChairmanMenu from './ChairmanMenu.vue';
+import SupervisorMenu from './SupervisorMenu.vue';
 import TreasurerMenu from './TreasurerMenu.vue';
 
 export default {
 
     components: {
-        MainMenu,
-        TreasurerMenu
+        TreasurerMenu,
+        SupervisorMenu,
+        ChairmanMenu
     },
 
     data: function() {
@@ -54,7 +65,8 @@ export default {
     },
     
     props: {
-        name: String
+        name: String,
+        role: String
     },
 
     methods: {

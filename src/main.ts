@@ -1,5 +1,5 @@
-import { createApp } from 'vue'
-import { createRouter, createWebHistory }  from 'vue-router'
+import { createApp, nextTick } from 'vue'
+import { createRouter, createWebHistory, type RouteLocationNormalized }  from 'vue-router'
 import { MoneviCookieHandler } from './api/methods/monevi-cookie-handler';
 import LoadScript from "vue-plugin-load-script";
 
@@ -13,9 +13,9 @@ const router = createRouter({
     history: createWebHistory(),
     routes: [
         // { path: '/index', component: Index }, 
-        { path: '/dashboard', component: Dashboard },
-        { path: '/login', component: Login },
-        { path: '/register', component: Register }
+        { path: '/dashboard', component: Dashboard, meta: { title: 'Dashboard' } },
+        { path: '/login', component: Login, meta: { title: 'Login' } },
+        { path: '/register', component: Register, meta: { title: 'Register'} }
     ]
 });
 
@@ -32,6 +32,18 @@ router.beforeEach((to, from, next) => {
         return next('/login');
     }
     next();
+})
+
+// Assign name to title
+router.afterEach((to, from, next) => {
+
+    // assign title after moving between page
+    nextTick(() => {
+        console.log(to)
+        if (typeof(to.meta.title) === 'string') {
+            document.title = to.meta.title || "Monevi";
+        }
+    })
 })
 
 const app = createApp(App);

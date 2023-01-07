@@ -1,11 +1,16 @@
 <template>
-    <MainHeader />
-    <div class="main-content" v-if="role === 'ROLE_TREASURER'">
+    <MainHeader
+        v-bind:role="role"
+        v-bind:name="name" />
+    <div class="main-content">
         <DashboardTreasurerContent 
+            v-if="role === 'ROLE_TREASURER'"
             v-bind:name="name" />
-    </div>
-    <div class="main-content" v-if="role === 'ROLE_CHAIRMAN'">
         <DashboardChairmanContent
+            v-if="role === 'ROLE_CHAIRMAN'"
+            v-bind:name="name" />
+        <DashboardSupervisorContent
+            v-if="role === 'ROLE_SUPERVISOR'"
             v-bind:name="name" />
     </div>
     <MainFooter />
@@ -14,7 +19,7 @@
 <script lang="ts">
 import MainHeader from '../components/header/MainHeader.vue'
 import MainFooter from '../components/footer/MainFooter.vue';
-import DashboardTreasurerContent from '../components/content/DashboardTreasurerContent.vue';
+import DashboardTreasurerContent from '../components/content/DashboardContent.vue';
 import DashboardChairmanContent from '../components/content/DashboardChairmanContent.vue';
 import { MoneviCookieHandler } from '@/api/methods/monevi-cookie-handler';
 

@@ -1,7 +1,5 @@
 <template>
-    <div class="main-content">
-        <RegisterContent />
-    </div>
+    <RegisterContent />
 </template>
 
 <script lang="ts">

@@ -1,6 +1,7 @@
 import { createApp } from 'vue'
 import { createRouter, createWebHistory }  from 'vue-router'
 import { MoneviCookieHandler } from './api/methods/monevi-cookie-handler';
+import LoadScript from "vue-plugin-load-script";
 
 import App from './App.vue';
 import Dashboard from './pages/Dashboard.vue';
@@ -23,17 +24,18 @@ router.beforeEach((to, from, next) => {
     const publicPages = ['/index', '/login', '/register'];
     const loggedIn = MoneviCookieHandler.getCookie('username');
     
-    if (loggedIn && to.path == "/login") {
+    if (loggedIn && (to.path === "/login" || to.path === "/register") ) {
         return next('/dashboard');
     }
 
     if (!loggedIn && !publicPages.includes(to.path)) {
-        return next(to.path);
+        return next('/login');
     }
     next();
 })
 
 const app = createApp(App);
 app.use(router);
+app.use(LoadScript);
 router.isReady().then(() => app.mount('#app'));
 

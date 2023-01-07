@@ -11,10 +11,10 @@
             <ul class="navbar-nav navbar-right">
                 <li class="dropdown"><a href="#" data-toggle="dropdown"
                         class="nav-link dropdown-toggle nav-link-lg nav-link-user">
-                        <div class="d-sm-none d-lg-inline-block">Hi, Ujang Maman</div>
+                        <div class="d-sm-none d-lg-inline-block"> {{name}} </div>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right">
-                        <a href="#" class="dropdown-item has-icon text-danger">
+                        <a v-on:click="logout()" class="dropdown-item has-icon text-danger">
                             <i class="fas fa-sign-out-alt"></i> Logout
                         </a>
                     </div>
@@ -29,19 +29,39 @@
                 <div class="sidebar-brand sidebar-brand-sm">
                     <router-link to="/"><img src="@/assets/img/logo.svg" style="height: 19px;"></router-link>
                 </div>
-                <MainMenu />
+                <TreasurerMenu />
             </aside>
         </div>
     </div>
 </template>
 
 <script lang="ts">
+import { MoneviAPI } from '@/api/methods/monevi-api';
 import MainMenu from './MainMenu.vue';
+import TreasurerMenu from './TreasurerMenu.vue';
 
 export default {
 
     components: {
-        MainMenu
+        MainMenu,
+        TreasurerMenu
+    },
+
+    data: function() {
+        return {
+            monevi_api: new MoneviAPI()
+        }
+    },
+    
+    props: {
+        name: String
+    },
+
+    methods: {
+        logout(): void {
+            this.monevi_api.logout();
+            this.$router.push('/login');
+        }
     }
 }
 

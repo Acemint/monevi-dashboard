@@ -47,7 +47,7 @@ export default {
         }
     },
 
-    mounted: function() {
+    beforeMount: function() {
         this.getUserData();
     }
 }

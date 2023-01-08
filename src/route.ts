@@ -5,12 +5,13 @@ import { MoneviCookieHandler } from '@/api/methods/monevi-cookie-handler';
 import Dashboard from '@/views/Dashboard.vue';
 import Login from '@/views/Login.vue';
 import Register from '@/views/Register.vue';
-import Path from '@/path';
+import Path from '@/constants/path';
+import Program from './views/Program.vue';
 
 
 // Define category of pages
 const PUBLIC_PATHS = [ Path.INDEX ];
-const LOGGED_IN_PATHS = [ Path.DASHBOARD ];
+const LOGGED_IN_PATHS = [ Path.DASHBOARD, Path.PROGRAM ];
 const NON_LOGGED_IN_PATHS = [ Path.LOGIN, Path.REGISTER ];
 
 
@@ -20,7 +21,7 @@ const router = createRouter({
       { 
         path: Path.DASHBOARD, 
         component: Dashboard, 
-        meta: { title: 'Dashboard' },
+        meta: { title: 'Dashboard' }
       },
       { 
         path: Path.LOGIN, 
@@ -30,7 +31,12 @@ const router = createRouter({
       { 
         path: Path.REGISTER, 
         component: Register, 
-        meta: { title: 'Register'} 
+        meta: { title: 'Register' } 
+      },
+      {
+        path: Path.PROGRAM,
+        component: Program,
+        meta: { title: 'Program' }
       }
   ]
 });

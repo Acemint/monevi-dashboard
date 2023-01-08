@@ -11,12 +11,8 @@
                 <div class="sidebar-brand sidebar-brand-sm">
                     <router-link to="/"><img src="@/assets/img/logo.svg" style="height: 19px;"></router-link>
                 </div>
-                <TreasurerMenu
-                    v-if="role === 'ROLE_TREASURER'" />
-                <ChairmanMenu
-                    v-if="role === 'ROLE_CHAIRMAN'" />
-                <SupervisorMenu
-                    v-if="role === 'ROLE_SUPERVISOR'" />
+                <SidebarMenu
+                    v-bind:role="role"/>
             </aside>
         </div>
     </div>
@@ -24,17 +20,13 @@
 
 <script lang="ts">
 import MainNavbar from './navbar/MainNavbar.vue';
-import ChairmanMenu from '@/components/header/sidebar-menu/ChairmanMenu.vue';
-import SupervisorMenu from '@/components/header/sidebar-menu/SupervisorMenu.vue';
-import TreasurerMenu from '@/components/header/sidebar-menu/TreasurerMenu.vue';
+import SidebarMenu from '@/components/header/sidebar-menu/MainSidebarMenu.vue';
 
 export default {
 
     components: {
         MainNavbar,
-        TreasurerMenu,
-        SupervisorMenu,
-        ChairmanMenu
+        SidebarMenu
     },
 
     props: {

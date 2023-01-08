@@ -1,6 +1,5 @@
 <template>
-  <ul class="sidebar-menu">
-    <li class="menu-header">Dashboard</li>
+  <ul class="sidebar-menu"> 
     <li>
       <a class="nav-link" href="index.html"><i class="fas fa-fire"></i> <span>Dashboard</span></a>
     </li>

@@ -17,18 +17,20 @@
 </template>
 
 <script lang="ts">
-import MainHeader from '../components/header/MainHeader.vue'
-import MainFooter from '../components/footer/MainFooter.vue';
-import DashboardTreasurerContent from '../components/content/DashboardContent.vue';
-import DashboardChairmanContent from '../components/content/DashboardChairmanContent.vue';
+import MainHeader from '@/components/header/MainHeader.vue'
+import MainFooter from '@/components/footer/MainFooter.vue';
+import DashboardChairmanContent from '@/components/content/dashboard/DashboardChairmanContent.vue';
+import DashboardTreasurerContent from '@/components/content/dashboard/DashboardTreasurerContent.vue';
+import DashboardSupervisorContent from '@/components/content/dashboard/DashboardSupervisorContent.vue';
 import { MoneviCookieHandler } from '@/api/methods/monevi-cookie-handler';
 
 export default {
     components: {
         MainHeader,
+        DashboardChairmanContent,
+        DashboardSupervisorContent,
+        DashboardTreasurerContent,
         MainFooter,
-        DashboardChairmanContent, 
-        DashboardTreasurerContent
     },
 
     methods: {

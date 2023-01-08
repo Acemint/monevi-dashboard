@@ -5,7 +5,7 @@
     <div class="main-content">
         <ProgramTreasurerContent 
             v-if="role === 'ROLE_TREASURER'"
-            v-bind:name="name" />
+            v-bind:organizationRegionId="organizationRegionId"/>
         <!-- <DashboardChairmanContent
             v-if="role === 'ROLE_CHAIRMAN'"
             v-bind:name="name" />
@@ -33,6 +33,7 @@ export default {
         getUserData(): void {
             this.name = MoneviCookieHandler.getCookie("username");
             this.role = MoneviCookieHandler.getCookie("role");
+            this.organizationRegionId = MoneviCookieHandler.getCookie("organizationRegionId");
         }
     },
 
@@ -40,6 +41,7 @@ export default {
         return {
             name: "",
             role: "",
+            organizationRegionId: ""
         }
     },
 

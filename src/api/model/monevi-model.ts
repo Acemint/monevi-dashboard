@@ -31,6 +31,15 @@ export type MoneviToken = {
     organizationRegionId: string,
 }
 
+export type Program = {
+    id: string,
+    name: string,
+    budget: number,
+    subsidy: number,
+    startDate: number,
+    endDate: number
+}
+
 export type BaseErrorResponse = {
     
     errorCode: string,

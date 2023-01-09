@@ -44,7 +44,15 @@ class MoneviCookieHandler {
         };
     }
     return undefined;
-}
+  }
+
+  static getUserData(): MoneviToken {
+    const token = MoneviCookieHandler.getCachedLogin();
+    if (token == undefined) {
+      throw Error();
+    }
+    return token;
+  }
 
 }
 

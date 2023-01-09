@@ -21,17 +21,32 @@ export type UserAccount = {
     lockedAccount: boolean
 }
 
-export type MoneviToken = {
-    id: string,
-    fullname: string,
-    username: string,
-    email: string,
-    role: string,
-    accessToken: string,
-    type: string,
-    organizationRegionId: string,
-    regionId: string
+class MoneviToken {
+
+    id: string;
+    fullname: string;
+    username: string;
+    email: string;
+    role: string;
+    accessToken: string;
+    type: string;
+    organizationRegionId: string;
+    regionId: string;
+
+    constructor(id: string, fullname: string, username: string, email: string, role: string, accessToken: string, type: string, organizationRegionId: string, regionId: string) {
+        this.id = id;
+        this.fullname = fullname;
+        this.username = username;
+        this.email = email;
+        this.role = role;
+        this.accessToken = accessToken; 
+        this.type = type;
+        this.organizationRegionId = organizationRegionId;
+        this.regionId = regionId;
+    }
 }
+
+export { MoneviToken };
 
 export type Program = {
     id: string,

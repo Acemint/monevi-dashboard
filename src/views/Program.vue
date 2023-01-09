@@ -1,11 +1,11 @@
 <template>
     <MainHeader
-        v-bind:role="role"
-        v-bind:name="name" />
+        v-bind:role="userAccount.role"
+        v-bind:name="userAccount.fullname" />
     <div class="main-content">
         <ProgramTreasurerContent 
-            v-if="role === 'ROLE_TREASURER'"
-            v-bind:organizationRegionId="organizationRegionId"/>
+            v-if="userAccount.role === 'ROLE_TREASURER'"
+            v-bind:organizationRegionId="userAccount.organizationRegionId"/>
         <!-- <DashboardChairmanContent
             v-if="role === 'ROLE_CHAIRMAN'"
             v-bind:name="name" />
@@ -29,24 +29,10 @@ export default {
         MainFooter,
     },
 
-    methods: {
-        getUserData(): void {
-            this.name = MoneviCookieHandler.getCookie("username");
-            this.role = MoneviCookieHandler.getCookie("role");
-            this.organizationRegionId = MoneviCookieHandler.getCookie("organizationRegionId");
-        }
-    },
-
     data: function() {
         return {
-            name: "",
-            role: "",
-            organizationRegionId: ""
+            userAccount: MoneviCookieHandler.getUserData(),
         }
-    },
-
-    beforeMount: function() {
-        this.getUserData();
     }
 }
 </script>

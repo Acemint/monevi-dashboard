@@ -8,7 +8,7 @@
             Anda tidak memiliki akses ke halaman ini.
           </div>
           <div class="mt-3">
-            <a href="index.html">Back to Home</a>
+            <router-link to="/">Back to Home</router-link>
           </div>
         </div>
       </div>

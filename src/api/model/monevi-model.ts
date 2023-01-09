@@ -23,12 +23,14 @@ export type UserAccount = {
 
 export type MoneviToken = {
     id: string,
+    fullname: string,
     username: string,
     email: string,
     role: string,
     accessToken: string,
     type: string,
     organizationRegionId: string,
+    regionId: string
 }
 
 export type Program = {

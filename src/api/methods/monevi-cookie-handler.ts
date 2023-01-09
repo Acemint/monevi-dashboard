@@ -38,7 +38,7 @@ class MoneviCookieHandler {
             email: MoneviCookieHandler.getCookie("email"),                
             role: MoneviCookieHandler.getCookie("role"),
             accessToken: MoneviCookieHandler.getCookie("jwt"),
-            type: MoneviCookieHandler.getCookie("fullname"),
+            type: MoneviCookieHandler.getCookie("type"),
             organizationRegionId: MoneviCookieHandler.getCookie("organizationRegionId"),
             regionId: MoneviCookieHandler.getCookie("regionId")
         };

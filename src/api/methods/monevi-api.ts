@@ -66,16 +66,26 @@ class MoneviAPI {
     };
 
     async login(username: string, password: string): Promise<MoneviToken> {
+        // Cache, if already logged in just return from cookie
+        const token = MoneviCookieHandler.getCachedLogin();
+        if (token != undefined) return token;
         return MoneviAxios
             .post(LOGIN_PATH, {
                 username: username,
                 password: password,
             })
             .then(response => {
-                MoneviCookieHandler.setCookie("username", response.data.value.username);
-                MoneviCookieHandler.setCookie("jwt", response.data.value.accessToken);
-                MoneviCookieHandler.setCookie("role", response.data.value.role);
-                MoneviCookieHandler.setCookie("organizationRegionId", response.data.value.organizationRegionId);
+                const user: MoneviToken = response.data.value;
+                console.log(user);
+                MoneviCookieHandler.setCookie("id", user.id);
+                MoneviCookieHandler.setCookie("fullname", user.fullname);
+                MoneviCookieHandler.setCookie("username", user.username);
+                MoneviCookieHandler.setCookie("email", user.email);
+                MoneviCookieHandler.setCookie("role", user.role);
+                MoneviCookieHandler.setCookie("jwt", user.accessToken);
+                MoneviCookieHandler.setCookie("type", user.accessToken);
+                MoneviCookieHandler.setCookie("organizationRegionId", user.organizationRegionId);
+                MoneviCookieHandler.setCookie("regionId", user.regionId);
                 return response.data.value;
             })
             .catch(error => {
@@ -85,10 +95,15 @@ class MoneviAPI {
     }
 
     async logout(): Promise<void> {
+        MoneviCookieHandler.deleteCookie("id");
+        MoneviCookieHandler.deleteCookie("fullname");
         MoneviCookieHandler.deleteCookie("username");
-        MoneviCookieHandler.deleteCookie("jwt");
+        MoneviCookieHandler.deleteCookie("email");
         MoneviCookieHandler.deleteCookie("role");
+        MoneviCookieHandler.deleteCookie("jwt");
+        MoneviCookieHandler.deleteCookie("type");
         MoneviCookieHandler.deleteCookie("organizationRegionId");
+        MoneviCookieHandler.deleteCookie("regionId");
     }
 
     async getPrograms(organizationRegionId: string): Promise<Array<Program>> {

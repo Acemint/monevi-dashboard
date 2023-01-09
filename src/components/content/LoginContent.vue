@@ -27,9 +27,9 @@
                                     <div class="d-block">
                                         <label for="password" class="control-label">Password</label>
                                         <div class="float-right">
-                                            <a href="auth-forgot-password.html" class="text-small">
+                                            <router-link to="/forgot-password" class="text-small">
                                                 Forgot Password?
-                                            </a>
+                                            </router-link>
                                         </div>
                                     </div>
                                     <input v-model="password" id="password" type="password" class="form-control" name="password"
@@ -57,7 +57,7 @@
                         </div>
                     </div>
                     <div class="mt-5 text-muted text-center">
-                        Don't have an account? <a href="auth-register.html">Create One</a>
+                        Don't have an account? <router-link to="/register">Create One</router-link>
                     </div>
                     <div class="simple-footer">
                         Copyright &copy; Monevi 2022
@@ -69,6 +69,8 @@
 </template>
 
 <script lang="ts">
+// TODO: Check if click remember me, and then prolong the cookie to 7 days or more.
+
 import { MoneviAPI } from '@/api/methods/monevi-api';
 
 export default {

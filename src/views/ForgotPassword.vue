@@ -36,5 +36,8 @@
 </template>
 
 <script lang="ts">
+export default {
+  
+}
 // TODO: Onclick forgot password, send email
 </script>

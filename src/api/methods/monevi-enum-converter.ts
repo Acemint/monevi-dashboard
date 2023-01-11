@@ -1,6 +1,6 @@
 class MoneviEnumConverter {
 
-    static convertUserAccountRole(bahasaIndonesiaRoleName: string): string | undefined {
+    static convertUserAccountRole(bahasaIndonesiaRoleName: string): string | null {
         if (bahasaIndonesiaRoleName === "BENDAHARA") {
             return "TREASURER";
         }
@@ -10,7 +10,7 @@ class MoneviEnumConverter {
         else if (bahasaIndonesiaRoleName === "SUPERVISOR") {
             return "SUPERVISOR";
         }
-        return undefined
+        return null;
     }
 }
 

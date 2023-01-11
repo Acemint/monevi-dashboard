@@ -21,6 +21,20 @@ export type UserAccount = {
     lockedAccount: boolean
 }
 
+export type UserAccountDetails = {
+    id: string,
+    nim: string,
+    fullname: string,
+    email: string,
+    orgName: string,
+    orgAbbreviation: string,
+    regionName: string,
+    role: string,
+    periodMonth: number,
+    periodYear: number,
+    lockedAccount: boolean
+}
+
 class MoneviToken {
 
     id: string;

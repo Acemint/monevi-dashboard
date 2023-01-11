@@ -98,6 +98,7 @@ export default {
         MoneviDateFormatter.formatDate(this.startDate),
         MoneviDateFormatter.formatDate(this.endDate))
       .then(data => {
+        // TODO: On close modal, trigger restart for parent using emit
         if (this.$refs.closeModalButton instanceof HTMLButtonElement) {
           this.$refs.closeModalButton.click();
         }

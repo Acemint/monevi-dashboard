@@ -1,6 +1,8 @@
 import MoneviAxios from '@/api/configuration/monevi-axios';
 import { CREATE_NEW_PROGRAM_PATH, GET_ORGANIZATIONS_PATH, GET_REGIONS_PATH, LOGIN_PATH, REGISTER_STUDENT_PATH, GET_PROGRAMS_PATH } from "@/api/path/path";
 import type { Region, Organization, UserAccount, BaseErrorResponse, MoneviToken, Program } from '@/api/model/monevi-model';
+import { CREATE_NEW_PROGRAM_PATH, GET_ORGANIZATIONS_PATH, GET_REGIONS_PATH, LOGIN_PATH, REGISTER_STUDENT_PATH, GET_PROGRAMS_PATH, GET_TRANSACTIONS_PATH, GET_STUDENTS_PATH, APPROVE_STUDENT_PATH, DECLINE_STUDENT_PATH } from "@/api/path/path";
+import type { Region, Organization, UserAccount, BaseErrorResponse, MoneviToken, Program, UserAccountDetails } from '@/api/model/monevi-model';
 import { MoneviEnumConverter } from '@/api/methods/monevi-enum-converter';
 import { MoneviCookieHandler } from './monevi-cookie-handler';
 import { MoneviDateFormatter } from './monevi-date-formatter';
@@ -64,6 +66,73 @@ class MoneviAPI {
                 console.log(baseError);
             });
     };
+
+    async getStudents(studentName: string | null, organizationName: string | null, regionId: string | null, periodMonth: number | null, periodYear: number | null, studentRole: string | null): Promise<Array<UserAccountDetails>> {
+        const params = {
+            regionId: regionId,
+            lockedAccount: true
+        } as { studentName: string, organizationName: string, regionId: string, periodMonth: number, periodYear: number, studentRole: string, lockedAccount: boolean }
+        if (regionId != null) {
+            params.regionId = regionId
+        }
+        if (organizationName != null) {
+            params.organizationName = organizationName
+        }
+        if (studentName != null) {
+            params.studentName = studentName
+        }
+        if (periodYear != null) {
+            params.periodYear = periodYear
+        }
+        if (periodMonth != null) {
+            params.periodMonth = periodMonth
+        }
+        if (studentRole != null || studentRole === "") {
+            const role = MoneviEnumConverter.convertUserAccountRole(studentRole.toUpperCase());
+            if (role != null) {
+                params.studentRole = role;
+            }
+        }
+        return MoneviAxios.get(GET_STUDENTS_PATH, {
+            params: params,
+            paramsSerializer: { indexes: null }
+        })
+        .then(response => {
+            return response.data.values;
+        });
+    }
+
+    async acceptStudent(id: string): Promise<UserAccount> {
+        const params = { studentId: id}
+        return MoneviAxios.post(
+            APPROVE_STUDENT_PATH, null, {
+                params: params,
+                paramsSerializer: { indexes: null }
+            })
+            .then(response => {
+                return response.data.value;
+            })
+            .catch(error => {
+                const baseError: BaseErrorResponse = error.response.data;
+                console.log(baseError);
+            });;
+    } 
+
+    async rejectStudent(id: string): Promise<UserAccount> {
+        const params = { studentId: id}
+        return MoneviAxios.post(
+            DECLINE_STUDENT_PATH, null, {
+                params: params,
+                paramsSerializer: { indexes: null }
+            })
+            .then(response => {
+                return response.data.value;
+            })
+            .catch(error => {
+                const baseError: BaseErrorResponse = error.response.data;
+                console.log(baseError);
+            });;
+    } 
 
     async login(username: string, password: string): Promise<MoneviToken> {
         // Cache, if already logged in just return from cookie

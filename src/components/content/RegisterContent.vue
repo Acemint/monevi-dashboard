@@ -106,7 +106,7 @@
 </template>
 
 <script lang="ts">
-// TODO: Create handling on user has been registered 
+// TODO: Create handling on user has been registered (change page) and user on nim exists / email exists
 import { MoneviAPI } from '@/api/methods/monevi-api';
 import type { Region, Organization } from '@/api/model/monevi-model';
 

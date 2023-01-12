@@ -36,4 +36,12 @@ export {
     GET_STUDENTS_PATH,
     APPROVE_STUDENT_PATH,
     DECLINE_STUDENT_PATH
-};
+};class MoneviPath {
+    
+    static REQUEST_RESET_PASSWORD_PATH = USER + AUTH + REQUEST_RESET_PASSWORD;
+    static RESET_PASSWORD_PATH = USER + AUTH + RESET_PASSWORD;
+
+}
+
+
+export { MoneviPath };

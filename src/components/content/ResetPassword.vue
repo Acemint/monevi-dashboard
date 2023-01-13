@@ -27,7 +27,7 @@
                   </div>
 
                   <div class="form-group">
-                    <button type="submit" class="btn btn-primary btn-lg btn-block" tabindex="4">
+                    <button type="submit" class="btn btn-primary btn-lg btn-block" tabindex="4" data-toggle="modal" data-target="#reset">
                       Reset Password
                     </button>
                   </div>
@@ -43,20 +43,21 @@
     </div>
   </section>
 
-  <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" id="forgotPassword">
+  <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" id="reset">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">Lupa Password</h5>
+            <h5 class="modal-title">Reset Password</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
           <div class="modal-body">
-            <p>Tautan reset kata sandi telah dikirim ke email Anda.</p>
+            <p>Password Anda telah berhasil diperbaharui.</p>
           </div>
           <div class="modal-footer bg-whitesmoke br">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+            <button type="button" class="btn btn-primary">Login</button>
           </div>
         </div>
       </div>

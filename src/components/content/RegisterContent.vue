@@ -171,7 +171,7 @@
 </template>
 
 <script lang="ts">
-// TODO: Create handling on user has been registered (change page) and user on nim exists / email exists
+// TODO: Create handling fail register
 import moneviAxios from "@/api/configuration/monevi-axios";
 import { MoneviAPI } from "@/api/methods/monevi-api";
 import { MoneviEnumConverter } from "@/api/methods/monevi-enum-converter";

@@ -45,28 +45,6 @@ class MoneviAPI {
             });
     };
 
-    async registerStudent(nim: string, fullName: string, email: string, password: string, periodMonth: number, periodYear: number, regionName: string, organizationName: string, role: string): Promise<UserAccount> {
-        return MoneviAxios
-            .post(REGISTER_STUDENT_PATH, {
-                nim: nim,
-                fullName: fullName,
-                email: email,
-                password: password,
-                periodMonth: periodMonth,
-                periodYear: periodYear,
-                organizationName: organizationName,
-                regionName: regionName,
-                role:  MoneviEnumConverter.convertUserAccountRole(role.toUpperCase())
-            })
-            .then(response => {
-                return response.data.value;
-            })
-            .catch(error => {
-                const baseError: BaseErrorResponse = error.response.data;
-                console.log(baseError);
-            });
-    };
-
     async getStudents(studentName: string | null, organizationName: string | null, regionId: string | null, periodMonth: number | null, periodYear: number | null, studentRole: string | null): Promise<Array<UserAccountDetails>> {
         const params = {
             regionId: regionId,

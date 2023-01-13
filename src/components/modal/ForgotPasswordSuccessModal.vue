@@ -32,5 +32,12 @@
 </template>
 
 <script lang="ts">
-export default {};
+export default {
+  methods: {
+    showModal() {
+      var forgotPasswordModal: JQuery<HTMLDivElement> = $("#forgotPassword");
+      forgotPasswordModal.modal("show");
+    },
+  },
+};
 </script>

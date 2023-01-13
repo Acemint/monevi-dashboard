@@ -65,8 +65,6 @@ import { MoneviAPI } from "@/api/methods/monevi-api";
 import SimpleHeader from "@/components/header/SimpleHeader.vue";
 import SimpleFooter from "@/components/footer/SimpleFooter.vue";
 import ForgotPasswordSuccessModal from "@/components/modal/ForgotPasswordSuccessModal.vue";
-import "jquery";
-import "bootstrap";
 
 export default {
   data: function () {

@@ -60,7 +60,7 @@
                         Don't have an account? <router-link to="/register">Create One</router-link>
                     </div>
                     <div class="simple-footer">
-                        Copyright &copy; Monevi 2022
+                        Copyright &copy; Monevi 2023
                     </div>
                 </div>
             </div>

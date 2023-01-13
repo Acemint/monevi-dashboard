@@ -9,11 +9,11 @@
 
           <div class="card card-primary">
             <div class="card-header">
-              <h4>Kami akan mengirimkan tautan untuk mengatur ulang kata sandi Anda</h4>
+              <h4>Lupa Kata Sandi</h4>
             </div>
 
             <div class="card-body">
-              <p class="text-muted">We will send a link to reset your password</p>
+              <p class="text-muted">Kami akan mengirimkan tautan untuk mengatur ulang kata sandi Anda</p>
 
               <form v-on:submit="requestForgetPassword">
                 <div class="form-group">
@@ -23,7 +23,7 @@
                 </div>
 
                 <div class="form-group">
-                  <button type="submit" class="btn btn-primary btn-lg btn-block" tabindex="4">
+                  <button type="submit" class="btn btn-primary btn-lg btn-block" tabindex="4" data-toggle="modal" data-target="#forgotPassword">
                     Forgot Password
                   </button>
                 </div>
@@ -33,12 +33,31 @@
           </div>
 
           <div class="simple-footer">
-            Copyright &copy; Monevi 2022
+            Copyright &copy; Monevi 2023
           </div>
         </div>
       </div>
     </div>
   </section>
+
+  <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" id="forgotPassword">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Lupa Password</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Tautan reset kata sandi telah dikirim ke email Anda.</p>
+          </div>
+          <div class="modal-footer bg-whitesmoke br">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+          </div>
+        </div>
+      </div>
+    </div>
 </template>
 
 <script lang="ts">

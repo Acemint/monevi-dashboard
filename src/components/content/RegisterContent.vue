@@ -89,7 +89,7 @@
                   </div>
 
                   <div class="form-group">
-                    <button type="submit" class="btn btn-primary btn-lg btn-block">
+                    <button type="submit" class="btn btn-primary btn-lg btn-block" data-toggle="modal" data-target="#register">
                       Register
                     </button>
                   </div>
@@ -97,12 +97,31 @@
               </div>
             </div>
             <div class="simple-footer">
-              Copyright &copy; Monevi 2022
+              Copyright &copy; Monevi 2023
             </div>
           </div>
         </div>
       </div>
     </section>
+
+    <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" id="register">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Register</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Akun Anda telah berhasil didaftarkan, silakan menunggu email konfirmasi dari pengawas agar dapat login.</p>
+          </div>
+          <div class="modal-footer bg-whitesmoke br">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+          </div>
+        </div>
+      </div>
+    </div>
 </template>
 
 <script lang="ts">

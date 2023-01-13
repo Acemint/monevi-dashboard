@@ -4,8 +4,24 @@ type MoneviParamsRequestResetPassword = {
 
 }
 
+type MoneviBodyResetPassword = {
+
+  newPassword: string,
+  confirmationPassword: string  
+
+}
+
+type MoneviParamsResetPassword = {
+
+  token: string,
+
+}
+
 export type {
 
-  MoneviParamsRequestResetPassword
+  MoneviParamsRequestResetPassword,
+  
+  MoneviBodyResetPassword,
+  MoneviParamsResetPassword
 
 }

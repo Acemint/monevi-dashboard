@@ -13,6 +13,8 @@ const REGISTER: string = "/register";
 const AUTH: string = "/auth";
 const LOGIN: string = "/login";
 const CREATE_NEW: string = '/create-new';
+const RESET_PASSWORD = '/reset-password';
+const REQUEST_RESET_PASSWORD = '/request/reset-password';
 
 const GET_REGIONS_PATH: string = REGIONS + GET_ALL
 const GET_ORGANIZATIONS_PATH: string = ORGANIZATIONS + GET_ALL
@@ -36,7 +38,10 @@ export {
     GET_STUDENTS_PATH,
     APPROVE_STUDENT_PATH,
     DECLINE_STUDENT_PATH
-};class MoneviPath {
+};
+
+
+class MoneviPath {
     
     static REQUEST_RESET_PASSWORD_PATH = USER + AUTH + REQUEST_RESET_PASSWORD;
     static RESET_PASSWORD_PATH = USER + AUTH + RESET_PASSWORD;

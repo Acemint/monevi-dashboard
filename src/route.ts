@@ -9,14 +9,15 @@ import ForgotPassword from '@/views/ForgotPassword.vue';
 import StudentManagement from '@/views/StudentManagement.vue';
 import Error403 from '@/views/error/Error403.vue';
 import Error404 from '@/views/error/Error404.vue';
-import Path from '@/constants/path';
+import Path, { FrontendPath } from '@/constants/path';
 import Role from '@/constants/role';
 import Program from './views/Program.vue';
 import type { MoneviToken } from './api/model/monevi-model';
+import ResetPassword from '@/views/ResetPassword.vue';
 
 
 // Define category of pages
-const NON_LOGGED_IN_PATHS: string[] = [ Path.LOGIN, Path.REGISTER, Path.FORGOT_PASSWORD ];
+const NON_LOGGED_IN_PATHS: string[] = [ Path.LOGIN, Path.REGISTER, Path.FORGOT_PASSWORD, FrontendPath.RESET_PASSSWORD ];
 const ROLE_SPECIFIC_PATHS: { [key: string]: string[] } = 
   {
     supervisor: [ Path.STUDENT_MANAGEMENT ],
@@ -47,6 +48,11 @@ const router = createRouter({
         path: Path.FORGOT_PASSWORD,
         component: ForgotPassword,
         meta: { title: 'Forgot Password' }
+      },
+      {
+        path: FrontendPath.RESET_PASSSWORD,
+        component: ResetPassword,
+        meta: { title: 'Reset Password' }
       },
       { 
         path: Path.REGISTER, 

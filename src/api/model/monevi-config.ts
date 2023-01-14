@@ -17,11 +17,27 @@ type MoneviParamsResetPassword = {
 
 }
 
+type MoneviBodyRegisterStudent = {
+
+  nim: string,
+  fullName: string,
+  email: string,
+  password: string,
+  periodMonth: number,
+  periodYear: number,
+  organizationName: string,
+  regionName: string,
+  role: string
+
+}
+
 export type {
 
   MoneviParamsRequestResetPassword,
   
   MoneviBodyResetPassword,
-  MoneviParamsResetPassword
+  MoneviParamsResetPassword,
+
+  MoneviBodyRegisterStudent
 
 }

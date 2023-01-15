@@ -13,7 +13,7 @@
         </div>
         <div class="modal-footer bg-whitesmoke br">
           <button v-on:click="accept" type="button" class="btn btn-danger">Yes</button>
-          <button ref="closeModalButton" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+          <button v-on:click="closeModal" ref="closeModalButton" type="button" class="btn btn-secondary">Cancel</button>
         </div>
       </div>
     </div>
@@ -21,41 +21,52 @@
 </template>
 
 <script lang="ts">
-  import {
-    MoneviAPI
-  } from '@/api/methods/monevi-api';
+  import moneviAxios from '@/api/configuration/monevi-axios';
+  import type { MoneviParamsAcceptStudent } from '@/api/model/monevi-config';
+  import { MoneviPath } from '@/api/path/path';
+  import StudentManagementContent from '../content/StudentManagementContent.vue';
 
   export default {
-
     props: {
-      studentId: String
+      studentId: String,
     },
 
     methods: {
-      
       accept() {
+        var params = {} as MoneviParamsAcceptStudent;
         if (this.studentId == null) {
+          console.error('Internal server error, studentId is not found');
           return;
         }
-        this.monevi_api.acceptStudent(this.studentId)
-          .then(response => {
-            // TODO: On close modal, trigger restart for parent using emit
+        params.studentId = this.studentId;
+        return moneviAxios
+          .post(MoneviPath.APPROVE_STUDENT_PATH, null, {
+            params: params,
+            paramsSerializer: { indexes: null },
+          })
+          .then((response) => {
             if (this.$refs.closeModalButton instanceof HTMLButtonElement) {
               this.$refs.closeModalButton.click();
             }
+            this.$emit('successUpdate');
+          })
+          .catch((error) => {
+            if (this.$refs.closeModalButton instanceof HTMLButtonElement) {
+              this.$refs.closeModalButton.click();
+            }
+            alert('internal server error, unable to accept student');
           });
-      }
+      },
 
+      showModal() {
+        var acceptStudentModal: JQuery<HTMLDivElement> = $('#acceptStudent');
+        acceptStudentModal.modal('show');
+      },
+
+      closeModal(event: Event) {
+        var acceptStudentModal: JQuery<HTMLDivElement> = $('#acceptStudent');
+        acceptStudentModal.modal('hide');
+      },
     },
-
-    data: function() {
-      
-      return {
-        monevi_api: new MoneviAPI(),
-      }
-
-    }
-
-
-  }
+  };
 </script>

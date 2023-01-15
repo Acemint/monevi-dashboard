@@ -1,3 +1,28 @@
+type MoneviParamsGetStudents = {
+
+  studentName: string
+  organizationName: string
+  regionId: string
+  periodMonth: number
+  periodYear: number
+  studentRole: string
+  lockedAccount: boolean
+
+}
+
+type MoneviParamsAcceptStudent = {
+
+  studentId: string
+
+}
+
+type MoneviParamsDeclineStudent = {
+
+  studentId: string
+
+}
+
+
 type MoneviParamsRequestResetPassword = {
 
   email: string
@@ -32,6 +57,10 @@ type MoneviBodyRegisterStudent = {
 }
 
 export type {
+
+  MoneviParamsAcceptStudent,
+  MoneviParamsDeclineStudent,
+  MoneviParamsGetStudents,
 
   MoneviParamsRequestResetPassword,
   

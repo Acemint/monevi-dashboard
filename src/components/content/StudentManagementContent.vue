@@ -60,7 +60,7 @@
                   <td>{{ item.nim }}</td>
                   <td>{{ item.fullname }}</td>
                   <td>{{ item.email }}</td>
-                  <td>{{ item.role }}</td>
+                  <td>{{ formatRole(item.role) }}</td>
                   <td>{{ item.orgAbbreviation }}</td>
                   <td>{{ item.periodYear }}</td>
                   <td>
@@ -85,6 +85,7 @@
   // TODO: Ignore case on search from API
   import moneviAxios from '@/api/configuration/monevi-axios';
   import { MoneviAPI } from '@/api/methods/monevi-api';
+  import { MoneviDisplayFormatter } from '@/api/methods/monevi-display-formatter';
   import { MoneviEnumConverter } from '@/api/methods/monevi-enum-converter';
   import type { MoneviParamsGetStudents } from '@/api/model/monevi-config';
   import type { UserAccountDetails } from '@/api/model/monevi-model';
@@ -163,6 +164,10 @@
 
       setStudentId(studentId: string) {
         this.studentId = studentId;
+      },
+
+      formatRole(role: string) {
+        return MoneviDisplayFormatter.convertUserAccountRoleForDisplay(role);
       },
 
       openStudentAcceptModal(event: Event) {

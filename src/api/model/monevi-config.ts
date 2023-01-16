@@ -81,6 +81,17 @@ type MoneviBodyLoginUserAccount = {
   password: string 
 
 }
+type MoneviBodyCreateProgram = {
+
+  organizationRegionId: string,
+  programName: string,
+  budget: number,
+  subsidy: number,
+  startDate: string,
+  endDate: string
+
+}
+
 export type {
 
   MoneviParamsGetOrganizations,
@@ -98,4 +109,5 @@ export type {
   MoneviBodyRegisterStudent,
   MoneviBodyLoginUserAccount,
 
+  MoneviBodyCreateProgram
 }

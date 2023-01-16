@@ -1,11 +1,10 @@
 <template>
   <section class="section">
-    <div class="section-header" style="justify-content: space-between;">
+    <div class="section-header" style="justify-content: space-between">
       <h1>Program Kerja</h1>
-      <div style="display: flex;">
+      <div style="display: flex">
         <div class="section-header-button">
-          <button class="btn btn-primary" data-toggle="modal" data-target="#tambahProker">
-            Tambah Program Kerja</button>
+          <button class="btn btn-primary" v-on:click="openNewProgramModal">Tambah Program Kerja</button>
         </div>
       </div>
     </div>
@@ -28,12 +27,12 @@
                   <th>Tanggal Selesai</th>
                 </tr>
                 <tr v-for="(item, index) in programs">
-                  <td> {{ index + 1 }} </td>
-                  <td> {{ item.name }} </td>
-                  <td> {{ item.budget }} </td>
-                  <td> {{ item.subsidy }} </td>
-                  <td> {{ item.startDate }} </td>
-                  <td> {{ item.endDate }} </td>
+                  <td>{{ index + 1 }}</td>
+                  <td>{{ item.name }}</td>
+                  <td>{{ item.budget }}</td>
+                  <td>{{ item.subsidy }}</td>
+                  <td>{{ item.startDate }}</td>
+                  <td>{{ item.endDate }}</td>
                 </tr>
               </table>
             </div>
@@ -43,50 +42,48 @@
     </div>
   </section>
 
-  <ProgramAddProgramKerjaModal 
-    v-bind:organizationRegionId="organizationRegionId"/>
+  <ProgramAddProgramKerjaModal v-bind:organizationRegionId="organizationRegionId" v-on:success-update="getPrograms" ref="addProgramModal" />
 </template>
 
 <script lang="ts">
-import { MoneviAPI } from '@/api/methods/monevi-api';
-import ProgramAddProgramKerjaModal from '@/components/modal/ProgramAddProgramKerjaModal.vue';
-import type { Program } from '@/api/model/monevi-model';
+  import { MoneviAPI } from '@/api/methods/monevi-api';
+  import ProgramAddProgramKerjaModal from '@/components/modal/ProgramAddProgramKerjaModal.vue';
+  import type { Program } from '@/api/model/monevi-model';
 
-export default {
+  export default {
+    data: function () {
+      return {
+        monevi_api: new MoneviAPI(),
+        programs: new Array<Program>(),
+      };
+    },
 
-  data: function(){
-    return {
-      monevi_api: new MoneviAPI(),
-      programs: new Array<Program>(),
-    }
-  },
-  
-  components: {
-    ProgramAddProgramKerjaModal
-  },
+    components: {
+      ProgramAddProgramKerjaModal,
+    },
 
-  props: {
-    organizationRegionId: String
-  },
+    props: {
+      organizationRegionId: String,
+    },
 
-  beforeMount() {
-    this.getPrograms();
-  },
+    beforeMount() {
+      this.getPrograms();
+    },
 
-  methods: {
-    async getPrograms() {
-      if (this.organizationRegionId === undefined) {
-        return;
-      }
-      await this.monevi_api.getPrograms(this.organizationRegionId)
-        .then(data => {
-          for (var datum of data) {
-            this.programs.push(datum);
-          }
+    methods: {
+      async getPrograms() {
+        if (this.organizationRegionId == null) {
+          return;
+        }
+        await this.monevi_api.getPrograms(this.organizationRegionId).then((data) => {
+          this.programs = data;
         });
-    }
-  }
+      },
 
-}
-
+      openNewProgramModal(event: Event) {
+        var addProgramModal: any = this.$refs.addProgramModal;
+        addProgramModal.showModal();
+      },
+    },
+  };
 </script>

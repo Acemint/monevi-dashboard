@@ -32,9 +32,9 @@
           <div class="card-header">
             <h4>Kelola Pengurus</h4>
             <div class="card-header-action">
-              <form>
+              <form v-on:submit="search">
                 <div class="input-group">
-                  <input v-model="search" type="text" class="form-control" placeholder="Search" />
+                  <input v-model="searchTerm" type="text" class="form-control" placeholder="Search" />
                   <div class="input-group-btn">
                     <button class="btn btn-primary"><i class="fas fa-search"></i></button>
                   </div>
@@ -111,9 +111,6 @@
       roleFilter(newRole, oldRole) {
         this.getLockedStudents();
       },
-      search(newSearch, oldSearch) {
-        this.getLockedStudents();
-      },
     },
 
     methods: {
@@ -123,8 +120,8 @@
           console.error('internal server error, no region is found on user');
           return;
         }
-        if (this.search != '') {
-          params.studentName = this.search;
+        if (this.searchTerm != '') {
+          params.studentName = this.searchTerm;
         }
         params.regionId = this.regionId;
         if (this.roleFilter != 'Semua') {
@@ -162,6 +159,11 @@
           });
       },
 
+      search(event: Event) {
+        event.preventDefault();
+        this.getLockedStudents();
+      },
+
       setStudentId(studentId: string) {
         this.studentId = studentId;
       },
@@ -195,7 +197,7 @@
       return {
         monevi_api: new MoneviAPI(),
         roleFilter: 'Semua',
-        search: '',
+        searchTerm: '',
         lockedStudents: new Array<UserAccountDetails>(),
         studentId: '',
       };

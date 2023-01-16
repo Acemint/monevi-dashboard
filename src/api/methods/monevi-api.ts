@@ -3,14 +3,12 @@ import {
     CREATE_NEW_PROGRAM_PATH,
     GET_ORGANIZATIONS_PATH,
     GET_REGIONS_PATH,
-    LOGIN_PATH,
     GET_PROGRAMS_PATH,
 } from "@/api/path/path"
 import type {
     Region,
     Organization,
     BaseErrorResponse,
-    MoneviToken,
     Program,
 } from "@/api/model/monevi-model"
 import { MoneviCookieHandler } from "./monevi-cookie-handler"
@@ -44,36 +42,6 @@ class MoneviAPI {
         })
             .then((response) => {
                 return response.data.values
-            })
-            .catch((error) => {
-                const baseError: BaseErrorResponse = error.response.data
-                console.log(baseError)
-            })
-    }
-
-    async login(username: string, password: string): Promise<MoneviToken> {
-        // Cache, if already logged in just return from cookie
-        const token = MoneviCookieHandler.getCachedLogin()
-        if (token != undefined) return token
-        return MoneviAxios.post(LOGIN_PATH, {
-            username: username,
-            password: password,
-        })
-            .then((response) => {
-                const user: MoneviToken = response.data.value
-                MoneviCookieHandler.setCookie("id", user.id)
-                MoneviCookieHandler.setCookie("fullname", user.fullname)
-                MoneviCookieHandler.setCookie("username", user.username)
-                MoneviCookieHandler.setCookie("email", user.email)
-                MoneviCookieHandler.setCookie("role", user.role)
-                MoneviCookieHandler.setCookie("jwt", user.accessToken)
-                MoneviCookieHandler.setCookie("type", user.accessToken)
-                MoneviCookieHandler.setCookie(
-                    "organizationRegionId",
-                    user.organizationRegionId
-                )
-                MoneviCookieHandler.setCookie("regionId", user.regionId)
-                return response.data.value
             })
             .catch((error) => {
                 const baseError: BaseErrorResponse = error.response.data

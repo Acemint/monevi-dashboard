@@ -75,6 +75,12 @@ type MoneviBodyRegisterStudent = {
 
 }
 
+type MoneviBodyLoginUserAccount = {
+
+  username: string,
+  password: string 
+
+}
 export type {
 
   MoneviParamsGetOrganizations,
@@ -89,6 +95,7 @@ export type {
   MoneviBodyResetPassword,
   MoneviParamsResetPassword,
 
-  MoneviBodyRegisterStudent
+  MoneviBodyRegisterStudent,
+  MoneviBodyLoginUserAccount,
 
 }

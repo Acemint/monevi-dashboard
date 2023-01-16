@@ -6,6 +6,7 @@ const FORGOT_PASSWORD = "/forgot-password";
 const STUDENT_MANAGEMENT = "/student-management";
 const PROGRAM = "/program-kerja";
 const REPORT = "/report";
+const ORGANIZATION = '/organization';
 
 const NOT_FOUND = "/:pathMatch(.*)*";
 const UNAUTHORIZED = "/403-unauthorized";
@@ -18,6 +19,7 @@ export default {
   FORGOT_PASSWORD: FORGOT_PASSWORD,
   PROGRAM: PROGRAM,
   REPORT: REPORT,
+  ORGANIZATION: ORGANIZATION,
   STUDENT_MANAGEMENT: STUDENT_MANAGEMENT,
   NOT_FOUND: NOT_FOUND,
   UNAUTHORIZED: UNAUTHORIZED
@@ -27,7 +29,19 @@ class FrontendPath {
 
   static LOGIN = "/login";
   static RESET_PASSSWORD = "/reset-password";
+  static ORGANIZATION = "/organization";
 
 }
 
-export { FrontendPath }
+class FrontendRouteName {
+
+  static LOGIN = "login";
+  static RESET_PASSWORD = "reset-password";
+  static TRANSACTION = "transaction";
+  static REPORT = "report";
+  static STUDENT_MANAGEMENT = "student-management";
+  static ORGANIZATION = "organization";
+
+}
+
+export { FrontendPath, FrontendRouteName }

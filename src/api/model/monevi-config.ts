@@ -1,3 +1,22 @@
+type MoneviParamsGetOrganizations = {
+
+  regionName: string,
+  searchTerm: string
+  page: number,
+  size: number, 
+  sortBy: Array<string>, 
+  isAscending: Array<string>
+
+}
+
+type MoneviBodyCreateOrganization = {
+
+  name: string,
+  abbreviation: string,
+  regionNames: Array<string>
+
+}
+
 type MoneviParamsGetStudents = {
 
   studentName: string
@@ -57,6 +76,9 @@ type MoneviBodyRegisterStudent = {
 }
 
 export type {
+
+  MoneviParamsGetOrganizations,
+  MoneviBodyCreateOrganization,
 
   MoneviParamsAcceptStudent,
   MoneviParamsDeclineStudent,

@@ -7,12 +7,14 @@ import Login from '@/views/Login.vue';
 import Register from '@/views/Register.vue';
 import ForgotPassword from '@/views/ForgotPassword.vue';
 import StudentManagement from '@/views/StudentManagement.vue';
+import Program from '@/views/Program.vue';
+import Transaction from '@/views/Transaction.vue';
+import Report from '@/views/Report.vue';
+import Organization from '@/views/Organization.vue';
 import Error403 from '@/views/error/Error403.vue';
 import Error404 from '@/views/error/Error404.vue';
-import Path, { FrontendPath } from '@/constants/path';
+import Path, { FrontendPath, FrontendRouteName } from '@/constants/path';
 import Role from '@/constants/role';
-import Program from './views/Program.vue';
-import type { MoneviToken } from './api/model/monevi-model';
 import ResetPassword from '@/views/ResetPassword.vue';
 
 
@@ -20,7 +22,7 @@ import ResetPassword from '@/views/ResetPassword.vue';
 const NON_LOGGED_IN_PATHS: string[] = [ Path.LOGIN, Path.REGISTER, Path.FORGOT_PASSWORD, FrontendPath.RESET_PASSSWORD ];
 const ROLE_SPECIFIC_PATHS: { [key: string]: string[] } = 
   {
-    supervisor: [ Path.STUDENT_MANAGEMENT ],
+    supervisor: [ Path.STUDENT_MANAGEMENT, FrontendPath.ORGANIZATION ],
     chairman: [  ],
     treasurer: [  ]
   };
@@ -41,6 +43,7 @@ const router = createRouter({
       },
       { 
         path: Path.LOGIN, 
+        name: FrontendRouteName.LOGIN,
         component: Login, 
         meta: { title: 'Login' } 
       },
@@ -67,7 +70,14 @@ const router = createRouter({
       {
         path: Path.STUDENT_MANAGEMENT,
         component: StudentManagement,
+        name: FrontendRouteName.STUDENT_MANAGEMENT,
         meta: { title: 'Student Management' }
+      },
+      {
+        path: FrontendPath.ORGANIZATION, 
+        component: Organization,
+        name: FrontendRouteName.ORGANIZATION,
+        meta: { title: 'Organization' }
       },
       {
         path: Path.UNAUTHORIZED,

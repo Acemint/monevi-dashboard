@@ -80,6 +80,18 @@ const router = createRouter({
         meta: { title: 'Organization' }
       },
       {
+        path: FrontendPath.TRANSACTION + '/:period?',
+        component: Transaction,
+        name: FrontendRouteName.TRANSACTION,
+        meta: { title: 'Transaction' }
+      },
+      {
+        path: FrontendPath.REPORT + '/:period?',
+        component: Report,
+        name: FrontendRouteName.REPORT, 
+        meta: { title: 'Report' }
+      },
+      {
         path: Path.UNAUTHORIZED,
         component: Error403, 
         meta: { title: 'Unauthorized' }

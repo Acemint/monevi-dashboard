@@ -29,6 +29,8 @@ class FrontendPath {
 
   static LOGIN = "/login";
   static RESET_PASSSWORD = "/reset-password";
+  static TRANSACTION = "/transaction";
+  static REPORT = "/report";
   static ORGANIZATION = "/organization";
 
 }

@@ -81,6 +81,77 @@ type MoneviBodyLoginUserAccount = {
   password: string 
 
 }
+
+type MoneviBodyRejectReport = {
+
+  reportId: string,
+  userId: string,
+  comment: string
+
+}
+
+type MoneviBodyApproveReport = {
+
+  reportId: string,
+  userId: string
+
+}
+
+
+type MoneviBodySubmitReport = {
+
+  organizationRegionId: string,
+  date: string,
+  opnameData: {
+    CASH: number,
+    BANK: number
+  }
+
+}
+
+type MoneviParamsSummarizeReport = {
+
+  organizationRegionId: string,
+  date: string
+
+}
+
+type MoneviParamsGetTransactions = {
+
+  organizationRegionId: string | null, 
+  regionId: string | null,
+  generalLedgerAccountType: string | null,
+  entryPosition: string | null,
+  transactionType: string | null,
+  startDate: string, 
+  endDate: string, 
+  page: number,
+  size: number, 
+  sortBy: Array<string>, 
+  isAscending: Array<string>
+
+}
+
+type MoneviBodyCreateTransaction = {
+
+  organizationRegionId: string, 
+  name: string, 
+  transactionDate: string,
+  amount: number, 
+  entryPosition: string, 
+  type: string, 
+  generalLedgerAccountType: string, 
+  description: string, 
+  proof: string | ArrayBuffer | null
+
+}
+
+type MoneviParamsDeleteTransaction = {
+
+  transactionId: string
+
+}
+
 type MoneviBodyCreateProgram = {
 
   organizationRegionId: string,
@@ -109,5 +180,15 @@ export type {
   MoneviBodyRegisterStudent,
   MoneviBodyLoginUserAccount,
 
+  MoneviBodyApproveReport,
+  MoneviBodyRejectReport,
+  MoneviBodySubmitReport,
+  MoneviParamsSummarizeReport,
+
+  MoneviParamsGetTransactions,
+  MoneviBodyCreateTransaction,
+  MoneviParamsDeleteTransaction,
+
   MoneviBodyCreateProgram
+
 }

@@ -1,6 +1,5 @@
 import MoneviAxios from "@/api/configuration/monevi-axios"
 import {
-    CREATE_NEW_PROGRAM_PATH,
     GET_ORGANIZATIONS_PATH,
     GET_REGIONS_PATH,
     GET_PROGRAMS_PATH,
@@ -93,26 +92,6 @@ class MoneviAPI {
                 const baseError: BaseErrorResponse = error.response.data
                 console.log(baseError)
             })
-    }
-
-    async createNewProgram(
-        organizationRegionId: string,
-        programName: string,
-        budget: number,
-        subsidy: number,
-        startDate: string,
-        endDate: string
-    ): Promise<Program> {
-        return MoneviAxios.post(CREATE_NEW_PROGRAM_PATH, {
-            organizationRegionId: organizationRegionId,
-            programName: programName,
-            budget: budget,
-            subsidy: subsidy,
-            startDate: startDate,
-            endDate: endDate,
-        }).then((response) => {
-            return response.data.value
-        })
     }
 }
 

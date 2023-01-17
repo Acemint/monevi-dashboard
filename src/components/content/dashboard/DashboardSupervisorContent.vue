@@ -1,7 +1,7 @@
 <template>
     <section class="section">
         <div class="section-header">
-            <h1>Dashboard - Ketua</h1>
+            <h1>Dashboard - Bendahara</h1>
         </div>
         <div class="row">
             <div class="col-lg-4 col-md-6 col-sm-6 col-12">
@@ -59,43 +59,47 @@
                     <div class="card-body">
                         <ul class="list-unstyled list-unstyled-border">
                             <li class="media">
-                                <img class="mr-3 rounded-circle" width="50" src="../assets/img/avatar/avatar-1.png"
+                                <img class="mr-3 rounded-circle" width="50" src="@/assets/img/avatar/avatar-1.png"
                                     alt="avatar">
                                 <div class="media-body">
                                     <div class="float-right text-primary">Now</div>
-                                    <div class="media-title"> {{ name }} </div>
+                                    <div class="media-title">Farhan A Mujib</div>
                                     <span class="text-small text-muted">Cras sit amet nibh libero, in gravida nulla.
-                                        Nulla vel metus scelerisque ante sollicitudin.</span>
+                                        Nulla vel metus
+                                        scelerisque ante sollicitudin.</span>
                                 </div>
                             </li>
                             <li class="media">
-                                <img class="mr-3 rounded-circle" width="50" src="../assets/img/avatar/avatar-2.png"
+                                <img class="mr-3 rounded-circle" width="50" src="@/assets/img/avatar/avatar-2.png"
                                     alt="avatar">
                                 <div class="media-body">
                                     <div class="float-right">12m</div>
-                                    <div class="media-title">Ujang Maman</div>
+                                    <div class="media-title"> {{ name }} </div>
                                     <span class="text-small text-muted">Cras sit amet nibh libero, in gravida nulla.
-                                        Nulla vel metus scelerisque ante sollicitudin.</span>
+                                        Nulla vel metus
+                                        scelerisque ante sollicitudin.</span>
                                 </div>
                             </li>
                             <li class="media">
-                                <img class="mr-3 rounded-circle" width="50" src="../assets/img/avatar/avatar-3.png"
+                                <img class="mr-3 rounded-circle" width="50" src="@/assets/img/avatar/avatar-3.png"
                                     alt="avatar">
                                 <div class="media-body">
                                     <div class="float-right">17m</div>
                                     <div class="media-title">Rizal Fakhri</div>
                                     <span class="text-small text-muted">Cras sit amet nibh libero, in gravida nulla.
-                                        Nulla vel metus scelerisque ante sollicitudin.</span>
+                                        Nulla vel metus
+                                        scelerisque ante sollicitudin.</span>
                                 </div>
                             </li>
                             <li class="media">
-                                <img class="mr-3 rounded-circle" width="50" src="../assets/img/avatar/avatar-4.png"
+                                <img class="mr-3 rounded-circle" width="50" src="@/assets/img/avatar/avatar-4.png"
                                     alt="avatar">
                                 <div class="media-body">
                                     <div class="float-right">21m</div>
                                     <div class="media-title">Alfa Zulkarnain</div>
                                     <span class="text-small text-muted">Cras sit amet nibh libero, in gravida nulla.
-                                        Nulla vel metus scelerisque ante sollicitudin.</span>
+                                        Nulla vel metus
+                                        scelerisque ante sollicitudin.</span>
                                 </div>
                             </li>
                         </ul>

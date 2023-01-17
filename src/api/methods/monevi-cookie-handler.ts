@@ -1,3 +1,5 @@
+import type { MoneviToken } from "../model/monevi-model";
+
 class MoneviCookieHandler {
 
   static getCookie(cookieName: string): string {
@@ -25,6 +27,31 @@ class MoneviCookieHandler {
 
   static deleteCookie(cookieName: string): void { 
     MoneviCookieHandler.setCookie(cookieName, "", 0);
+  }
+
+  static getCachedLogin(): MoneviToken | undefined {
+    if (MoneviCookieHandler.getCookie("username")) {
+        return {
+            id: MoneviCookieHandler.getCookie("id"),
+            fullname: MoneviCookieHandler.getCookie("fullname"),
+            username: MoneviCookieHandler.getCookie("username"),
+            email: MoneviCookieHandler.getCookie("email"),                
+            role: MoneviCookieHandler.getCookie("role"),
+            accessToken: MoneviCookieHandler.getCookie("jwt"),
+            type: MoneviCookieHandler.getCookie("type"),
+            organizationRegionId: MoneviCookieHandler.getCookie("organizationRegionId"),
+            regionId: MoneviCookieHandler.getCookie("regionId")
+        };
+    }
+    return undefined;
+  }
+
+  static getUserData(): MoneviToken {
+    const token = MoneviCookieHandler.getCachedLogin();
+    if (token == undefined) {
+      throw Error();
+    }
+    return token;
   }
 
 }

@@ -1,6 +1,14 @@
 import { createApp } from 'vue'
-import App from './App.vue'
+import LoadScript from "vue-plugin-load-script";
 
-import './assets/main.css'
+import { router } from '@/route';
+import App from '@/App.vue';
 
-createApp(App).mount('#app')
+
+const app = createApp(App);
+app.use(router);
+app.use(LoadScript);
+router.isReady().then(() => {
+    app.mount('#app');
+});
+

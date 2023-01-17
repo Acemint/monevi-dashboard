@@ -1,0 +1,182 @@
+<template>
+  <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" id="transactionAddModal">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Tambah Transaksi</h5>
+          <button v-on:click="closeModal" type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form>
+            <div class="form-group">
+              <label for="tanggal">Tanggal*</label>
+              <input v-model="date" id="tanggal" type="date" class="form-control" name="tanggal" />
+              <div class="invalid-feedback"></div>
+            </div>
+            <div class="row">
+              <div class="form-group col-6">
+                <label>Dompet*</label>
+                <select v-model="generalLedgerAccountType" class="form-control selectric">
+                  <option>Bank</option>
+                  <option>Kas</option>
+                </select>
+              </div>
+
+              <div class="form-group col-6">
+                <label>Jenis Transaksi*</label>
+                <select v-model="entryPosition" class="form-control selectric">
+                  <option>Debit</option>
+                  <option>Kredit</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="transaksi">Transaksi*</label>
+              <input v-model="transactionName" id="transaksi" type="text" class="form-control" name="transaksi" />
+              <div class="invalid-feedback"></div>
+            </div>
+
+            <div class="form-group">
+              <label>Kategori*</label>
+              <select v-model="transactionType" class="form-control selectric">
+                <option>Rutin</option>
+                <option>Non Rutin</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="keterangan">Keterangan</label>
+              <input v-model="description" id="keterangan" type="text" class="form-control" name="keterangan" />
+              <div class="invalid-feedback"></div>
+            </div>
+
+            <div class="form-group">
+              <label for="jumlah">Jumlah*</label>
+              <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">Rp</span>
+                </div>
+                <input v-model="amount" id="jumlah" type="text" class="form-control" name="jumlah" aria-label="Jumlah (dalam rupiah)" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="col-form-label text-md-left">Bukti Transaksi*</label>
+              <div class="mb-3">
+                <input v-on:change="loadImage" class="form-control" type="file" id="formFile" /><br />
+                <img ref="sample" src="#" id="buktiTransaksi" style="width: 100%" />
+              </div>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer bg-whitesmoke br">
+          <button v-on:click="closeModal" ref="closeModalButton" type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+          <button v-on:click="submitTransaction" type="button" class="btn btn-primary">Tambah Transaksi</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script lang="ts">
+  import { MoneviPath } from '@/api/path/path';
+  import type { MoneviBodyCreateTransaction } from '@/api/model/monevi-config';
+  import { MoneviDateFormatter } from '@/api/methods/monevi-date-formatter';
+  import { MoneviEnumConverter } from '@/api/methods/monevi-enum-converter';
+  import moneviAxios from '@/api/configuration/monevi-axios';
+
+  export default {
+    data: function () {
+      return {
+        date: '',
+        generalLedgerAccountType: 'Bank',
+        entryPosition: 'Debit',
+        transactionName: '',
+        transactionType: 'Non Rutin',
+        description: '',
+        amount: 0,
+      };
+    },
+
+    props: {
+      organizationRegionId: String,
+    },
+
+    methods: {
+      showModal() {
+        var transactionAddModal: JQuery<HTMLDivElement> = $('#transactionAddModal');
+        transactionAddModal.modal('show');
+      },
+
+      closeModal(event: Event) {
+        var transactionDeleteModal: JQuery<HTMLDivElement> = $('#transactionAddModal');
+        transactionDeleteModal.modal('hide');
+      },
+
+      loadImage(event: any) {
+        if (event.target != null) {
+          var files: FileList = event.target.files;
+          var displayImage: any = this.$refs.sample;
+          if (files.length != 0) {
+            displayImage.src = URL.createObjectURL(files[0]);
+          }
+        }
+      },
+
+      async submitTransaction() {
+        var imageHTMLElement: any = this.$refs.sample;
+        let blob = await fetch(imageHTMLElement.src).then((r) => r.blob());
+
+        const reader = new FileReader();
+        reader.readAsDataURL(blob);
+        reader.addEventListener('load', () => {
+          var body = {} as MoneviBodyCreateTransaction;
+          if (this.organizationRegionId == undefined) {
+            console.error('Organization is not defined');
+            return;
+          }
+          body.organizationRegionId = this.organizationRegionId;
+          body.name = this.transactionName;
+          body.transactionDate = MoneviDateFormatter.formatDate(this.date);
+          body.amount = this.amount;
+          var generalLedgerAccountType = MoneviEnumConverter.convertGeneralLedgerAccountType(this.generalLedgerAccountType);
+          if (generalLedgerAccountType == null) {
+            console.error('invalid general ledger account type');
+            return;
+          }
+          body.generalLedgerAccountType = generalLedgerAccountType;
+          var entryPosition = MoneviEnumConverter.convertEntryPosition(this.entryPosition);
+          if (entryPosition == null) {
+            console.error('invalid entry position');
+            return;
+          }
+          body.entryPosition = entryPosition;
+          var transactionType = MoneviEnumConverter.convertTransactionType(this.transactionType);
+          if (transactionType == null) {
+            console.error('invalid category');
+            return;
+          }
+          body.type = transactionType;
+          body.description = this.description;
+          body.proof = reader.result;
+          return moneviAxios
+            .post(MoneviPath.CREATE_NEW_TRANSACTION_PATH, body)
+            .then((response) => {
+              alert('success in creating transaction');
+              // TODO: Update parent on success
+              URL.revokeObjectURL(imageHTMLElement.src);
+              if (this.$refs.closeModalButton instanceof HTMLButtonElement) {
+                this.$refs.closeModalButton.click();
+              }
+            })
+            .catch((error) => {
+              console.error(error.response.data.errorFields);
+            });
+        });
+      },
+    },
+  };
+</script>

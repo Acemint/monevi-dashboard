@@ -40,7 +40,6 @@
 
       if (this.$route.query.period == undefined) {
         this.$router.push({ name: this.currentRouteName, query: { period: this.formatDateToMonth(this.dates[this.currentDateIndex]) } });
-
         return;
       }
 

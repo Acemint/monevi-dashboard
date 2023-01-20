@@ -151,7 +151,7 @@
   <TransactionAddModal ref="transactionAddModal" v-bind:organizationRegionId="organizationRegionId" />
   <TransactionEditModal ref="transactionEditModal" v-bind:transaction="transaction" v-on:success-update="getTransactions()" />
   <TransactionDeleteModal ref="transactionDeleteModal" v-bind:transaction="transaction" v-on:success-update="getTransactions()" />
-  <TransactionSendModal ref="transactionSendModal" v-bind:organizationRegionId="organizationRegionId" v-bind:period="date" />
+  <TransactionSendModal ref="transactionSendModal" v-bind:organizationRegionId="organizationRegionId" v-bind:date="formatMonthToDate(date)" />
 </template>
 
 <script lang="ts">

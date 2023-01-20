@@ -43,12 +43,14 @@
 
 <script lang="ts">
   import moneviAxios from '@/api/configuration/monevi-axios';
+  import { MoneviDateFormatter } from '@/api/methods/monevi-date-formatter';
   import type { MoneviBodySubmitReport } from '@/api/model/monevi-config';
   import { MoneviPath } from '@/api/path/path';
+  import { FrontendRouteName } from '@/constants/path';
 
   export default {
     props: {
-      period: String,
+      date: String,
       organizationRegionId: String,
     },
 
@@ -72,11 +74,11 @@
 
       sendReport() {
         var body = {} as MoneviBodySubmitReport;
-        if (this.period == undefined) {
+        if (this.date == undefined) {
           console.error('internal server error, period is not found');
           return;
         }
-        body.date = this.period;
+        body.date = this.date;
         if (this.organizationRegionId == undefined) {
           console.error('internal server error, organization region id is not found');
           return;
@@ -87,10 +89,11 @@
           .post(MoneviPath.SUBMIT_REPORT_PATH, body)
           .then((response) => {
             alert('Berhasil mengirim laporan');
-            // TODO: On close modal, trigger restart for parent using emit
-            if (this.$refs.closeModalButton instanceof HTMLButtonElement) {
-              this.$refs.closeModalButton.click();
+            if (!(this.$refs.closeModalButton instanceof HTMLButtonElement)) {
+              return;
             }
+            this.$refs.closeModalButton.click();
+            this.$router.push({ name: FrontendRouteName.Report.DETAILS, query: { period: MoneviDateFormatter.formatDateDMYToMonthAndYear(this.date) } });
           })
           .catch((error) => {
             console.error(error.response);

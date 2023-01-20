@@ -15,7 +15,8 @@
           <div class="card-header">
             <h4>Rencana Program Kerja</h4>
           </div>
-          <div class="card-body">
+
+          <div class="card-body" v-if="programs.length != 0">
             <div class="table-responsive">
               <table v-if="role === 'ROLE_SUPERVISOR'" class="table table-striped table-bordered" id="table-1">
                 <tr>
@@ -57,6 +58,9 @@
                 </tr>
               </table>
             </div>
+          </div>
+          <div class="card-body" v-else>
+            <p>Tidak ada program kerja yang tersedia saat ini</p>
           </div>
         </div>
       </div>

@@ -80,6 +80,22 @@
               </table>
             </div>
           </div>
+
+          <template v-else>
+            <div class="row">
+              <div class="col-12">
+                <div class="card">
+                  <div class="card-header">
+                    <h4>Rencana Program Kerja</h4>
+                  </div>
+                  <div class="card-body">
+                    <p>Tidak ada program kerja yang tersedia saat ini</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </template>
+
           <div class="card-footer text-right">
             <div>
               <button v-on:click="rejectReport" type="button" class="btn btn-danger">Tolak Laporan</button>
@@ -110,6 +126,7 @@
     props: {
       userId: String,
       organizationRegionId: String,
+      role: String,
     },
 
     data: function () {
@@ -122,6 +139,7 @@
 
     methods: {
       async getReportSummary(date: string) {
+        // TODO: get report summary should also accept status
         this.date = date;
 
         this.reportData = new MoneviReportSummary();

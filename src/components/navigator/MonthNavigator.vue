@@ -43,7 +43,6 @@
         return;
       }
 
-      console.log('Period is ', this.$route.query.period);
       var originalDate = this.formatMonthToDate(this.$route.query.period);
       var i = 0;
       for (var date of this.dates) {

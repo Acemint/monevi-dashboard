@@ -109,6 +109,16 @@ type MoneviBodySubmitReport = {
 
 }
 
+type MoneviParamsGetReports = {
+
+  regionId: string,
+  organizationRegionId: string,
+  startDate: string,
+  endDate: string,
+  reportStatus: string
+
+}
+
 type MoneviParamsSummarizeReport = {
 
   organizationRegionId: string,
@@ -183,6 +193,7 @@ export type {
   MoneviBodyApproveReport,
   MoneviBodyRejectReport,
   MoneviBodySubmitReport,
+  MoneviParamsGetReports,
   MoneviParamsSummarizeReport,
 
   MoneviParamsGetTransactions,

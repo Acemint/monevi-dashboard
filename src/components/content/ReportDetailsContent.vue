@@ -3,7 +3,9 @@
     <div class="section-header" style="justify-content: space-between">
       <h1>Laporan</h1>
       <div style="display: flex">
-        <MonthNavigator v-bind:currentRouteName="currentRouteName" v-on:period-change="getReportSummary" />
+        <div class="section-header-button">
+          <MonthNavigator v-bind:currentRouteName="currentRouteName" v-on:period-change="getReportSummary" />
+        </div>
       </div>
     </div>
 
@@ -13,7 +15,7 @@
           <div class="card-header">
             <h4>Laporan Keuangan Kas dan Bank UKM HIMTI (Himpunan Mahasiswa Teknik Informatika) per Bulan {{ formatDateToMonth(date) }}</h4>
             <div class="card-header-action">
-              <button class="btn btn-primary" onclick="location.href='report-detail.html';">Lihat Detail Transaksi</button>
+              <button class="btn btn-primary" v-on:click="navigateToTransactionPage">Lihat Detail Transaksi</button>
             </div>
           </div>
           <div class="card-body" v-if="reportData.reportId != ''">
@@ -88,7 +90,7 @@
     data: function () {
       return {
         reportData: new MoneviReportSummary(),
-        currentRouteName: FrontendRouteName.REPORT,
+        currentRouteName: FrontendRouteName.Report.DETAILS,
         date: '',
       };
     },
@@ -96,6 +98,7 @@
     methods: {
       async getReportSummary(date: string) {
         this.date = date;
+
         this.reportData = new MoneviReportSummary();
         var params = {} as MoneviParamsSummarizeReport;
         if (this.organizationRegionId == undefined) {
@@ -152,6 +155,10 @@
         this.reportData = report;
       },
 
+      navigateToTransactionPage() {
+        this.$router.push({ name: FrontendRouteName.Transaction.ROOT });
+      },
+
       approveReport() {
         var reportApproveModal: any = this.$refs.reportApproveModal;
         reportApproveModal.showModal();
@@ -168,6 +175,10 @@
 
       formatDateToMonth(date: string): string {
         return MoneviDateFormatter.formatDateDMYToMonthAndYear(date);
+      },
+
+      formatMonthToDate(date: string): string {
+        return MoneviDateFormatter.formatMonthAndYearToDateDMY(date);
       },
 
       formatAmountToRupiah(amount: number): string {

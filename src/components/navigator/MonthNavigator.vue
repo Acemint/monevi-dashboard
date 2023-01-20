@@ -1,26 +1,24 @@
 <template>
-  <div class="section-header-button">
-    <nav class="d-inline-block">
-      <ul class="pagination mb-0">
-        <li v-bind:class="[currentDateIndex == 0 ? 'disabled' : '', 'page-item']">
-          <a v-on:click="navigateDate($event)" id="navigate-page-left" class="page-link" href="#" tabindex="-1"><i class="fas fa-chevron-left"></i></a>
-        </li>
+  <nav class="d-inline-block">
+    <ul class="pagination mb-0">
+      <li v-bind:class="[currentDateIndex == 0 ? 'disabled' : '', 'page-item']">
+        <a v-on:click="navigateDate($event)" id="navigate-page-left" class="page-link" href="#" tabindex="-1"><i class="fas fa-chevron-left"></i></a>
+      </li>
 
-        <li class="page-item">
-          <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            {{ formatDateToMonth(dates[currentDateIndex]) }}
-          </button>
-          <div class="dropdown-menu">
-            <a v-on:click="changeDate($event)" v-for="item in dates" v-bind:id="item" class="dropdown-item"> {{ formatDateToMonth(item) }}</a>
-          </div>
-        </li>
+      <li class="page-item">
+        <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          {{ formatDateToMonth(dates[currentDateIndex]) }}
+        </button>
+        <div class="dropdown-menu">
+          <a v-on:click="changeDate($event)" v-for="item in dates" v-bind:id="item" class="dropdown-item"> {{ formatDateToMonth(item) }}</a>
+        </div>
+      </li>
 
-        <li v-bind:class="[currentDateIndex == dates.length - 1 ? 'disabled' : '', 'page-item']">
-          <a v-on:click="navigateDate($event)" id="navigate-page-right" class="page-link" href="#"><i class="fas fa-chevron-right"></i></a>
-        </li>
-      </ul>
-    </nav>
-  </div>
+      <li v-bind:class="[currentDateIndex == dates.length - 1 ? 'disabled' : '', 'page-item']">
+        <a v-on:click="navigateDate($event)" id="navigate-page-right" class="page-link" href="#"><i class="fas fa-chevron-right"></i></a>
+      </li>
+    </ul>
+  </nav>
 </template>
 
 <script lang="ts">

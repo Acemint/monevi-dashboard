@@ -72,14 +72,14 @@
             },
             {
               name: 'Program Kerja',
-              path: Path.PROGRAM,
+              path: FrontendPath.Program.ROOT,
               logo: 'fas fa-briefcase',
               active: false,
               dropdownProps: null,
             },
             {
               name: 'Laporan',
-              path: Path.REPORT,
+              path: FrontendPath.Report.ROOT,
               logo: 'fas fa-file-alt',
               active: false,
               dropdownProps: null,
@@ -96,7 +96,7 @@
             },
             {
               name: 'Program Kerja',
-              path: Path.PROGRAM,
+              path: FrontendPath.Program.ROOT,
               logo: 'fas fa-briefcase',
               active: false,
               dropdownProps: null,
@@ -109,12 +109,12 @@
               dropdownProps: [
                 {
                   name: 'Transaksi',
-                  path: FrontendPath.TRANSACTION,
+                  path: FrontendPath.Transaction.ROOT,
                   active: false,
                 },
                 {
                   name: 'Laporan',
-                  path: FrontendPath.REPORT,
+                  path: FrontendPath.Report.ROOT,
                   active: false,
                 },
               ],
@@ -131,7 +131,7 @@
             },
             {
               name: 'Program Kerja',
-              path: Path.PROGRAM,
+              path: FrontendPath.Program.ROOT,
               logo: 'fas fa-briefcase',
               active: false,
               dropdownProps: null,
@@ -144,12 +144,12 @@
               dropdownProps: [
                 {
                   name: 'Laporan',
-                  path: FrontendPath.REPORT,
+                  path: FrontendPath.Report.ROOT,
                   active: false,
                 },
                 {
                   name: 'Detail Transaksi',
-                  path: FrontendPath.TRANSACTION,
+                  path: FrontendPath.Transaction.ROOT,
                   active: false,
                 },
               ],

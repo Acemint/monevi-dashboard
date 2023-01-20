@@ -7,9 +7,11 @@ import Login from '@/views/Login.vue';
 import Register from '@/views/Register.vue';
 import ForgotPassword from '@/views/ForgotPassword.vue';
 import StudentManagement from '@/views/StudentManagement.vue';
-import Program from '@/views/Program.vue';
+import ProgramDetails from '@/views/ProgramDetails.vue';
+import ProgramSelect from '@/views/ProgramSelect.vue';
 import Transaction from '@/views/Transaction.vue';
-import Report from '@/views/Report.vue';
+import ReportSelect from '@/views/ReportSelect.vue';
+import ReportDetails from '@/views/ReportDetails.vue';
 import Organization from '@/views/Organization.vue';
 import Error403 from '@/views/error/Error403.vue';
 import Error404 from '@/views/error/Error404.vue';
@@ -63,9 +65,19 @@ const router = createRouter({
         meta: { title: 'Register' } 
       },
       {
-        path: Path.PROGRAM,
-        component: Program,
-        meta: { title: 'Program' }
+        path: FrontendPath.Program.ROOT,
+        meta: { title: 'Program' },
+        children: [
+          {
+            path: "",
+            name: FrontendRouteName.Program.ROOT,
+            component: ProgramSelect
+          },
+          {
+            path: FrontendPath.Program.DETAILS,
+            component: ProgramDetails,
+          }
+        ],
       },
       {
         path: Path.STUDENT_MANAGEMENT,
@@ -80,16 +92,32 @@ const router = createRouter({
         meta: { title: 'Organization' }
       },
       {
-        path: FrontendPath.TRANSACTION + '/:period?',
-        component: Transaction,
-        name: FrontendRouteName.TRANSACTION,
-        meta: { title: 'Transaction' }
+        path: FrontendPath.Transaction.ROOT + '/:period?',
+        meta: { title: 'Transaction' },
+        children: [
+          {
+            path: "",
+            name: FrontendRouteName.Transaction.ROOT,
+            component: Transaction
+          }
+        ]
       },
       {
-        path: FrontendPath.REPORT + '/:period?',
-        component: Report,
-        name: FrontendRouteName.REPORT, 
-        meta: { title: 'Report' }
+        path: FrontendPath.Report.ROOT + '/:period?',
+        meta: { title: 'Report' },
+        children: [
+          {
+            path: "",
+            name: FrontendRouteName.Report.ROOT,
+            component: ReportSelect,
+          },
+          {
+            path: FrontendPath.Report.DETAILS,
+            name: FrontendRouteName.Report.DETAILS,
+            component: ReportDetails
+          }
+
+        ]
       },
       {
         path: Path.UNAUTHORIZED,

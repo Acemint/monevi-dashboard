@@ -11,7 +11,9 @@
           </div>
         </div>
 
-        <MonthNavigator v-bind:currentRouteName="currentRouteName" v-on:period-change="getTransactions" />
+        <div class="section-header-button">
+          <MonthNavigator v-bind:currentRouteName="currentRouteName" v-on:period-change="getTransactions" />
+        </div>
       </div>
     </div>
 
@@ -121,14 +123,9 @@
                   <td>{{ item.description }}</td>
                   <td v-bind:class="[item.entryPosition == 'CREDIT' ? 'text-danger' : 'text-primary']">{{ formatRupiah(item.amount, item.entryPosition) }}</td>
                   <td>
-                    <!-- TODO: Implement Minified Image -->
-                    <!-- <div class="gallery transaction">
-                      <img ref="proofImage" src="" />
-                      <div class="gallery-item" data-image="@/assets/img/news/img02.jpg"></div>
-                    </div>
-                    <div class="gallery transaction">
-                      <div class="gallery-item" src="@/assets/img/news/img02.jpg"></div>
-                    </div> -->
+                    <button v-if="item.proof != ''" class="btn btn-primary" v-on:click="openImageModal" v-bind:data-index="index">
+                      <i style="pointer-events: none" class="far fa-eye"></i>
+                    </button>
                   </td>
                   <td v-if="role === 'ROLE_TREASURER'">
                     <button ref="editTransactionButton" v-on:click="openTransactionEditModal($event)" class="btn btn-primary">
@@ -150,6 +147,7 @@
     </div>
   </section>
 
+  <ImageModal ref="imageModal" v-bind:imageSrc="imageSrc" />
   <TransactionAddModal ref="transactionAddModal" v-bind:organizationRegionId="organizationRegionId" />
   <TransactionEditModal ref="transactionEditModal" v-bind:transactionId="transactionId" />
   <TransactionDeleteModal ref="transactionDeleteModal" v-bind:transactionId="transactionId" />
@@ -171,6 +169,7 @@
   import { MoneviEnumConverter } from '@/api/methods/monevi-enum-converter';
   import { MoneviDisplayFormatter } from '@/api/methods/monevi-display-formatter';
   import { FrontendRouteName } from '@/constants/path';
+  import ImageModal from '@/components/modal/ImageModal.vue';
 
   export default {
     props: {
@@ -180,7 +179,7 @@
 
     data: function () {
       return {
-        currentRouteName: FrontendRouteName.TRANSACTION,
+        currentRouteName: FrontendRouteName.Transaction.ROOT,
         monevi_api: new MoneviAPI(),
         transactions: new Array<Transaction>(),
         filterGeneralLedgerAccount: 'Semua',
@@ -188,7 +187,16 @@
         filterEntryPosition: 'Semua',
         transactionId: '',
         date: '',
+        images: new Array<ArrayBuffer>(),
+        imageSrc: '',
       };
+    },
+
+    beforeMount() {
+      var period = this.$route.query.period;
+      if (period != '' && period != undefined) {
+        this.date = this.formatMonthToDate(period.toString());
+      }
     },
 
     watch: {
@@ -211,7 +219,7 @@
 
     methods: {
       async getTransactions(date: string) {
-        this.date = date;
+        this.date = this.formatDateToMonth(date);
         this.transactions = new Array<Transaction>();
 
         var params = {} as MoneviParamsGetTransactions;
@@ -293,6 +301,26 @@
         return MoneviDateFormatter.formatDateDMYToMonthAndYear(date);
       },
 
+      formatMonthToDate(date: string): string {
+        return MoneviDateFormatter.formatMonthAndYearToDateDMY(date);
+      },
+
+      openImageModal(event: Event) {
+        if (!(event.currentTarget instanceof HTMLButtonElement)) {
+          return;
+        }
+        var dataIndex = event.currentTarget.getAttribute('data-index');
+        if (dataIndex == null) {
+          return;
+        }
+        var index = parseInt(dataIndex);
+        this.imageSrc = this.transactions[index].proof;
+        this.$nextTick(() => {
+          var imageModal: any = this.$refs.imageModal;
+          imageModal.showModal();
+        });
+      },
+
       openTransactionAddModal(event: Event) {
         var transactionAddModal: any = this.$refs.transactionAddModal;
         transactionAddModal.showModal();
@@ -326,6 +354,7 @@
     },
 
     components: {
+      ImageModal,
       TransactionAddModal,
       TransactionDeleteModal,
       TransactionEditModal,

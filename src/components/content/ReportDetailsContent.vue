@@ -18,6 +18,7 @@
               <button class="btn btn-primary" v-on:click="navigateToTransactionPage">Lihat Detail Transaksi</button>
             </div>
           </div>
+
           <div class="card-body" v-if="reportData.reportId != ''">
             <div class="table-responsive">
               <table class="table table-striped table-bordered" id="table-1">
@@ -81,20 +82,9 @@
             </div>
           </div>
 
-          <template v-else>
-            <div class="row">
-              <div class="col-12">
-                <div class="card">
-                  <div class="card-header">
-                    <h4>Rencana Program Kerja</h4>
-                  </div>
-                  <div class="card-body">
-                    <p>Tidak ada program kerja yang tersedia saat ini</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </template>
+          <div class="card-body" v-else>
+            <p>Tidak ada laporan yang tersedia saat ini</p>
+          </div>
 
           <div class="card-footer text-right">
             <div>

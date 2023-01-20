@@ -84,7 +84,6 @@
 <script lang="ts">
   import moneviAxios from '@/api/configuration/monevi-axios';
   import { MoneviDisplayFormatter } from '@/api/methods/monevi-display-formatter';
-  import type { Transaction } from '@/api/model/monevi-model';
   import { MoneviPath } from '@/api/path/path';
   import type { MoneviBodyEditTransaction, MoneviParamsEditTransaction } from '@/api/model/monevi-config';
   import { MoneviDateFormatter } from '@/api/methods/monevi-date-formatter';

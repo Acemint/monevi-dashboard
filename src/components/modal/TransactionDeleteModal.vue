@@ -22,13 +22,12 @@
 
 <script lang="ts">
   import moneviAxios from '@/api/configuration/monevi-axios';
-  import { MoneviAPI } from '@/api/methods/monevi-api';
   import type { MoneviParamsDeleteTransaction } from '@/api/model/monevi-config';
   import { MoneviPath } from '@/api/path/path';
 
   export default {
     props: {
-      transactionId: String,
+      transaction: Object,
     },
 
     methods: {
@@ -44,11 +43,12 @@
 
       deleteTransaction(event: Event) {
         var params = {} as MoneviParamsDeleteTransaction;
-        if (this.transactionId == null) {
+        if (this.transaction == undefined) {
           console.log('Internal server error, no transaction id is found');
           return;
         }
-        params.transactionId = this.transactionId;
+        params.transactionId = this.transaction.id;
+        console.log(params.transactionId);
         return moneviAxios
           .delete(MoneviPath.DELETE_TRANSACTION_PATH, {
             params: params,
@@ -58,22 +58,16 @@
           })
           .then((response) => {
             alert('Successfully delete the transaction');
-            // TODO: On close modal, trigger restart for parent using emit
-            if (this.$refs.closeModalButton instanceof HTMLButtonElement) {
-              this.$refs.closeModalButton.click();
+            if (!(this.$refs.closeModalButton instanceof HTMLButtonElement)) {
+              return;
             }
+            this.$refs.closeModalButton.click();
+            this.$emit('successUpdate');
           })
           .catch((error) => {
-            console.log(error);
             alert('Internal server error, unable to delete transaction');
           });
       },
-    },
-
-    data: function () {
-      return {
-        monevi_api: new MoneviAPI(),
-      };
     },
   };
 </script>

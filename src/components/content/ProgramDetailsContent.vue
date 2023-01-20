@@ -30,7 +30,7 @@
                 <tr v-for="(item, index) in programs">
                   <td>{{ index + 1 }}</td>
                   <td>{{ item.name }}</td>
-                  <td>{{ item.budget }}</td>
+                  <td>{{ formatToRupiah(item.budget) }}</td>
                   <td>{{ formatToRupiah(item.subsidy) }}</td>
                   <td><button class="btn btn-primary"></button></td>
                   <td>{{ formatDate(item.startDate) }}</td>

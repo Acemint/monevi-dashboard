@@ -27,30 +27,55 @@
                     <th></th>
                     <th></th>
                   </tr>
+                  <!-- SALDO KAS / BANK -->
                   <tr>
                     <td>Saldo {{ generalLedgerData.identifier }} {{ getPreviousMonthFromCurrentMonth(date) }}</td>
                     <td></td>
                     <td>{{ formatAmountToRupiah(generalLedgerData.data.previousMonthAmount) }}</td>
                   </tr>
+                  <!-- KREDIT / DEBIT -->
                   <template v-for="entryPositionData in generalLedgerData.data.values()">
                     <tr>
                       <td>{{ entryPositionData.identifier }} Selama Bulan {{ formatDateToMonth(date) }}</td>
                       <td></td>
                       <td></td>
                     </tr>
+                    <!-- RUTIN / NON RUTIN -->
                     <template v-for="categoryData in entryPositionData.data.values()">
                       <tr>
-                        <td>{{ categoryData.index }} {{ categoryData.identifier }}</td>
+                        <td>{{ categoryData.index }}. {{ categoryData.identifier }}</td>
                         <td>{{ formatAmountToRupiah(entryPositionData.data.getByName(categoryData.identifier).amount) }}</td>
                         <td></td>
                       </tr>
                     </template>
+                    <!-- Total Dari Rutin + Non Rutin -->
                     <tr>
                       <td></td>
-                      <td>TOTAL</td>
-                      <td>TOTAL</td>
+                      <td>{{ formatAmountToRupiah(sumEntryPosition(entryPositionData)) }}</td>
+                      <td>{{ formatAmountToRupiah(sumEntryPosition(entryPositionData)) }}</td>
                     </tr>
                   </template>
+                  <!-- Jumlah Pengeluaran + Pemasukan di sebuah GL -->
+                  <tr>
+                    <td></td>
+                    <td></td>
+                    <td>{{ formatAmountToRupiah(sumGeneralLedgerAccount(generalLedgerData) + generalLedgerData.data.previousMonthAmount) }}</td>
+                  </tr>
+                  <tr>
+                    <td>Hasil {{ generalLedgerData.identifier }} Opname</td>
+                    <td></td>
+                    <td>{{ formatAmountToRupiah(generalLedgerData.data.opnameAmount) }}</td>
+                  </tr>
+                  <tr>
+                    <td>Selisih Saldo Buku vs {{ generalLedgerData.identifier }} Opname</td>
+                    <td></td>
+                    <td>{{ formatAmountToRupiah(sumGeneralLedgerAccount(generalLedgerData) + generalLedgerData.data.previousMonthAmount - generalLedgerData.data.opnameAmount) }}</td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
                 </template>
               </table>
             </div>
@@ -143,9 +168,9 @@
         report.cash.expense.nonDaily.amount = transactionTypeMap.generalLedgerAccountTypeData.CASH.transactionTypeData.NON_DAILY.entryPositionData.CREDIT.amount;
 
         report.bank.income.daily.amount = transactionTypeMap.generalLedgerAccountTypeData.BANK.transactionTypeData.DAILY.entryPositionData.DEBIT.amount;
-        report.bank.income.nonDaily.amount = transactionTypeMap.generalLedgerAccountTypeData.BANK.transactionTypeData.DAILY.entryPositionData.CREDIT.amount;
-        report.bank.expense.daily.amount = transactionTypeMap.generalLedgerAccountTypeData.BANK.transactionTypeData.NON_DAILY.entryPositionData.DEBIT.amount;
-        report.cash.expense.nonDaily.amount = transactionTypeMap.generalLedgerAccountTypeData.BANK.transactionTypeData.NON_DAILY.entryPositionData.CREDIT.amount;
+        report.bank.income.nonDaily.amount = transactionTypeMap.generalLedgerAccountTypeData.BANK.transactionTypeData.NON_DAILY.entryPositionData.DEBIT.amount;
+        report.bank.expense.daily.amount = transactionTypeMap.generalLedgerAccountTypeData.BANK.transactionTypeData.DAILY.entryPositionData.CREDIT.amount;
+        report.bank.expense.nonDaily.amount = transactionTypeMap.generalLedgerAccountTypeData.BANK.transactionTypeData.NON_DAILY.entryPositionData.CREDIT.amount;
 
         report.cash.opnameAmount = transactionTypeMap.generalLedgerAccountTypeData.CASH.opnameAmount;
         report.cash.previousMonthAmount = transactionTypeMap.generalLedgerAccountTypeData.CASH.previousMonthBalance;
@@ -153,6 +178,32 @@
         report.bank.previousMonthAmount = transactionTypeMap.generalLedgerAccountTypeData.BANK.previousMonthBalance;
 
         this.reportData = report;
+      },
+
+      sumGeneralLedgerAccount(generalLedgers: any): number {
+        var total = 0;
+        var entryPositions = generalLedgers.data.values();
+
+        for (var entryPosition of entryPositions) {
+          var totalEntryPosition = this.sumEntryPosition(entryPosition);
+
+          if (entryPosition.identifier === 'Pemasukan') {
+            total += totalEntryPosition;
+          } else {
+            total -= totalEntryPosition;
+          }
+        }
+        return total;
+      },
+
+      sumEntryPosition(entryPosition: any): number {
+        var total = 0;
+        var categories = entryPosition.data.values();
+
+        for (var category of categories) {
+          total += category.data.amount;
+        }
+        return total;
       },
 
       navigateToTransactionPage() {

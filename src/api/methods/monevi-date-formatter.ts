@@ -108,7 +108,7 @@ class MoneviDateFormatter {
   static minusMonth(input: string): string {
     var inputDate: Date = MoneviDateFormatter.fromDMYtoMYDDate(input);
 
-    let previousMonth = MoneviDateFormatter.formatDate( new Date( inputDate.getFullYear(), inputDate.getMonth(), 0), " ", true );
+    let previousMonth = MoneviDateFormatter.formatDate( new Date( inputDate.getFullYear(), inputDate.getMonth(), 0), "/", false );
     return previousMonth;
   }
 

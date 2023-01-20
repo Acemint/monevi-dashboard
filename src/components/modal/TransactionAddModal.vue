@@ -148,19 +148,30 @@
           body.description = this.description;
           body.proof = reader.result;
           return moneviAxios
-            .post(MoneviPath.CREATE_NEW_TRANSACTION_PATH, body)
+            .post(MoneviPath.CREATE_NEW_TRANSACTION_PATH, new Array<MoneviBodyCreateTransaction>(body))
             .then((response) => {
               alert('success in creating transaction');
-              // TODO: Update parent on success
               URL.revokeObjectURL(imageHTMLElement.src);
-              if (this.$refs.closeModalButton instanceof HTMLButtonElement) {
-                this.$refs.closeModalButton.click();
+              imageHTMLElement.src = '#';
+              if (!(this.$refs.closeModalButton instanceof HTMLButtonElement)) {
+                return;
               }
+              this.$refs.closeModalButton.click();
+              this.$emit('successUpdate');
+              this.resetData();
             })
             .catch((error) => {
-              console.error(error.response.data.errorFields);
+              for (const key in error.response.data.errorFields) {
+                var errorMessage = error.response.data.errorFields[key];
+                alert(errorMessage);
+                break;
+              }
             });
         });
+      },
+
+      resetData() {
+        (this.date = 'NaN/NaN/NaN'), (this.generalLedgerAccountType = 'Bank'), (this.entryPosition = 'Debit'), (this.transactionName = ''), (this.transactionType = 'Non Rutin'), (this.description = ''), (this.amount = 0);
       },
     },
   };

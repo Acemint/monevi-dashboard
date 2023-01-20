@@ -210,5 +210,24 @@ class CategoryData {
 
 }
 
+class MoneviReport {
 
-export { MoneviToken, MoneviReportSummary };
+    id: string;
+    periodDate: number;
+    status: string;
+    commentedBy: string;
+    comment: string;
+    generalLedgerAccountValues: Array<any>;
+
+    constructor(id: string = "", periodDate: number = 0, status: string = "", commentedBy: string = "", comment: string = ""){
+        this.id = id;
+        this.periodDate = periodDate; 
+        this.status = status;
+        this.commentedBy = commentedBy;
+        this.comment = comment;
+        this.generalLedgerAccountValues = new Array<Object>();
+    }
+
+}
+
+export { MoneviToken, MoneviReportSummary, MoneviReport };

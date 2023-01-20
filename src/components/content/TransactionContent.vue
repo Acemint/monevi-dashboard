@@ -12,7 +12,7 @@
         </div>
 
         <div class="section-header-button">
-          <MonthNavigator v-bind:currentRouteName="currentRouteName" v-on:period-change="getTransactions" />
+          <MonthNavigator v-bind:currentRouteName="currentRouteName" v-on:period-change="updateDate" />
         </div>
       </div>
     </div>
@@ -27,7 +27,7 @@
             <div class="card-header">
               <h4>Total Saldo</h4>
             </div>
-            <div class="card-body">Rp 10,000,000</div>
+            <div class="card-body">{{ getTotalBalance() }}</div>
           </div>
         </div>
       </div>
@@ -40,7 +40,7 @@
             <div class="card-header">
               <h4>Total Pengeluaran</h4>
             </div>
-            <div class="card-body">Rp 1,000,000</div>
+            <div class="card-body">{{ formatRupiah(totalExpense) }}</div>
           </div>
         </div>
       </div>
@@ -53,7 +53,7 @@
             <div class="card-header">
               <h4>Total Pendapatan</h4>
             </div>
-            <div class="card-body">Rp 9,000,000</div>
+            <div class="card-body">{{ formatRupiah(totalIncome) }}</div>
           </div>
         </div>
       </div>
@@ -103,44 +103,73 @@
           <div class="card-body">
             <div class="table-responsive">
               <table class="table table-striped table-bordered" id="table-1">
-                <tr>
-                  <th class="sorting" tabindex="0">No</th>
-                  <th>Tanggal</th>
-                  <th>Dompet</th>
-                  <th>Transaksi</th>
-                  <th>Kategori</th>
-                  <th>Keterangan</th>
-                  <th>Jumlah</th>
-                  <th>Bukti Transaksi</th>
-                  <th v-if="role === 'ROLE_TREASURER'">Aksi</th>
-                </tr>
-                <tr v-for="(item, index) in transactions" ref="transactionsDisplay">
-                  <td>{{ index + 1 }}</td>
-                  <td>{{ formatTransactionDate(item.transactionDate) }}</td>
-                  <td>{{ formatGeneralLedgerAccountType(item.generalLedgerAccountType) }}</td>
-                  <td>{{ item.name }}</td>
-                  <td>{{ formatTransactionType(item.type) }}</td>
-                  <td>{{ item.description }}</td>
-                  <td v-bind:class="[item.entryPosition == 'CREDIT' ? 'text-danger' : 'text-primary']">{{ formatRupiah(item.amount, item.entryPosition) }}</td>
-                  <td>
-                    <button v-if="item.proof != ''" class="btn btn-primary" v-on:click="openImageModal" v-bind:data-index="index">
-                      <i style="pointer-events: none" class="far fa-eye"></i>
-                    </button>
-                  </td>
-                  <td v-if="role === 'ROLE_TREASURER'">
-                    <button v-bind:data-index="index" v-on:click="openTransactionEditModal($event)" class="btn btn-primary">
-                      <i style="pointer-events: none" class="far fa-edit"></i>
-                    </button>
-                    <button v-bind:data-index="index" v-on:click="openTransactionDeleteModal($event)" class="btn btn-danger">
-                      <i style="pointer-events: none" class="far fa-trash-alt"></i>
-                    </button>
-                  </td>
-                </tr>
+                <template v-if="role === 'ROLE_TREASURER'">
+                  <tr>
+                    <th class="sorting" tabindex="0">No</th>
+                    <th>Tanggal</th>
+                    <th>Dompet</th>
+                    <th>Transaksi</th>
+                    <th>Kategori</th>
+                    <th>Keterangan</th>
+                    <th>Jumlah</th>
+                    <th>Bukti Transaksi</th>
+                    <th>Aksi</th>
+                  </tr>
+                  <tr v-for="(item, index) in transactions" ref="transactionsDisplay">
+                    <td>{{ index + 1 }}</td>
+                    <td>{{ formatTransactionDate(item.transactionDate) }}</td>
+                    <td>{{ formatGeneralLedgerAccountType(item.generalLedgerAccountType) }}</td>
+                    <td>{{ item.name }}</td>
+                    <td>{{ formatTransactionType(item.type) }}</td>
+                    <td>{{ item.description }}</td>
+                    <td v-bind:class="[item.entryPosition == 'CREDIT' ? 'text-danger' : 'text-primary']">{{ formatRupiah(item.amount, item.entryPosition) }}</td>
+                    <td>
+                      <button v-if="item.proof != ''" class="btn btn-primary" v-on:click="openImageModal" v-bind:data-index="index">
+                        <i style="pointer-events: none" class="far fa-eye"></i>
+                      </button>
+                    </td>
+                    <td>
+                      <button v-bind:class="[isCurrentMonthReportAlreadySent() ? 'disabled' : '', 'btn btn-primary']" v-bind:data-index="index" v-on:click="openTransactionEditModal($event)">
+                        <i style="pointer-events: none" class="far fa-edit"></i>
+                      </button>
+                      <button v-bind:class="[isCurrentMonthReportAlreadySent() ? 'disabled' : '', 'btn btn-danger']" v-bind:data-index="index" v-on:click="openTransactionDeleteModal($event)">
+                        <i style="pointer-events: none" class="far fa-trash-alt"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </template>
+
+                <template v-else>
+                  <tr>
+                    <th class="sorting" tabindex="0">No</th>
+                    <th>Tanggal</th>
+                    <th>Dompet</th>
+                    <th>Transaksi</th>
+                    <th>Kategori</th>
+                    <th>Keterangan</th>
+                    <th>Jumlah</th>
+                    <th>Bukti Transaksi</th>
+                  </tr>
+                  <tr v-for="(item, index) in transactions" ref="transactionsDisplay">
+                    <td>{{ index + 1 }}</td>
+                    <td>{{ formatTransactionDate(item.transactionDate) }}</td>
+                    <td>{{ formatGeneralLedgerAccountType(item.generalLedgerAccountType) }}</td>
+                    <td>{{ item.name }}</td>
+                    <td>{{ formatTransactionType(item.type) }}</td>
+                    <td>{{ item.description }}</td>
+                    <td v-bind:class="[item.entryPosition == 'CREDIT' ? 'text-danger' : 'text-primary']">{{ formatRupiah(item.amount, item.entryPosition) }}</td>
+                    <td>
+                      <button v-if="item.proof != ''" class="btn btn-primary" v-on:click="openImageModal" v-bind:data-index="index">
+                        <i style="pointer-events: none" class="far fa-eye"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </template>
               </table>
             </div>
           </div>
           <div v-if="role === 'ROLE_TREASURER'" class="card-footer text-right">
-            <button v-on:click="openTransactionSendModal" type="button" class="btn btn-primary">Kirim Laporan</button>
+            <button v-on:click="openTransactionSendModal" v-if="!isCurrentMonthReportAlreadySent()" type="button" class="btn btn-primary">Kirim Laporan</button>
           </div>
         </div>
       </div>
@@ -148,15 +177,16 @@
   </section>
 
   <ImageModal ref="imageModal" v-bind:imageSrc="imageSrc" />
-  <TransactionAddModal ref="transactionAddModal" v-bind:organizationRegionId="organizationRegionId" />
-  <TransactionEditModal ref="transactionEditModal" v-bind:transaction="transaction" v-on:success-update="getTransactions()" />
-  <TransactionDeleteModal ref="transactionDeleteModal" v-bind:transaction="transaction" v-on:success-update="getTransactions()" />
-  <TransactionSendModal ref="transactionSendModal" v-bind:organizationRegionId="organizationRegionId" v-bind:date="formatMonthToDate(date)" />
+  <TransactionAddModal ref="transactionAddModal" v-bind:organizationRegionId="organizationRegionId" v-on:success-update="initData()" />
+  <TransactionEditModal ref="transactionEditModal" v-bind:transaction="transaction" v-on:success-update="initData()" />
+  <TransactionDeleteModal ref="transactionDeleteModal" v-bind:transaction="transaction" v-on:success-update="initData()" />
+  <TransactionSendModal ref="transactionSendModal" v-bind:organizationRegionId="organizationRegionId" v-bind:date="date" />
 </template>
 
 <script lang="ts">
   import { Transaction } from '@/api/model/monevi-model';
-  import type { MoneviParamsGetTransactions } from '@/api/model/monevi-config';
+  import type { MoneviParamsGetReports, MoneviParamsGetTransactions } from '@/api/model/monevi-config';
+  import type { MoneviReport } from '@/api/model/monevi-model';
   import { MoneviPath } from '@/api/path/path';
   import { MoneviAPI } from '@/api/methods/monevi-api';
   import TransactionAddModal from '@/components/modal/TransactionAddModal.vue';
@@ -182,6 +212,10 @@
         currentRouteName: FrontendRouteName.Transaction.ROOT,
         monevi_api: new MoneviAPI(),
         transactions: new Array<Transaction>(),
+        totalIncome: 0,
+        totalExpense: 0,
+        currentMonthReports: new Array<MoneviReport>(),
+        previousMonthReports: new Array<MoneviReport>(),
         filterGeneralLedgerAccount: 'Semua',
         filterType: 'Semua',
         filterEntryPosition: 'Semua',
@@ -192,39 +226,44 @@
       };
     },
 
-    beforeMount() {
-      var period = this.$route.query.period;
-      if (period != '' && period != undefined) {
-        this.date = this.formatMonthToDate(period.toString());
-      }
-    },
-
     watch: {
+      date(newDate, oldDate) {
+        this.initData();
+      },
+
       currentDateIndex(newDateIndex, oldDateIndex) {
-        this.getTransactions();
+        this.initData();
       },
 
       filterGeneralLedgerAccount(newFilter: string, oldFilter: string) {
-        this.getTransactions();
+        this.initData();
       },
 
       filterType(newFilter: string, oldFilter: string) {
-        this.getTransactions();
+        this.initData();
       },
 
       filterEntryPosition(newFilter: string, oldFilter: string) {
-        this.getTransactions();
+        this.initData();
       },
     },
 
     methods: {
-      async getTransactions(date: string | null = null) {
-        if (date == null) {
-          date = this.formatMonthToDate(this.date);
-        }
-        this.date = this.formatDateToMonth(date);
+      updateDate(date: string) {
+        this.date = date;
+      },
+
+      async initData() {
         this.transactions = new Array<Transaction>();
 
+        await this.getTransactions();
+        this.currentMonthReports = await this.getReport();
+        console.log(this.currentMonthReports);
+        this.previousMonthReports = await this.getReport(-1);
+        console.log(this.previousMonthReports);
+      },
+
+      async getTransactions() {
         var params = {} as MoneviParamsGetTransactions;
         params.page = 0;
         params.size = 1000;
@@ -233,7 +272,7 @@
         if (this.organizationRegionId != undefined) {
           params.organizationRegionId = this.organizationRegionId;
         }
-        var datesBetween = MoneviDateFormatter.getFirstDateAndLastDateOfADate(date);
+        var datesBetween = MoneviDateFormatter.getFirstDateAndLastDateOfADate(this.date);
         params.startDate = datesBetween[0];
         params.endDate = datesBetween[1];
         if (this.filterGeneralLedgerAccount != 'Semua') {
@@ -245,7 +284,7 @@
         if (this.filterType != 'Semua') {
           params.transactionType = MoneviEnumConverter.convertTransactionType(this.filterType);
         }
-        return moneviAxios
+        await moneviAxios
           .get(MoneviPath.GET_TRANSACTIONS_PATH, {
             params: params,
             paramsSerializer: {
@@ -254,18 +293,79 @@
           })
           .then((response) => {
             this.transactions = response.data.values;
-            return response;
+            this.totalIncome = 0;
+            this.totalExpense = 0;
+            for (var transaction of this.transactions) {
+              if (transaction.entryPosition == 'DEBIT') {
+                this.totalIncome += transaction.amount;
+              } else {
+                this.totalExpense += transaction.amount;
+              }
+            }
           })
           .catch((error) => {
             console.error('Internal Server Error, Unable to get Transactions Data');
           });
       },
 
+      async getReport(monthDifference: number = 0): Promise<any> {
+        var params = {} as MoneviParamsGetReports;
+        if (this.organizationRegionId != undefined) {
+          params.organizationRegionId = this.organizationRegionId;
+        }
+        var month = this.date;
+        if (monthDifference == -1) {
+          month = MoneviDateFormatter.minusMonth(this.date);
+        }
+        var datesBetween = MoneviDateFormatter.getFirstDateAndLastDateOfADate(month);
+        params.startDate = datesBetween[0];
+        params.endDate = datesBetween[1];
+        return await moneviAxios
+          .get(MoneviPath.GET_REPORTS_PATH, { params: params })
+          .then((response) => {
+            return response.data.values;
+          })
+          .catch((error) => {
+            for (const key in error.response.data.errorFields) {
+              var errorMessage = error.response.data.errorFields[key];
+              alert(errorMessage);
+              break;
+            }
+            console.error('internal server error, unable to get previous month data');
+          });
+      },
+
+      isCurrentMonthReportAlreadySent(): boolean {
+        if (this.currentMonthReports.length == 0) {
+          return false;
+        }
+        var currentMonthReport = this.currentMonthReports[0];
+        if (currentMonthReport.status == 'NOT_SENT') {
+          return false;
+        }
+        return true;
+      },
+
+      getTotalBalance() {
+        if (this.previousMonthReports.length == 0) {
+          return 'N/A';
+        }
+        var previousMonthReport = this.previousMonthReports[0];
+        if (previousMonthReport.status != 'APPROVED_BY_SUPERVISOR') {
+          return 'N/A';
+        }
+        var totalBalance = 0;
+        for (var generalLedgerAccount of previousMonthReport.generalLedgerAccountValues) {
+          totalBalance += generalLedgerAccount.amount;
+        }
+        return this.formatRupiah(totalBalance);
+      },
+
       formatGeneralLedgerAccountType(generalLedgerAccountType: string) {
         return MoneviDisplayFormatter.convertGeneralLedgerAccountTypeForDisplay(generalLedgerAccountType);
       },
 
-      formatRupiah(amount: number, entryPosition: string) {
+      formatRupiah(amount: number, entryPosition: string = 'DEBIT') {
         return MoneviDisplayFormatter.toRupiah(MoneviDisplayFormatter.determineNumberByPositionType(amount, entryPosition));
       },
 
@@ -310,6 +410,9 @@
         if (!(event.currentTarget instanceof HTMLButtonElement)) {
           return;
         }
+        if (event.currentTarget.classList.contains('disabled')) {
+          return;
+        }
         var dataIndex = event.currentTarget.getAttribute('data-index');
         if (dataIndex == null) {
           return;
@@ -325,6 +428,9 @@
 
       openTransactionDeleteModal(event: MouseEvent) {
         if (!(event.currentTarget instanceof HTMLButtonElement)) {
+          return;
+        }
+        if (event.currentTarget.classList.contains('disabled')) {
           return;
         }
         var dataIndex = event.currentTarget.getAttribute('data-index');

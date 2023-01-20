@@ -96,7 +96,11 @@
             this.$router.push({ name: FrontendRouteName.Report.DETAILS, query: { period: MoneviDateFormatter.formatDateDMYToMonthAndYear(this.date) } });
           })
           .catch((error) => {
-            console.error(error.response);
+            for (const key in error.response.data.errorFields) {
+              var errorMessage = error.response.data.errorFields[key];
+              alert(errorMessage);
+              break;
+            }
             console.error('Internal Server Error, Unable to Submit Report');
           });
       },

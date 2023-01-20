@@ -10,7 +10,7 @@ class MoneviDateFormatter {
     else {
       date = inputDate.getDate().toString();
     }
-    if (inputDate.getMonth() < 10) {
+    if (inputDate.getMonth() < 9) {
       month = '0' + (inputDate.getMonth() + 1).toString();
     }
     else {

@@ -156,7 +156,7 @@
       },
 
       navigateToTransactionPage() {
-        this.$router.push({ name: FrontendRouteName.Transaction.ROOT });
+        this.$router.push({ name: FrontendRouteName.Transaction.ROOT, query: { period: this.formatDateToMonth(this.date) } });
       },
 
       approveReport() {

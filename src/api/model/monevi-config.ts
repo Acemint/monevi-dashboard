@@ -162,6 +162,26 @@ type MoneviParamsDeleteTransaction = {
 
 }
 
+type MoneviParamsEditTransaction = {
+
+  transactionId: string
+
+}
+
+type MoneviBodyEditTransaction = {
+
+  name: string,
+  transactionDate: string,
+  amount: number,
+  entryPosition: string,
+  type: string,
+  generalLedgerAccountType: string,
+  description: string,
+  proof: string | ArrayBuffer | null,
+  programId: string
+
+}
+
 type MoneviBodyCreateProgram = {
 
   organizationRegionId: string,
@@ -199,6 +219,8 @@ export type {
   MoneviParamsGetTransactions,
   MoneviBodyCreateTransaction,
   MoneviParamsDeleteTransaction,
+  MoneviParamsEditTransaction,
+  MoneviBodyEditTransaction,
 
   MoneviBodyCreateProgram
 

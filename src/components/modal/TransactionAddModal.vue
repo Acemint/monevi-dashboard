@@ -142,24 +142,9 @@
           body.name = this.transactionName;
           body.transactionDate = MoneviDateFormatter.formatDate(this.date);
           body.amount = this.amount;
-          var generalLedgerAccountType = MoneviEnumConverter.convertGeneralLedgerAccountType(this.generalLedgerAccountType);
-          if (generalLedgerAccountType == null) {
-            console.error('invalid general ledger account type');
-            return;
-          }
-          body.generalLedgerAccountType = generalLedgerAccountType;
-          var entryPosition = MoneviEnumConverter.convertEntryPosition(this.entryPosition);
-          if (entryPosition == null) {
-            console.error('invalid entry position');
-            return;
-          }
-          body.entryPosition = entryPosition;
-          var transactionType = MoneviEnumConverter.convertTransactionType(this.transactionType);
-          if (transactionType == null) {
-            console.error('invalid category');
-            return;
-          }
-          body.type = transactionType;
+          body.generalLedgerAccountType = MoneviEnumConverter.convertGeneralLedgerAccountType(this.generalLedgerAccountType);
+          body.entryPosition = MoneviEnumConverter.convertEntryPosition(this.entryPosition);
+          body.type = MoneviEnumConverter.convertTransactionType(this.transactionType);
           body.description = this.description;
           body.proof = reader.result;
           return moneviAxios

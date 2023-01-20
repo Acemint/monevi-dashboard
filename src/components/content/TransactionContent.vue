@@ -128,10 +128,10 @@
                     </button>
                   </td>
                   <td v-if="role === 'ROLE_TREASURER'">
-                    <button ref="editTransactionButton" v-on:click="openTransactionEditModal($event)" class="btn btn-primary">
+                    <button v-bind:data-index="index" v-on:click="openTransactionEditModal($event)" class="btn btn-primary">
                       <i style="pointer-events: none" class="far fa-edit"></i>
                     </button>
-                    <button ref="deleteTransactionButton" v-on:click="openTransactionDeleteModal($event)" class="btn btn-danger">
+                    <button v-bind:data-index="index" v-on:click="openTransactionDeleteModal($event)" class="btn btn-danger">
                       <i style="pointer-events: none" class="far fa-trash-alt"></i>
                     </button>
                   </td>
@@ -149,13 +149,13 @@
 
   <ImageModal ref="imageModal" v-bind:imageSrc="imageSrc" />
   <TransactionAddModal ref="transactionAddModal" v-bind:organizationRegionId="organizationRegionId" />
-  <TransactionEditModal ref="transactionEditModal" v-bind:transactionId="transactionId" />
-  <TransactionDeleteModal ref="transactionDeleteModal" v-bind:transactionId="transactionId" />
+  <TransactionEditModal ref="transactionEditModal" v-bind:transaction="transaction" v-on:success-update="getTransactions()" />
+  <TransactionDeleteModal ref="transactionDeleteModal" v-bind:transaction="transaction" />
   <TransactionSendModal ref="transactionSendModal" v-bind:organizationRegionId="organizationRegionId" v-bind:period="date" />
 </template>
 
 <script lang="ts">
-  import type { Transaction } from '@/api/model/monevi-model';
+  import { Transaction } from '@/api/model/monevi-model';
   import type { MoneviParamsGetTransactions } from '@/api/model/monevi-config';
   import { MoneviPath } from '@/api/path/path';
   import { MoneviAPI } from '@/api/methods/monevi-api';
@@ -185,10 +185,10 @@
         filterGeneralLedgerAccount: 'Semua',
         filterType: 'Semua',
         filterEntryPosition: 'Semua',
-        transactionId: '',
         date: '',
         images: new Array<ArrayBuffer>(),
         imageSrc: '',
+        transaction: new Transaction(),
       };
     },
 
@@ -201,24 +201,27 @@
 
     watch: {
       currentDateIndex(newDateIndex, oldDateIndex) {
-        this.getTransactions(this.date);
+        this.getTransactions();
       },
 
       filterGeneralLedgerAccount(newFilter: string, oldFilter: string) {
-        this.getTransactions(this.date);
+        this.getTransactions();
       },
 
       filterType(newFilter: string, oldFilter: string) {
-        this.getTransactions(this.date);
+        this.getTransactions();
       },
 
       filterEntryPosition(newFilter: string, oldFilter: string) {
-        this.getTransactions(this.date);
+        this.getTransactions();
       },
     },
 
     methods: {
-      async getTransactions(date: string) {
+      async getTransactions(date: string | null = null) {
+        if (date == null) {
+          date = this.formatMonthToDate(this.date);
+        }
         this.date = this.formatDateToMonth(date);
         this.transactions = new Array<Transaction>();
 
@@ -252,29 +255,6 @@
           .then((response) => {
             this.transactions = response.data.values;
             return response;
-          })
-          .then((response) => {
-            if (this.$refs.deleteTransactionButton instanceof Array<HTMLButtonElement>) {
-              let i = 0;
-              for (var button of this.$refs.deleteTransactionButton) {
-                button.id = response.data.values[i].id;
-                i++;
-              }
-            }
-            if (this.$refs.editTransactionButton instanceof Array<HTMLButtonElement>) {
-              let i = 0;
-              for (var button of this.$refs.editTransactionButton) {
-                button.id = response.data.values[i].id;
-                i++;
-              }
-            }
-            if (this.$refs.proofImage instanceof Array<HTMLImageElement>) {
-              let i = 0;
-              for (var image of this.$refs.proofImage) {
-                image.src = atob(response.data.values[i].proof);
-                i++;
-              }
-            }
           })
           .catch((error) => {
             console.error('Internal Server Error, Unable to get Transactions Data');
@@ -327,20 +307,32 @@
       },
 
       openTransactionEditModal(event: MouseEvent) {
-        if (event.currentTarget instanceof HTMLButtonElement) {
-          this.transactionId = event.currentTarget.id;
+        if (!(event.currentTarget instanceof HTMLButtonElement)) {
+          return;
         }
+        var dataIndex = event.currentTarget.getAttribute('data-index');
+        if (dataIndex == null) {
+          return;
+        }
+        var index = parseInt(dataIndex);
+        this.transaction = this.transactions[index];
         this.$nextTick(() => {
           var transactionEditModal: any = this.$refs.transactionEditModal;
-          transactionEditModal.initializeExistingValues(this.transactions[6]);
+          transactionEditModal.initializeExistingValues();
           transactionEditModal.showModal();
         });
       },
 
       openTransactionDeleteModal(event: MouseEvent) {
-        if (event.currentTarget instanceof HTMLButtonElement) {
-          this.transactionId = event.currentTarget.id;
+        if (!(event.currentTarget instanceof HTMLButtonElement)) {
+          return;
         }
+        var dataIndex = event.currentTarget.getAttribute('data-index');
+        if (dataIndex == null) {
+          return;
+        }
+        var index = parseInt(dataIndex);
+        this.transaction = this.transactions[index];
         this.$nextTick(() => {
           var transactionDeleteModal: any = this.$refs.transactionDeleteModal;
           transactionDeleteModal.showModal();

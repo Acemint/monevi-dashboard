@@ -44,19 +44,33 @@ export type Program = {
     endDate: number
 }
 
-export type Transaction = {
+class Transaction {
 
-    id: string,
-    name: string,
-    transactionDate: number,
-    amount: number,
-    entryPosition: string,
-    type: string,
-    generalLedgerAccountType: string,
-    description: string,
+    id: string;
+    name: string;
+    transactionDate: number;
+    amount: number;
+    entryPosition: string;
+    type: string;
+    generalLedgerAccountType: string;
+    description: string;
     proof: string;
 
+    constructor(id: string = "", name: string = "", transactionDate: number = 0, amount: number = 0, entryPosition: string = "", type: string = "", generalLedgerAccountType: string = "", description: string = "", proof: string = "") {
+        this.id = id;
+        this.name = name;
+        this.transactionDate = transactionDate;
+        this.amount = amount;
+        this.entryPosition = entryPosition;
+        this.type = type;
+        this.generalLedgerAccountType = generalLedgerAccountType;
+        this.description = description;
+        this.proof = proof;
+    }
+
 }
+
+export { Transaction };
 
 export type BaseErrorResponse = {
     

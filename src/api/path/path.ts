@@ -22,7 +22,7 @@ const APPROVE: string = "/approve";
 const SUBMIT: string = "/submit";
 const DELETE: string = "/delete";
 const SUMMARIZE: string = "/summarize";
-
+const EDIT: string = "/edit";
 
 
 const GET_REGIONS_PATH: string = REGIONS + GET_ALL
@@ -59,6 +59,7 @@ class MoneviPath {
     static GET_TRANSACTIONS_PATH = TRANSACTION + GET_ALL;
     static CREATE_NEW_TRANSACTION_PATH = TRANSACTION + CREATE_NEW;
     static DELETE_TRANSACTION_PATH = TRANSACTION + DELETE;
+    static EDIT_TRANSACTION_PATH = TRANSACTION + EDIT;
     static CREATE_PROGRAM_PATH = PROGRAM + CREATE_NEW;
     static GET_PROGRAMS_PATH = PROGRAM + GET_ALL
 

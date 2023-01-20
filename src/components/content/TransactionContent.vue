@@ -3,7 +3,7 @@
     <div class="section-header" style="justify-content: space-between">
       <h1>Transaksi</h1>
       <div style="display: flex">
-        <div class="section-header-button">
+        <div class="section-header-button" v-if="role === 'ROLE_TREASURER'">
           <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Tambah Transaksi</button>
           <div class="dropdown-menu">
             <a v-on:click="openTransactionAddModal" class="dropdown-item">Tambah Transaksi</a>

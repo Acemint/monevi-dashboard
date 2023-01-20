@@ -23,6 +23,7 @@
 
 <script lang="ts">
   import { MoneviDateFormatter } from '@/api/methods/monevi-date-formatter';
+  import type { LocationQueryValue } from 'vue-router';
 
   export default {
     data: function () {
@@ -36,18 +37,23 @@
       let START_DATE = '2022-11-01';
       let END_DATE = Date.now();
       this.dates = MoneviDateFormatter.getMonthsFromDatesBetween(START_DATE, END_DATE);
-      if (this.$route.query.period != undefined && typeof this.$route.query.period == 'string') {
-        var originalDate = this.formatMonthToDate(this.$route.query.period);
-        var i = 0;
-        for (var date of this.dates) {
-          if (date === originalDate) {
-            this.currentDateIndex = i;
-          }
-          i++;
-        }
-      } else {
-        this.currentDateIndex = 0;
+
+      if (this.$route.query.period == undefined) {
+        this.$router.push({ name: this.currentRouteName, query: { period: this.formatDateToMonth(this.dates[this.currentDateIndex]) } });
+
+        return;
       }
+
+      console.log('Period is ', this.$route.query.period);
+      var originalDate = this.formatMonthToDate(this.$route.query.period);
+      var i = 0;
+      for (var date of this.dates) {
+        if (date === originalDate) {
+          this.currentDateIndex = i;
+        }
+        i++;
+      }
+      this.$emit('periodChange', this.dates[this.currentDateIndex]);
       this.$router.push({ name: this.currentRouteName, query: { period: this.formatDateToMonth(this.dates[this.currentDateIndex]) } });
     },
 
@@ -95,7 +101,10 @@
         return MoneviDateFormatter.formatDateDMYToMonthAndYear(date);
       },
 
-      formatMonthToDate(date: string): string {
+      formatMonthToDate(date: string | LocationQueryValue[]): string {
+        if (typeof date === 'object') {
+          return '';
+        }
         return MoneviDateFormatter.formatMonthAndYearToDateDMY(date);
       },
     },

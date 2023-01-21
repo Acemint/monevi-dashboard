@@ -1,7 +1,7 @@
 <template>
   <section class="section">
     <div class="section-header" style="justify-content: space-between">
-      <h1>Laporan</h1>
+      <h1>Program Kerja</h1>
     </div>
 
     <div class="row">

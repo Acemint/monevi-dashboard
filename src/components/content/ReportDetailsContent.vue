@@ -58,7 +58,7 @@
                   </template>
                   <!-- Jumlah Pengeluaran + Pemasukan di sebuah GL -->
                   <tr>
-                    <td></td>
+                    <td>Saldo {{ generalLedgerData.identifier }} per Bulan {{ formatDateToMonth(date) }}</td>
                     <td></td>
                     <td>{{ formatAmountToRupiah(sumGeneralLedgerAccount(generalLedgerData) + generalLedgerData.data.previousMonthAmount) }}</td>
                   </tr>
@@ -86,10 +86,23 @@
             <p>Tidak ada laporan yang tersedia saat ini</p>
           </div>
 
-          <div class="card-footer text-right">
+          <div v-if="role === 'ROLE_SUPERVISOR'" class="card-footer text-right">
             <div>
               <button v-on:click="rejectReport" type="button" class="btn btn-danger">Tolak Laporan</button>
               <button v-on:click="approveReport" type="button" class="btn btn-primary">Terima Laporan</button>
+            </div>
+          </div>
+
+          <div v-else-if="role === 'ROLE_CHAIRMAN'" class="card-footer text-right">
+            <div>
+              <button v-on:click="rejectReport" type="button" class="btn btn-danger">Tolak Laporan</button>
+              <button v-on:click="approveReport" type="button" class="btn btn-primary">Kirim Laporan</button>
+            </div>
+          </div>
+
+          <div v-if="role === 'ROLE_TREASURER'" class="card-footer text-right">
+            <div>
+              <button v-on:click="approveReport" type="button" class="btn btn-primary">Kirim Laporan</button>
             </div>
           </div>
         </div>
@@ -229,7 +242,7 @@
       },
 
       getPreviousMonthFromCurrentMonth(date: string): string {
-        return MoneviDateFormatter.minusMonth(date);
+        return MoneviDateFormatter.formatDate(MoneviDateFormatter.fromDMYtoMYDDate(MoneviDateFormatter.minusMonth(date)), ' ', true);
       },
 
       formatDateToMonth(date: string): string {

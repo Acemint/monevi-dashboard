@@ -112,9 +112,7 @@ class MoneviDateFormatter {
     return previousMonth;
   }
 
-  
-    
-  private static fromDMYtoMYDDate(displayDate: string): Date {
+  static fromDMYtoMYDDate(displayDate: string): Date {
     var datearray = displayDate.split("/");
     return new Date(datearray[1] + '/' + datearray[0] + '/' + datearray[2]);
   }

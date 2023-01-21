@@ -83,7 +83,7 @@
                 </div>
 
                 <div class="form-group">
-                  <button type="submit" class="btn btn-primary btn-lg btn-block" data-toggle="modal">Register</button>
+                  <button type="submit" class="btn btn-primary btn-lg btn-block">Register</button>
                 </div>
               </form>
             </div>
@@ -98,7 +98,6 @@
 </template>
 
 <script lang="ts">
-  // TODO: Create handling fail register
   import moneviAxios from '@/api/configuration/monevi-axios';
   import { MoneviAPI } from '@/api/methods/monevi-api';
   import { MoneviEnumConverter } from '@/api/methods/monevi-enum-converter';

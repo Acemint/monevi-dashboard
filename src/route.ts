@@ -75,6 +75,7 @@ const router = createRouter({
           },
           {
             path: FrontendPath.Program.DETAILS,
+            name: FrontendRouteName.Program.DETAILS,
             component: ProgramDetails,
           }
         ],
@@ -127,6 +128,7 @@ const router = createRouter({
       {
         path: "/:pathMatch(.*)*",
         component: Error404,
+        name: FrontendRouteName.Error.ERROR_404,
         meta: { title: 'Not Found' }
       }
   ]

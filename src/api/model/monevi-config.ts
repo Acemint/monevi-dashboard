@@ -17,6 +17,18 @@ type MoneviBodyCreateOrganization = {
 
 }
 
+type MoneviParamsGetOrganizationsWithPrograms = {
+
+  regionId: string,
+
+}
+
+type MoneviParamsGetOrganizationsWithReports = {
+  
+  regionId: string
+
+}
+
 type MoneviParamsGetStudents = {
 
   studentName: string

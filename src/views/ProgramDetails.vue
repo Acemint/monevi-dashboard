@@ -1,7 +1,7 @@
 <template>
   <MainHeader v-bind:role="userAccount.role" v-bind:name="userAccount.fullname" />
   <div class="main-content">
-    <ProgramDetailsContent v-bind:role="userAccount.role" v-bind:organizationRegionId="userAccount.organizationRegionId" />
+    <ProgramDetailsContent v-bind:role="userAccount.role" v-bind:organizationRegionId="userAccount.organizationRegionId" v-bind:userId="userAccount.id" />
   </div>
   <MainFooter />
 </template>

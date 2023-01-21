@@ -70,7 +70,7 @@
   </section>
 
   <ProgramEditSubsidyModal v-bind:programId="selectedProgramId" v-on:success-update="getPrograms" ref="editSubsidyModal" />
-  <ProgramAddProgramKerjaModal v-bind:organizationRegionId="organizationRegionId" v-on:success-update="getPrograms" ref="addProgramModal" />
+  <ProgramAddProgramKerjaModal v-bind:organizationRegionId="organizationRegionId" v-bind:userId="userId" v-on:success-update="getPrograms" ref="addProgramModal" />
 </template>
 
 <script lang="ts">
@@ -102,6 +102,7 @@
 
     props: {
       role: String,
+      userId: String,
     },
 
     beforeMount() {

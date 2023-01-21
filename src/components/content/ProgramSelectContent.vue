@@ -19,18 +19,16 @@
                   <th>Periode</th>
                   <th>Aksi</th>
                 </tr>
-                <tr>
-                  <td>1</td>
-                  <td>HIMTI</td>
-                  <td>2022</td>
-                  <td><button class="btn btn-primary" onclick="location.href='proker-pengawas-ok.html';">Lihat Program Kerja</button></td>
-                </tr>
-                <tr>
-                  <td>2</td>
-                  <td>BNCC</td>
-                  <td>2022</td>
-                  <td><button class="btn btn-primary" onclick="location.href='proker-pengawas-ok.html';">Lihat Program Kerja</button></td>
-                </tr>
+                <template v-for="(item, index) of organizations">
+                  <tr>
+                    <td>{{ index + 1 }}</td>
+                    <td>{{ item.organizationAbbreviation }}</td>
+                    <td>{{ item.periodYear }}</td>
+                    <td>
+                      <button v-on:click="selectProgram($event)" v-bind:data-index="index" class="btn btn-primary">Lihat Program Kerja</button>
+                    </td>
+                  </tr>
+                </template>
               </table>
             </div>
           </div>
@@ -60,12 +58,16 @@
 </template>
 
 <script lang="ts">
-  import type { Program } from '@/api/model/monevi-model';
+  import type { OrganizationWithProgram } from '@/api/model/monevi-model';
+  import type { MoneviParamsGetOrganizationsWithPrograms } from '@/api/model/monevi-config';
+  import moneviAxios from '@/api/configuration/monevi-axios';
+  import { MoneviPath } from '@/api/path/path';
+  import { FrontendRouteName } from '@/constants/path';
 
   export default {
     data: function () {
       return {
-        programs: new Array<Program>(),
+        organizations: new Array<OrganizationWithProgram>(),
       };
     },
 
@@ -79,22 +81,20 @@
 
     methods: {
       async getPrograms() {
-        this.programs = new Array<Program>();
-        var params = {} as MoneviParamsGetPrograms;
-        if (this.organizationRegionId == null) {
-          console.error('internal server error, unable to get organization region id');
+        var params = {} as MoneviParamsGetOrganizationsWithPrograms;
+        if (this.regionId == undefined) {
           return;
         }
-        params.organizationRegionId = this.organizationRegionId;
-        this.programs = await moneviAxios
-          .get(MoneviPath.GET_PROGRAMS_PATH, {
+        params.regionId = this.regionId;
+        await moneviAxios
+          .get(MoneviPath.GET_ORGANIZATIONS_WITH_PROGRAMS_PATH, {
             params: params,
             paramsSerializer: {
               indexes: null,
             },
           })
           .then((response) => {
-            return response.data.values;
+            this.organizations = response.data.values;
           })
           .catch((error) => {
             if (error.response.status == 500 || error.response.status == 400) {
@@ -105,6 +105,18 @@
               }
             }
           });
+      },
+
+      selectProgram(event: MouseEvent) {
+        if (!(event.currentTarget instanceof HTMLButtonElement)) {
+          return;
+        }
+        var indexAttribute = event.currentTarget.getAttribute('data-index');
+        if (indexAttribute == null) {
+          return;
+        }
+        var index = parseInt(indexAttribute);
+        this.$router.push({ name: FrontendRouteName.Program.DETAILS, query: { organization: this.organizations[index].organizationRegionId } });
       },
     },
   };

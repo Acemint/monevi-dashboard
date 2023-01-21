@@ -58,6 +58,12 @@ class FrontendRouteName {
   static STUDENT_MANAGEMENT = "student-management";
   static ORGANIZATION = "organization";
 
+  static Error = class FrontendErrorRouteName {
+    
+    static ERROR_404 = "404"
+  
+  }
+
   static Transaction = class FrontendRouteNameTransaction {
 
     static ROOT = "transaction";
@@ -74,6 +80,7 @@ class FrontendRouteName {
   static Program = class FrontendRouteNameProgram {
 
     static ROOT = "program";
+    static DETAILS = "progrma-details";
     
   }
 

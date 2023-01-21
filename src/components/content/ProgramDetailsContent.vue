@@ -3,7 +3,7 @@
     <div class="section-header" style="justify-content: space-between">
       <h1>Program Kerja</h1>
       <div style="display: flex">
-        <div class="section-header-button">
+        <div class="section-header-button" v-if="role === 'ROLE_CHAIRMAN' || role === 'ROLE_TREASURER'">
           <button class="btn btn-primary" v-on:click="openNewProgramModal">Tambah Program Kerja</button>
         </div>
       </div>
@@ -24,7 +24,7 @@
                   <th>Program Kerja</th>
                   <th>Budget</th>
                   <th>Jumlah Subsidi</th>
-                  <th>Tambah Subsidi</th>
+                  <th>Ubah Subsidi</th>
                   <th>Tanggal Mulai</th>
                   <th>Tanggal Selesai</th>
                 </tr>
@@ -33,7 +33,9 @@
                   <td>{{ item.name }}</td>
                   <td>{{ formatToRupiah(item.budget) }}</td>
                   <td>{{ formatToRupiah(item.subsidy) }}</td>
-                  <td><button class="btn btn-primary"></button></td>
+                  <td>
+                    <button class="btn btn-primary" v-on:click="openEditSubsidyModal"><i style="pointer-events: none" class="far fa-edit"></i></button>
+                  </td>
                   <td>{{ formatDate(item.startDate) }}</td>
                   <td>{{ formatDate(item.endDate) }}</td>
                 </tr>
@@ -80,31 +82,36 @@
   import type { MoneviParamsGetPrograms } from '@/api/model/monevi-config';
   import { MoneviDisplayFormatter } from '@/api/methods/monevi-display-formatter';
   import { MoneviDateFormatter } from '@/api/methods/monevi-date-formatter';
+  import { FrontendRouteName } from '@/constants/path';
+  import { MoneviCookieHandler } from '@/api/methods/monevi-cookie-handler';
 
   export default {
     data: function () {
       return {
         programs: new Array<Program>(),
         selectedProgramId: '',
+        organizationRegionId: '',
+        role: '',
       };
     },
 
     components: {
       ProgramAddProgramKerjaModal,
-      ProgramAddSubsidyModal: ProgramEditSubsidyModal,
+      ProgramEditSubsidyModal,
     },
 
     props: {
-      organizationRegionId: String,
       role: String,
     },
 
     beforeMount() {
+      this.validateRole();
       this.getPrograms();
     },
 
     methods: {
       async getPrograms() {
+        this.validateRole();
         this.programs = new Array<Program>();
         var params = {} as MoneviParamsGetPrograms;
         if (this.organizationRegionId == null) {
@@ -131,6 +138,25 @@
               }
             }
           });
+      },
+
+      validateRole() {
+        var userAccount = MoneviCookieHandler.getUserData();
+        this.role = userAccount.role;
+        if (userAccount.role === 'ROLE_SUPERVISOR') {
+          if (this.$route.query.organization == undefined) {
+            return this.$router.push({ name: FrontendRouteName.Error.ERROR_404 });
+          } else {
+            var organizationId = this.$route.query.organization;
+            if (typeof organizationId != 'string') {
+              return;
+            }
+            console.log(organizationId);
+            this.organizationRegionId = organizationId;
+          }
+        } else {
+          this.organizationRegionId = userAccount.organizationRegionId;
+        }
       },
 
       formatDate(date: number) {

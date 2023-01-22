@@ -2,7 +2,7 @@
   <nav class="d-inline-block">
     <ul class="pagination mb-0">
       <li v-bind:class="[currentDateIndex == 0 ? 'disabled' : '', 'page-item']">
-        <a v-on:click="navigateDate($event)" id="navigate-page-left" class="page-link" href="#" tabindex="-1"><i class="fas fa-chevron-left"></i></a>
+        <a v-on:click="navigateDateByButton($event)" id="navigate-page-left" class="page-link" href="#" tabindex="-1"><i class="fas fa-chevron-left"></i></a>
       </li>
 
       <li class="page-item">
@@ -10,12 +10,12 @@
           {{ formatDateToMonth(dates[currentDateIndex]) }}
         </button>
         <div class="dropdown-menu">
-          <a v-on:click="changeDate($event)" v-for="item in dates" v-bind:id="item" class="dropdown-item"> {{ formatDateToMonth(item) }}</a>
+          <a v-on:click="navigateDateByDropdown($event)" v-for="item in dates" v-bind:data-date="item" class="dropdown-item"> {{ formatDateToMonth(item) }}</a>
         </div>
       </li>
 
       <li v-bind:class="[currentDateIndex == dates.length - 1 ? 'disabled' : '', 'page-item']">
-        <a v-on:click="navigateDate($event)" id="navigate-page-right" class="page-link" href="#"><i class="fas fa-chevron-right"></i></a>
+        <a v-on:click="navigateDateByButton($event)" id="navigate-page-right" class="page-link" href="#"><i class="fas fa-chevron-right"></i></a>
       </li>
     </ul>
   </nav>
@@ -39,7 +39,7 @@
       this.dates = MoneviDateFormatter.getMonthsFromDatesBetween(START_DATE, END_DATE);
 
       if (this.$route.query.period == undefined) {
-        this.$router.push({ name: this.currentRouteName, query: { period: this.formatDateToMonth(this.dates[this.currentDateIndex]) } });
+        this.$emit('periodChange', this.dates[this.currentDateIndex]);
         return;
       }
 
@@ -52,7 +52,6 @@
         i++;
       }
       this.$emit('periodChange', this.dates[this.currentDateIndex]);
-      this.$router.push({ name: this.currentRouteName, query: { period: this.formatDateToMonth(this.dates[this.currentDateIndex]) } });
     },
 
     watch: {
@@ -73,7 +72,7 @@
     },
 
     methods: {
-      navigateDate(event: MouseEvent) {
+      navigateDateByButton(event: MouseEvent) {
         if (event.currentTarget instanceof HTMLAnchorElement) {
           var target = this.currentDateIndex;
           if (event.currentTarget.id === 'navigate-page-right') {
@@ -81,17 +80,23 @@
           } else if (event.currentTarget.id === 'navigate-page-left') {
             target -= 1;
           }
-          try {
-            this.$router.push({ name: this.currentRouteName, query: { period: this.formatDateToMonth(this.dates[target]) } });
-          } catch {
-            return;
-          }
+          this.currentDateIndex = target;
+          this.$emit('periodChange', this.dates[target]);
         }
       },
 
-      changeDate(event: MouseEvent) {
+      navigateDateByDropdown(event: MouseEvent) {
         if (event.currentTarget instanceof HTMLAnchorElement) {
-          this.$router.push({ name: this.currentRouteName, query: { period: MoneviDateFormatter.formatDateDMYToMonthAndYear(event.currentTarget.id) } });
+          var selectedDate = event.currentTarget.getAttribute('data-date');
+          var i = 0;
+          for (var date of this.dates) {
+            if (selectedDate == date) {
+              this.currentDateIndex = i;
+              this.$emit('periodChange', date);
+              break;
+            }
+            i++;
+          }
         }
       },
 
@@ -105,10 +110,6 @@
         }
         return MoneviDateFormatter.formatMonthAndYearToDateDMY(date);
       },
-    },
-
-    props: {
-      currentRouteName: String,
     },
   };
 </script>

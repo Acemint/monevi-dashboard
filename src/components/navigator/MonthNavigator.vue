@@ -54,23 +54,6 @@
       this.$emit('periodChange', this.dates[this.currentDateIndex]);
     },
 
-    watch: {
-      '$route.query.period': {
-        handler: function (queryPeriod) {
-          var i = 0;
-          for (var date of this.dates) {
-            if (queryPeriod == this.formatDateToMonth(date)) {
-              this.currentDateIndex = i;
-              this.$emit('periodChange', date);
-              break;
-            }
-            i++;
-          }
-        },
-        deep: true,
-      },
-    },
-
     methods: {
       navigateDateByButton(event: MouseEvent) {
         if (event.currentTarget instanceof HTMLAnchorElement) {

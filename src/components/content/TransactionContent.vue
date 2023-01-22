@@ -12,90 +12,13 @@
         </div>
 
         <div class="section-header-button">
-          <MonthNavigator v-bind:currentRouteName="currentRouteName" v-on:period-change="updateDate" />
+          <MonthNavigator v-on:period-change="updateDate" />
         </div>
       </div>
     </div>
 
-    <div class="row">
-      <div class="col-lg-4 col-md-6 col-sm-6 col-12">
-        <div class="card card-statistic-1">
-          <div class="card-icon bg-primary">
-            <i class="fas fa-regular fa-wallet"></i>
-          </div>
-          <div class="card-wrap">
-            <div class="card-header">
-              <h4>Total Saldo</h4>
-            </div>
-            <div class="card-body">{{ getTotalBalance() }}</div>
-          </div>
-        </div>
-      </div>
-      <div class="col-lg-4 col-md-6 col-sm-6 col-12">
-        <div class="card card-statistic-1">
-          <div class="card-icon bg-danger">
-            <i class="fas fa-minus"></i>
-          </div>
-          <div class="card-wrap">
-            <div class="card-header">
-              <h4>Total Pengeluaran</h4>
-            </div>
-            <div class="card-body">{{ formatRupiah(totalExpense) }}</div>
-          </div>
-        </div>
-      </div>
-      <div class="col-lg-4 col-md-6 col-sm-6 col-12">
-        <div class="card card-statistic-1">
-          <div class="card-icon bg-primary">
-            <i class="fas fa-plus"></i>
-          </div>
-          <div class="card-wrap">
-            <div class="card-header">
-              <h4>Total Pendapatan</h4>
-            </div>
-            <div class="card-body">{{ formatRupiah(totalIncome) }}</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col">
-        <div class="card">
-          <div class="card-header">
-            <h5>Filter</h5>
-          </div>
-          <div class="card-body">
-            <div class="form-row">
-              <div class="form-group col-md-4">
-                <label for="inputCity">Berdasarkan dompet</label>
-                <select v-model="filterGeneralLedgerAccount" id="inputState" class="form-control">
-                  <option selected>Semua</option>
-                  <option>Bank</option>
-                  <option>Kas</option>
-                </select>
-              </div>
-              <div class="form-group col-md-4">
-                <label for="inputState">Berdasarkan jenis transaksi</label>
-                <select v-model="filterEntryPosition" id="inputState" class="form-control">
-                  <option selected>Semua</option>
-                  <option>Debit</option>
-                  <option>Kredit</option>
-                </select>
-              </div>
-              <div class="form-group col-md-4">
-                <label for="inputZip">Berdasarkan kategori</label>
-                <select v-model="filterType" id="inputState" class="form-control">
-                  <option selected>Semua</option>
-                  <option>Rutin</option>
-                  <option>Non Rutin</option>
-                </select>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+    <TransactionGeneralData v-bind:transactions="transactions" v-bind:previousMonthReports="previousMonthReports" />
+    <TransactionFilter v-on:filter-change="getTransactions" />
 
     <div class="row">
       <div class="col-12">
@@ -169,7 +92,7 @@
             </div>
           </div>
           <div v-if="role === 'ROLE_TREASURER'" class="card-footer text-right">
-            <button v-on:click="openTransactionSendModal" v-if="!isCurrentMonthReportAlreadySent()" type="button" class="btn btn-primary">Kirim Laporan</button>
+            <button v-on:click="openTransactionSendModal" v-if="!isCurrentMonthReportAlreadySent()" type="button" class="btn btn-primary">Buat Laporan</button>
           </div>
         </div>
       </div>
@@ -188,7 +111,8 @@
   import type { MoneviParamsGetReports, MoneviParamsGetTransactions } from '@/api/model/monevi-config';
   import type { MoneviReport } from '@/api/model/monevi-model';
   import { MoneviPath } from '@/api/path/path';
-  import { MoneviAPI } from '@/api/methods/monevi-api';
+  import TransactionGeneralData from '@/components/content/row/TransactionGeneralData.vue';
+  import TransactionFilter from '@/components/content/row/TransactionFilter.vue';
   import TransactionAddModal from '@/components/modal/TransactionAddModal.vue';
   import TransactionEditModal from '@/components/modal/TransactionEditModal.vue';
   import TransactionDeleteModal from '@/components/modal/TransactionDeleteModal.vue';
@@ -200,70 +124,63 @@
   import { MoneviDisplayFormatter } from '@/api/methods/monevi-display-formatter';
   import { FrontendRouteName } from '@/constants/path';
   import ImageModal from '@/components/modal/ImageModal.vue';
+  import { MoneviCookieHandler } from '@/api/methods/monevi-cookie-handler';
 
   export default {
-    props: {
-      organizationRegionId: String,
-      role: String,
-    },
-
     data: function () {
       return {
-        currentRouteName: FrontendRouteName.Transaction.ROOT,
-        monevi_api: new MoneviAPI(),
         transactions: new Array<Transaction>(),
-        totalIncome: 0,
-        totalExpense: 0,
         currentMonthReports: new Array<MoneviReport>(),
         previousMonthReports: new Array<MoneviReport>(),
-        filterGeneralLedgerAccount: 'Semua',
-        filterType: 'Semua',
-        filterEntryPosition: 'Semua',
         date: '',
         images: new Array<ArrayBuffer>(),
         imageSrc: '',
         transaction: new Transaction(),
+        organizationRegionId: '',
+        role: '',
       };
     },
 
-    watch: {
-      date(newDate, oldDate) {
-        this.initData();
-      },
-
-      currentDateIndex(newDateIndex, oldDateIndex) {
-        this.initData();
-      },
-
-      filterGeneralLedgerAccount(newFilter: string, oldFilter: string) {
-        this.initData();
-      },
-
-      filterType(newFilter: string, oldFilter: string) {
-        this.initData();
-      },
-
-      filterEntryPosition(newFilter: string, oldFilter: string) {
-        this.initData();
-      },
+    beforeMount() {
+      this.validateRole();
+      this.getTransactions();
     },
 
     methods: {
       updateDate(date: string) {
         this.date = date;
+        this.$nextTick(() => {
+          this.initData();
+        });
       },
 
       async initData() {
         this.transactions = new Array<Transaction>();
 
         await this.getTransactions();
+        this.validateRole();
         this.currentMonthReports = await this.getReport();
-        console.log(this.currentMonthReports);
         this.previousMonthReports = await this.getReport(-1);
-        console.log(this.previousMonthReports);
       },
 
-      async getTransactions() {
+      validateRole() {
+        var userAccount = MoneviCookieHandler.getUserData();
+        if (userAccount.role === 'ROLE_SUPERVISOR') {
+          if (this.$route.query.organization == undefined) {
+            return this.$router.push({ name: FrontendRouteName.Error.ERROR_404 });
+          } else {
+            var organizationId = this.$route.query.organization;
+            if (typeof organizationId != 'string') {
+              return;
+            }
+            this.organizationRegionId = organizationId;
+          }
+        } else {
+          this.organizationRegionId = userAccount.organizationRegionId;
+        }
+      },
+
+      async getTransactions(filterGeneralLedgerAccount: string = 'Semua', filterEntryPosition: string = 'Semua', filterType: string = 'Semua') {
         var params = {} as MoneviParamsGetTransactions;
         params.page = 0;
         params.size = 1000;
@@ -275,14 +192,14 @@
         var datesBetween = MoneviDateFormatter.getFirstDateAndLastDateOfADate(this.date);
         params.startDate = datesBetween[0];
         params.endDate = datesBetween[1];
-        if (this.filterGeneralLedgerAccount != 'Semua') {
-          params.generalLedgerAccountType = MoneviEnumConverter.convertGeneralLedgerAccountType(this.filterGeneralLedgerAccount);
+        if (filterGeneralLedgerAccount != 'Semua') {
+          params.generalLedgerAccountType = MoneviEnumConverter.convertGeneralLedgerAccountType(filterGeneralLedgerAccount);
         }
-        if (this.filterEntryPosition != 'Semua') {
-          params.entryPosition = MoneviEnumConverter.convertEntryPosition(this.filterEntryPosition);
+        if (filterEntryPosition != 'Semua') {
+          params.entryPosition = MoneviEnumConverter.convertEntryPosition(filterEntryPosition);
         }
-        if (this.filterType != 'Semua') {
-          params.transactionType = MoneviEnumConverter.convertTransactionType(this.filterType);
+        if (filterType != 'Semua') {
+          params.transactionType = MoneviEnumConverter.convertTransactionType(filterType);
         }
         await moneviAxios
           .get(MoneviPath.GET_TRANSACTIONS_PATH, {
@@ -293,15 +210,6 @@
           })
           .then((response) => {
             this.transactions = response.data.values;
-            this.totalIncome = 0;
-            this.totalExpense = 0;
-            for (var transaction of this.transactions) {
-              if (transaction.entryPosition == 'DEBIT') {
-                this.totalIncome += transaction.amount;
-              } else {
-                this.totalExpense += transaction.amount;
-              }
-            }
           })
           .catch((error) => {
             console.error('Internal Server Error, Unable to get Transactions Data');
@@ -344,21 +252,6 @@
           return false;
         }
         return true;
-      },
-
-      getTotalBalance() {
-        if (this.previousMonthReports.length == 0) {
-          return 'N/A';
-        }
-        var previousMonthReport = this.previousMonthReports[0];
-        if (previousMonthReport.status != 'APPROVED_BY_SUPERVISOR') {
-          return 'N/A';
-        }
-        var totalBalance = 0;
-        for (var generalLedgerAccount of previousMonthReport.generalLedgerAccountValues) {
-          totalBalance += generalLedgerAccount.amount;
-        }
-        return this.formatRupiah(totalBalance);
       },
 
       formatGeneralLedgerAccountType(generalLedgerAccountType: string) {
@@ -458,6 +351,8 @@
       TransactionEditModal,
       TransactionSendModal,
       MonthNavigator,
+      TransactionGeneralData,
+      TransactionFilter,
     },
   };
 </script>

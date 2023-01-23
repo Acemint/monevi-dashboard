@@ -38,7 +38,7 @@ class MoneviDateFormatter {
     return month + " " + year;
   }
   
-  static formatMonthAndYearToDateDMY(input: string): string {
+  static formatMonthAndYearToDateDMY(input: string | any): string {
     var month = MoneviDateFormatter.stringMonthMapping(input.split(" ")[0]);
     var year = input.split(" ")[1];
     

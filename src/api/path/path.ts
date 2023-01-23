@@ -1,6 +1,7 @@
 const MONEVI_BASE_URL: string = "http://localhost:8080/api/monevi";
 const REGIONS: string = "/region";
 const ORGANIZATIONS: string = "/organization";
+const ORGANIZATION_REGION: string = "/organization-region";
 const USER: string = "/user";
 const SUPERVISOR: string = "/supervisor";
 const STUDENT: string = "/student";
@@ -23,6 +24,8 @@ const SUBMIT: string = "/submit";
 const DELETE: string = "/delete";
 const SUMMARIZE: string = "/summarize";
 const EDIT: string = "/edit";
+const WITH_PROGRAM: string = "/program-exists";
+const WITH_REPORT: string = "/report-exists";
 
 
 const GET_REGIONS_PATH: string = REGIONS + GET_ALL
@@ -43,6 +46,9 @@ export {
 class MoneviPath {
     
     static GET_ORGANIZATIONS_PATH = ORGANIZATIONS + GET_ALL;
+    static GET_ORGANIZATIONS_WITH_PROGRAMS_PATH = ORGANIZATIONS + GET_ALL + WITH_PROGRAM;
+    static GET_ORGANIZATIONS_WITH_REPORT_PATH = ORGANIZATIONS + GET_ALL + WITH_REPORT;
+    static GET_ORGANIZATION_REGION_PATH = ORGANIZATION_REGION;
     static CREATE_NEW_ORGANIZATION_PATH = ORGANIZATIONS + CREATE_NEW;
     static GET_REGIONS_PATH = REGIONS + GET_ALL;
     static REQUEST_RESET_PASSWORD_PATH = USER + AUTH + REQUEST_RESET_PASSWORD;

@@ -2,10 +2,20 @@
   <section class="section">
     <div class="section-header" style="justify-content: space-between">
       <h1>Laporan</h1>
-      <div style="display: flex">
-        <div class="section-header-button">
-          <MonthNavigator v-bind:currentRouteName="currentRouteName" v-on:period-change="getReportSummary" />
+      <div class="section-header-breadcrumb">
+        <div class="breadcrumb-item active">
+          <router-link :to="getRouteToReportSelect()">Pilih Laporan</router-link>
         </div>
+        <div class="breadcrumb-item">Laporan {{ organization.organizationName }}</div>
+        <div class="breadcrumb-item">
+          <router-link :to="getRouteToTransactionDetail()">Detail Transaksi</router-link>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="display: flex">
+      <div class="card-body">
+        <MonthNavigator v-on:period-change="updateDate" />
       </div>
     </div>
 
@@ -13,13 +23,14 @@
       <div class="col-12">
         <div class="card">
           <div class="card-header">
-            <h4>Laporan Keuangan Kas dan Bank UKM HIMTI (Himpunan Mahasiswa Teknik Informatika) per Bulan {{ formatDateToMonth(date) }}</h4>
+            <h4>Laporan Keuangan Kas dan Bank UKM {{ organization.organizationName }} {{ organization.regionName }} per Bulan {{ formatDateToMonth(date) }}</h4>
             <div class="card-header-action">
               <button class="btn btn-primary" v-on:click="navigateToTransactionPage">Lihat Detail Transaksi</button>
             </div>
           </div>
 
           <div class="card-body" v-if="reportData.reportId != ''">
+            <p>{{ formatReportStatus(reportData.reportStatus, role!) }}</p>
             <div class="table-responsive">
               <table class="table table-striped table-bordered" id="table-1">
                 <template v-for="generalLedgerData of reportData.values()">
@@ -80,83 +91,97 @@
                 </template>
               </table>
             </div>
+
+            <div v-if="reportData.reportStatus == 'APPROVED_BY_CHAIRMAN'" class="card-footer text-right">
+              <div>
+                <button v-on:click="rejectReport" type="button" class="btn btn-danger">Tolak Laporan</button>
+                <button v-on:click="approveReport" type="button" class="btn btn-primary">Terima Laporan</button>
+              </div>
+            </div>
           </div>
 
           <div class="card-body" v-else>
             <p>Tidak ada laporan yang tersedia saat ini</p>
           </div>
-
-          <div v-if="role === 'ROLE_SUPERVISOR'" class="card-footer text-right">
-            <div>
-              <button v-on:click="rejectReport" type="button" class="btn btn-danger">Tolak Laporan</button>
-              <button v-on:click="approveReport" type="button" class="btn btn-primary">Terima Laporan</button>
-            </div>
-          </div>
-
-          <div v-else-if="role === 'ROLE_CHAIRMAN'" class="card-footer text-right">
-            <div>
-              <button v-on:click="rejectReport" type="button" class="btn btn-danger">Tolak Laporan</button>
-              <button v-on:click="approveReport" type="button" class="btn btn-primary">Kirim Laporan</button>
-            </div>
-          </div>
-
-          <div v-if="role === 'ROLE_TREASURER'" class="card-footer text-right">
-            <div>
-              <button v-on:click="approveReport" type="button" class="btn btn-primary">Kirim Laporan</button>
-            </div>
-          </div>
         </div>
       </div>
     </div>
   </section>
-  <ReportApproveModal ref="reportApproveModal" v-bind:reportId="reportData.reportId" v-bind:userId="userId" />
-  <ReportRejectModal ref="reportRejectModal" v-bind:reportId="reportData.reportId" v-bind:userId="userId" />
+  <ReportApproveModal ref="reportApproveModal" v-on:success-update="updateReport" v-bind:role="role" v-bind:reportId="reportData.reportId" v-bind:userId="userId" />
+  <ReportRejectModal ref="reportRejectModal" v-on:success-update="updateReport" v-bind:reportId="reportData.reportId" v-bind:userId="userId" />
 </template>
 
 <script lang="ts">
   import moneviAxios from '@/api/configuration/monevi-axios';
   import { MoneviPath } from '@/api/path/path';
-  import type { MoneviParamsSummarizeReport } from '@/api/model/monevi-config';
-  import { MoneviReportSummary } from '@/api/model/monevi-model';
+  import type { MoneviParamsGetOrganizationRegion, MoneviParamsSummarizeReport } from '@/api/model/monevi-config';
+  import { MoneviReportSummary, MoneviOrganizationRegion } from '@/api/model/monevi-model';
   import ReportApproveModal from '@/components/modal/ReportApproveModal.vue';
   import ReportRejectModal from '@/components/modal/ReportRejectModal.vue';
   import MonthNavigator from '@/components/navigator/MonthNavigator.vue';
   import { FrontendRouteName } from '@/constants/path';
   import { MoneviDateFormatter } from '@/api/methods/monevi-date-formatter';
   import { MoneviDisplayFormatter } from '@/api/methods/monevi-display-formatter';
+  import { MoneviCookieHandler } from '@/api/methods/monevi-cookie-handler';
 
   export default {
-    props: {
-      userId: String,
-      organizationRegionId: String,
-      role: String,
-    },
-
     data: function () {
       return {
         reportData: new MoneviReportSummary(),
-        currentRouteName: FrontendRouteName.Report.DETAILS,
         date: '',
+        role: '',
+        organizationRegionId: '',
+        organization: new MoneviOrganizationRegion(),
+        userId: '',
       };
     },
 
     methods: {
-      async getReportSummary(date: string) {
-        // TODO: get report summary should also accept status
+      async updateDate(date: string) {
         this.date = date;
+        await this.updateReport();
+        this.$router.push({ name: FrontendRouteName.Report.DETAILS, query: { period: MoneviDateFormatter.formatDateDMYToMonthAndYear(this.date), organization: this.organization.id } });
+      },
 
+      async updateReport() {
+        var userData = MoneviCookieHandler.getUserData();
+
+        this.userId = userData.id;
+        this.role = userData.role;
+        if (this.$route.query.organization == undefined) {
+          this.$router.push({ name: FrontendRouteName.Error.ERROR_404 });
+          return;
+        }
+        this.organizationRegionId = this.$route.query.organization.toString();
+
+        await this.setOrganization();
+        if (this.organization.id == '') {
+          this.$router.push({ name: FrontendRouteName.Error.ERROR_404 });
+          return;
+        }
+        await this.setReportSummary();
+      },
+
+      async setOrganization() {
+        this.organization = new MoneviOrganizationRegion();
+        var params = {} as MoneviParamsGetOrganizationRegion;
+        params.id = this.organizationRegionId;
+        await moneviAxios
+          .get(MoneviPath.GET_ORGANIZATION_REGION_PATH, { params })
+          .then((response) => {
+            this.organization = response.data.value;
+          })
+          .catch((error) => {
+            console.error('no organization region found');
+            return undefined;
+          });
+      },
+
+      async setReportSummary() {
         this.reportData = new MoneviReportSummary();
         var params = {} as MoneviParamsSummarizeReport;
-        if (this.organizationRegionId == undefined) {
-          console.error('internal server error, organization undefined');
-          return;
-        }
-        params.organizationRegionId = this.organizationRegionId;
-        if (date == undefined) {
-          console.error('internal server error, date is undefined');
-          return;
-        }
-        params.date = date;
+        params.organizationRegionId = this.organization.id;
+        params.date = this.date;
         var reportSummary = await moneviAxios
           .get(MoneviPath.SUMMARIZE_REPORT_PATH, {
             params: params,
@@ -167,21 +192,31 @@
           })
           .catch((error) => {
             if (error.response.status == 400) {
+              return;
             }
             return;
           });
-        if (reportSummary) {
-          try {
-            this.extractDataFromReport(reportSummary);
-          } catch {
-            console.error('Error processing data');
-          }
+
+        if (!reportSummary) {
+          return;
         }
+        if (this.isAllowedToView(reportSummary) == false) {
+          return;
+        }
+        this.reportData = this.extractDataFromReport(reportSummary);
+      },
+
+      isAllowedToView(reportSummary: MoneviReportSummary) {
+        if (reportSummary.reportStatus == 'NOT_SENT' || reportSummary.reportStatus == 'UNAPPROVED') {
+          return false;
+        }
+        return true;
       },
 
       extractDataFromReport(transactionTypeMap: any) {
         var report = new MoneviReportSummary();
         report.reportId = transactionTypeMap.reportId;
+        report.reportStatus = transactionTypeMap.reportStatus;
 
         report.cash.income.daily.amount = transactionTypeMap.generalLedgerAccountTypeData.CASH.transactionTypeData.DAILY.entryPositionData.DEBIT.amount;
         report.cash.income.nonDaily.amount = transactionTypeMap.generalLedgerAccountTypeData.CASH.transactionTypeData.NON_DAILY.entryPositionData.DEBIT.amount;
@@ -198,7 +233,7 @@
         report.bank.opnameAmount = transactionTypeMap.generalLedgerAccountTypeData.BANK.opnameAmount;
         report.bank.previousMonthAmount = transactionTypeMap.generalLedgerAccountTypeData.BANK.previousMonthBalance;
 
-        this.reportData = report;
+        return report;
       },
 
       sumGeneralLedgerAccount(generalLedgers: any): number {
@@ -228,7 +263,7 @@
       },
 
       navigateToTransactionPage() {
-        this.$router.push({ name: FrontendRouteName.Transaction.ROOT, query: { period: this.formatDateToMonth(this.date) } });
+        this.$router.push({ name: FrontendRouteName.Transaction.ROOT, query: { period: this.formatDateToMonth(this.date), organization: this.$route.query.organization } });
       },
 
       approveReport() {
@@ -255,6 +290,18 @@
 
       formatAmountToRupiah(amount: number): string {
         return MoneviDisplayFormatter.toRupiah(amount);
+      },
+
+      formatReportStatus(status: string, role: string): string {
+        return MoneviDisplayFormatter.convertReportStatusForDisplay(status, role);
+      },
+
+      getRouteToReportSelect() {
+        return { name: FrontendRouteName.Report.ROOT };
+      },
+
+      getRouteToTransactionDetail(): any {
+        return { name: FrontendRouteName.Transaction.ROOT, query: { period: this.formatDateToMonth(this.date), organization: this.organizationRegionId } };
       },
     },
     components: { ReportRejectModal, ReportApproveModal, MonthNavigator },

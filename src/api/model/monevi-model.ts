@@ -35,6 +35,26 @@ export type UserAccountDetails = {
     lockedAccount: boolean
 }
 
+export type OrganizationWithProgram = {
+
+    organizationAbbreviation: string,
+    organizationName: string,
+    organizationRegionId: string,
+    periodYear: number
+
+}
+
+export type OrganizationWithReport = {
+
+    reportId: string
+    organizationAbbreviation: string,
+    organizationName: string,
+    organizationRegionId: string,
+    periodDate: number
+    reportStatus: string
+
+}
+
 export type Program = {
     id: string,
     name: string,
@@ -108,11 +128,13 @@ class MoneviToken {
 class MoneviReportSummary {
 
     reportId: string;
+    reportStatus: string;
     cash: GeneralLedgerData;
     bank: GeneralLedgerData;
 
     constructor() {
         this.reportId = "";
+        this.reportStatus = "";
         this.cash = new GeneralLedgerData();
         this.bank = new GeneralLedgerData();
     }
@@ -128,6 +150,19 @@ class MoneviReportSummary {
                 data: this.bank
             }
         )
+    }
+}
+
+export class MoneviOrganizationRegion {
+
+    id: string;
+    regionName: string;
+    organizationName: string;
+
+    constructor() {
+        this.id = "";
+        this.regionName = "";
+        this.organizationName = "";
     }
 
 }

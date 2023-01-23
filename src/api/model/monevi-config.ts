@@ -29,6 +29,12 @@ type MoneviParamsGetOrganizationsWithReports = {
 
 }
 
+type MoneviParamsGetOrganizationRegion = {
+
+  id: string
+
+}
+
 type MoneviParamsGetStudents = {
 
   studentName: string
@@ -202,6 +208,17 @@ type MoneviBodyCreateProgram = {
   subsidy: number,
   startDate: string,
   endDate: string
+  userId: string
+
+}
+
+type MoneviParamsGetPrograms = {
+
+  organizationRegionId: string,
+  page: number,
+  size: number,
+  sortBy: Array<string>,
+  isAscending: Array<string>
 
 }
 
@@ -209,6 +226,9 @@ export type {
 
   MoneviParamsGetOrganizations,
   MoneviBodyCreateOrganization,
+  MoneviParamsGetOrganizationsWithPrograms,
+  MoneviParamsGetOrganizationsWithReports,
+  MoneviParamsGetOrganizationRegion,
 
   MoneviParamsAcceptStudent,
   MoneviParamsDeclineStudent,
@@ -234,6 +254,7 @@ export type {
   MoneviParamsEditTransaction,
   MoneviBodyEditTransaction,
 
-  MoneviBodyCreateProgram
+  MoneviBodyCreateProgram,
+  MoneviParamsGetPrograms
 
 }

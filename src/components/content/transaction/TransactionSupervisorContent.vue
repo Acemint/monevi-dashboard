@@ -19,45 +19,59 @@
       </div>
     </div>
 
-    <TransactionGeneralData v-bind:transactions="transactions" v-bind:previousMonthReports="previousMonthReports" />
-    <TransactionFilter v-on:filter-change="setTransactions" />
+    <template v-if="isCurrentMonthReportAlreadySent()">
+      <TransactionGeneralData v-bind:transactions="transactions" v-bind:previousMonthReports="previousMonthReports" />
+      <TransactionFilter v-on:filter-change="setTransactions" />
 
-    <div class="row">
-      <div class="col-12">
-        <div class="card">
-          <div class="card-body">
-            <div class="table-responsive">
-              <table class="table table-striped table-bordered" id="table-1">
-                <tr>
-                  <th class="sorting" tabindex="0">No</th>
-                  <th>Tanggal</th>
-                  <th>Dompet</th>
-                  <th>Transaksi</th>
-                  <th>Kategori</th>
-                  <th>Keterangan</th>
-                  <th>Jumlah</th>
-                  <th>Bukti Transaksi</th>
-                </tr>
-                <tr v-for="(item, index) in transactions" ref="transactionsDisplay">
-                  <td>{{ index + 1 }}</td>
-                  <td>{{ formatTransactionDate(item.transactionDate) }}</td>
-                  <td>{{ formatGeneralLedgerAccountType(item.generalLedgerAccountType) }}</td>
-                  <td>{{ item.name }}</td>
-                  <td>{{ formatTransactionType(item.type) }}</td>
-                  <td>{{ item.description }}</td>
-                  <td v-bind:class="[item.entryPosition == 'CREDIT' ? 'text-danger' : 'text-primary']">{{ formatRupiah(item.amount, item.entryPosition) }}</td>
-                  <td>
-                    <button v-if="item.proof != ''" class="btn btn-primary" v-on:click="openImageModal" v-bind:data-index="index">
-                      <i style="pointer-events: none" class="far fa-eye"></i>
-                    </button>
-                  </td>
-                </tr>
-              </table>
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-body">
+              <div class="table-responsive">
+                <table class="table table-striped table-bordered" id="table-1">
+                  <tr>
+                    <th class="sorting" tabindex="0">No</th>
+                    <th>Tanggal</th>
+                    <th>Dompet</th>
+                    <th>Transaksi</th>
+                    <th>Kategori</th>
+                    <th>Keterangan</th>
+                    <th>Jumlah</th>
+                    <th>Bukti Transaksi</th>
+                  </tr>
+                  <tr v-for="(item, index) in transactions" ref="transactionsDisplay">
+                    <td>{{ index + 1 }}</td>
+                    <td>{{ formatTransactionDate(item.transactionDate) }}</td>
+                    <td>{{ formatGeneralLedgerAccountType(item.generalLedgerAccountType) }}</td>
+                    <td>{{ item.name }}</td>
+                    <td>{{ formatTransactionType(item.type) }}</td>
+                    <td>{{ item.description }}</td>
+                    <td v-bind:class="[item.entryPosition == 'CREDIT' ? 'text-danger' : 'text-primary']">{{ formatRupiah(item.amount, item.entryPosition) }}</td>
+                    <td>
+                      <button v-if="item.proof != ''" class="btn btn-primary" v-on:click="openImageModal" v-bind:data-index="index">
+                        <i style="pointer-events: none" class="far fa-eye"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </table>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </template>
+
+    <template v-else>
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-body">
+              <p>Belum ada laporan yang disetujui oleh Ketua organisasi {{ organization.organizationName }} untuk bulan {{ formatDateToMonth(date) }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
   </section>
 
   <ImageModal ref="imageModal" v-bind:imageSrc="imageSrc" />
@@ -242,7 +256,7 @@
           return false;
         }
         var currentMonthReport = this.currentMonthReports[0];
-        if (currentMonthReport.status == 'NOT_SENT') {
+        if (currentMonthReport.status != 'APPROVED_BY_CHAIRMAN') {
           return false;
         }
         return true;

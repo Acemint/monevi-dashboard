@@ -96,7 +96,7 @@
       setOrganizationsData(organizationsData: any): void {
         var organizationIdAndPeriodMap: Map<String, any> = new Map();
         for (var organizationData of organizationsData) {
-          if (organizationData.reportStatus != 'APPROVED_BY_CHAIRMAN') {
+          if (!(organizationData.reportStatus == 'APPROVED_BY_CHAIRMAN' || organizationData.reportStatus == 'APPROVED_BY_SUPERVISOR')) {
             continue;
           }
           if (organizationIdAndPeriodMap.get(organizationData.organizationRegionId) == undefined) {

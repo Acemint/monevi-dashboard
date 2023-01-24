@@ -153,7 +153,6 @@
       isBalanced() {
         for (var generalLedger of this.reportSummary.values()) {
           if (generalLedger.data.opnameAmount != this.sumGeneralLedgerAccount(generalLedger)) {
-            console.log(generalLedger.identifier, generalLedger.data.opnameAmount, this.sumGeneralLedgerAccount(generalLedger));
             return false;
           }
         }
@@ -191,7 +190,6 @@
       },
 
       approveReport() {
-        console.log(this.isBalanced());
         if (this.isBalanced() == false) {
           alert('Hasil opname dan saldo buku tidak seimbang, harap cek kembali');
           return;

@@ -44,11 +44,9 @@
       deleteTransaction(event: Event) {
         var params = {} as MoneviParamsDeleteTransaction;
         if (this.transaction == undefined) {
-          console.log('Internal server error, no transaction id is found');
           return;
         }
         params.transactionId = this.transaction.id;
-        console.log(params.transactionId);
         return moneviAxios
           .delete(MoneviPath.DELETE_TRANSACTION_PATH, {
             params: params,

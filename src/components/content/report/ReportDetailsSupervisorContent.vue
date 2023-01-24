@@ -154,9 +154,7 @@
         if (this.date == 'N/A') {
           return;
         }
-
         this.reportSummary = await reportApi.summarizeReport(this.organizationRegion.id, this.date);
-        console.log(this.organizationRegion, this.reportSummary);
       },
 
       async initData() {

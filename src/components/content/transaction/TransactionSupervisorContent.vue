@@ -7,7 +7,7 @@
           <router-link :to="getRouteToReportSelect()">Pilih Laporan</router-link>
         </div>
         <div class="breadcrumb-item">
-          <router-link :to="getRouteToReportDetail()">Laporan {{ organization.organizationName }}</router-link>
+          <router-link :to="getRouteToReportDetail()">Laporan {{ organizationRegion.organizationName }}</router-link>
         </div>
         <div class="breadcrumb-item">Detail Transaksi</div>
       </div>
@@ -19,9 +19,9 @@
       </div>
     </div>
 
-    <template v-if="isCurrentMonthReportAlreadySent()">
-      <TransactionGeneralData v-bind:transactions="transactions" v-bind:previousMonthReports="previousMonthReports" />
-      <TransactionFilter v-on:filter-change="setTransactions" />
+    <template v-if="date != 'N/A'">
+      <TransactionGeneralData v-bind:transactions="transactions" v-bind:organizationRegionId="organizationRegion.id" v-bind:date="date" />
+      <TransactionFilter v-on:filter-change="getTransactions" />
 
       <div class="row">
         <div class="col-12">
@@ -66,7 +66,7 @@
         <div class="col-12">
           <div class="card">
             <div class="card-body">
-              <p>Belum ada laporan yang disetujui oleh Ketua organisasi {{ organization.organizationName }} untuk bulan {{ formatDateToMonth(date) }}</p>
+              <p>Belum ada laporan yang disetujui oleh Ketua organisasi {{ organizationRegion.organizationName }} untuk bulan {{ formatDateToMonth(date) }}</p>
             </div>
           </div>
         </div>
@@ -75,17 +75,10 @@
   </section>
 
   <ImageModal ref="imageModal" v-bind:imageSrc="imageSrc" />
-  <TransactionAddModal ref="transactionAddModal" v-bind:organizationRegionId="organizationRegionId" v-on:success-update="initData()" />
-  <TransactionEditModal ref="transactionEditModal" v-bind:transaction="transaction" v-on:success-update="initData()" />
-  <TransactionDeleteModal ref="transactionDeleteModal" v-bind:transaction="transaction" v-on:success-update="initData()" />
-  <TransactionSendModal ref="transactionSendModal" v-bind:organizationRegionId="organizationRegionId" v-bind:date="date" />
 </template>
 
 <script lang="ts">
-  import { MoneviOrganizationRegion, MoneviToken, Transaction } from '@/api/model/monevi-model';
-  import type { MoneviParamsGetReports, MoneviParamsGetTransactions, MoneviParamsGetOrganizationRegion } from '@/api/model/monevi-config';
-  import type { MoneviReport } from '@/api/model/monevi-model';
-  import { MoneviPath } from '@/api/path/path';
+  import { MoneviOrganizationRegion, Transaction } from '@/api/model/monevi-model';
   import TransactionGeneralData from '@/components/content/row/TransactionGeneralData.vue';
   import TransactionFilter from '@/components/content/row/TransactionFilter.vue';
   import TransactionAddModal from '@/components/modal/TransactionAddModal.vue';
@@ -94,172 +87,42 @@
   import TransactionSendModal from '@/components/modal/TransactionSendModal.vue';
   import MonthNavigator from '@/components/navigator/MonthNavigator.vue';
   import { MoneviDateFormatter } from '@/api/methods/monevi-date-formatter';
-  import moneviAxios from '@/api/configuration/monevi-axios';
-  import { MoneviEnumConverter } from '@/api/methods/monevi-enum-converter';
   import { MoneviDisplayFormatter } from '@/api/methods/monevi-display-formatter';
   import { FrontendRouteName } from '@/constants/path';
   import ImageModal from '@/components/modal/ImageModal.vue';
   import { MoneviCookieHandler } from '@/api/methods/monevi-cookie-handler';
+  import { transactionApi } from '@/api/service/transaction-api';
+  import { organizationApi } from '@/api/service/organization-api';
 
   export default {
     data: function () {
       return {
         transactions: new Array<Transaction>(),
-        currentMonthReports: new Array<MoneviReport>(),
-        previousMonthReports: new Array<MoneviReport>(),
-        date: '',
-        images: new Array<ArrayBuffer>(),
         imageSrc: '',
-        transaction: new Transaction(),
-        organization: new MoneviOrganizationRegion(),
-        organizationRegionId: '',
-        role: '',
+        organizationRegion: new MoneviOrganizationRegion(),
+        date: 'N/A',
       };
     },
 
     methods: {
-      async initData() {
-        var userData = MoneviCookieHandler.getUserData();
-        this.role = userData.role;
+      async updateDate(date: string): Promise<void> {
+        let userData = MoneviCookieHandler.getUserData();
 
-        if (this.$route.query.organization == undefined) {
-          this.$router.push({ name: FrontendRouteName.Error.ERROR_404 });
+        this.organizationRegion = await organizationApi.getOrganization(this.$route.query.organization!.toString());
+        if (this.organizationRegion.id == '') {
           return;
         }
-        this.organizationRegionId = this.$route.query.organization.toString();
-        await this.setOrganization();
-        if (this.organization.id == '') {
-          this.$router.push({ name: FrontendRouteName.Error.ERROR_404 });
-          return;
-        }
-
-        await this.setTransactions();
-        this.currentMonthReports = await this.getReport();
-        if (this.currentMonthReports.length == 0) {
-          return;
-        }
-        this.previousMonthReports = await this.getReport(-1);
-        if (this.previousMonthReports.length == 0) {
-          return;
-        }
-      },
-
-      async updateDate(date: string) {
         this.date = date;
-        await this.initData();
-        this.$router.push({ name: FrontendRouteName.Transaction.ROOT, query: { period: MoneviDateFormatter.formatDateDMYToMonthAndYear(this.date), organization: this.organization.id } });
+        if (this.date == 'N/A') {
+          return;
+        }
+        this.transactions = await transactionApi.getTransactions(this.$route.query.organization!.toString(), this.date);
+        console.log(this.transactions);
+        return;
       },
 
-      async setOrganization() {
-        this.organization = new MoneviOrganizationRegion();
-        var params = {} as MoneviParamsGetOrganizationRegion;
-        params.id = this.organizationRegionId;
-        await moneviAxios
-          .get(MoneviPath.GET_ORGANIZATION_REGION_PATH, { params })
-          .then((response) => {
-            this.organization = response.data.value;
-          })
-          .catch((error) => {
-            console.error('no organization region found');
-            return undefined;
-          });
-      },
-
-      determineDestinationPage(userAccount: MoneviToken, date: string) {
-        if (userAccount.role === 'ROLE_SUPERVISOR') {
-          if (this.$route.query.organization == undefined) {
-            return this.$router.push({ name: FrontendRouteName.Error.ERROR_404 });
-          }
-          this.organizationRegionId = this.$route.query.organization.toString();
-          this.date = date;
-          this.role = userAccount.role;
-          return this.$router.push({ name: FrontendRouteName.Transaction.ROOT, query: { period: MoneviDateFormatter.formatDateDMYToMonthAndYear(date), organization: this.$route.query.organization } });
-        } else if (userAccount.role === 'ROLE_TREASURER' || userAccount.role === 'ROLE_CHAIRMAN') {
-          this.organizationRegionId = userAccount.organizationRegionId;
-          this.date = date;
-          this.role = userAccount.role;
-          if (this.$route.query.organization == undefined) {
-            return this.$router.push({ name: FrontendRouteName.Transaction.ROOT, query: { period: MoneviDateFormatter.formatDateDMYToMonthAndYear(date) } });
-          }
-          if (userAccount.organizationRegionId != this.$route.query.organization) {
-            return this.$router.push({ name: FrontendRouteName.Error.ERROR_403 });
-          }
-        }
-      },
-
-      async setTransactions(filterGeneralLedgerAccount: string = 'Semua', filterEntryPosition: string = 'Semua', filterType: string = 'Semua'): Promise<any> {
-        this.transactions = new Array<Transaction>();
-        var params = {} as MoneviParamsGetTransactions;
-        params.page = 0;
-        params.size = 1000;
-        params.sortBy = new Array<string>('transactionDate');
-        params.isAscending = new Array<string>('true');
-        if (this.organizationRegionId != undefined) {
-          params.organizationRegionId = this.organizationRegionId;
-        }
-        var datesBetween = MoneviDateFormatter.getFirstDateAndLastDateOfADate(this.date);
-        params.startDate = datesBetween[0];
-        params.endDate = datesBetween[1];
-        if (filterGeneralLedgerAccount != 'Semua') {
-          params.generalLedgerAccountType = MoneviEnumConverter.convertGeneralLedgerAccountType(filterGeneralLedgerAccount);
-        }
-        if (filterEntryPosition != 'Semua') {
-          params.entryPosition = MoneviEnumConverter.convertEntryPosition(filterEntryPosition);
-        }
-        if (filterType != 'Semua') {
-          params.transactionType = MoneviEnumConverter.convertTransactionType(filterType);
-        }
-
-        await moneviAxios
-          .get(MoneviPath.GET_TRANSACTIONS_PATH, {
-            params: params,
-            paramsSerializer: {
-              indexes: null,
-            },
-          })
-          .then((response) => {
-            this.transactions = response.data.values;
-          })
-          .catch((error) => {
-            console.error('Internal Server Error, unable to get transactions data');
-            return null;
-          });
-      },
-
-      async getReport(monthDifference: number = 0): Promise<any> {
-        var params = {} as MoneviParamsGetReports;
-        if (this.organizationRegionId != undefined) {
-          params.organizationRegionId = this.organizationRegionId;
-        }
-        var month = this.date;
-        if (monthDifference == -1) {
-          month = MoneviDateFormatter.minusMonth(this.date);
-        }
-        var datesBetween = MoneviDateFormatter.getFirstDateAndLastDateOfADate(month);
-        params.startDate = datesBetween[0];
-        params.endDate = datesBetween[1];
-
-        var report = await moneviAxios
-          .get(MoneviPath.GET_REPORTS_PATH, { params: params })
-          .then((response) => {
-            return response.data.values;
-          })
-          .catch((error) => {
-            console.error('Internal Server Error, unable to get reports data');
-            return new Array<MoneviReport>();
-          });
-        return report;
-      },
-
-      isCurrentMonthReportAlreadySent(): boolean {
-        if (this.currentMonthReports.length == 0) {
-          return false;
-        }
-        var currentMonthReport = this.currentMonthReports[0];
-        if (currentMonthReport.status != 'APPROVED_BY_CHAIRMAN') {
-          return false;
-        }
-        return true;
+      async getTransactions(generalLedgerAccount: string, entryPosition: string, type: string): Promise<void> {
+        this.transactions = await transactionApi.getTransactions(this.organizationRegion.id, this.date, generalLedgerAccount, entryPosition, type);
       },
 
       formatGeneralLedgerAccountType(generalLedgerAccountType: string) {
@@ -307,7 +170,7 @@
       },
 
       getRouteToReportDetail() {
-        return { name: FrontendRouteName.Report.DETAILS, query: { period: this.formatDateToMonth(this.date), organization: this.organizationRegionId } };
+        return { name: FrontendRouteName.Report.DETAILS, query: { period: this.formatDateToMonth(this.date), organization: this.organizationRegion.id } };
       },
     },
 

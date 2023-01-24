@@ -152,7 +152,6 @@
             if (typeof organizationId != 'string') {
               return;
             }
-            console.log(organizationId);
             this.organizationRegionId = organizationId;
           }
         } else {

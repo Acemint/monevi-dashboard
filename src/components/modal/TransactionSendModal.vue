@@ -88,7 +88,7 @@
         moneviAxios
           .post(MoneviPath.SUBMIT_REPORT_PATH, body)
           .then((response) => {
-            alert('Berhasil mengirim laporan');
+            alert('Berhasil membuat laporan');
             if (!(this.$refs.closeModalButton instanceof HTMLButtonElement)) {
               return;
             }

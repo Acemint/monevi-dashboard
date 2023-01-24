@@ -114,7 +114,13 @@ class MoneviDateFormatter {
 
   static fromDMYtoMYDDate(displayDate: string): Date {
     var datearray = displayDate.split("/");
-    return new Date(datearray[1] + '/' + datearray[0] + '/' + datearray[2]);
+    try {
+      var date =  new Date(datearray[1] + '/' + datearray[0] + '/' + datearray[2]);
+      return date;
+    }
+    catch {
+      return new Date(Date.now());
+    }
   }
 
   private static anyInputToDate(input: any): Date {

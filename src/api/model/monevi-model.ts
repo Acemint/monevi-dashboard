@@ -247,19 +247,19 @@ class CategoryData {
 
 class MoneviReport {
 
-    id: string;
-    periodDate: number;
-    status: string;
-    commentedBy: string;
-    comment: string;
+    id: string | undefined;
+    periodDate: number | undefined;
+    status: string | undefined;
+    commentedBy: string | undefined;
+    comment: string | undefined;
     generalLedgerAccountValues: Array<any>;
 
-    constructor(id: string = "", periodDate: number = 0, status: string = "", commentedBy: string = "", comment: string = ""){
-        this.id = id;
-        this.periodDate = periodDate; 
-        this.status = status;
-        this.commentedBy = commentedBy;
-        this.comment = comment;
+    constructor(){
+        this.id = undefined;
+        this.periodDate = undefined; 
+        this.status = undefined;
+        this.commentedBy = undefined;
+        this.comment = undefined;
         this.generalLedgerAccountValues = new Array<Object>();
     }
 

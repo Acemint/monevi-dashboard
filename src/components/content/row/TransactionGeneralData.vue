@@ -9,7 +9,7 @@
           <div class="card-header">
             <h4>Total Saldo</h4>
           </div>
-          <div class="card-body">{{ getTotalBalance() }}</div>
+          <div class="card-body">{{ totalPreviousMonthBalance }}</div>
         </div>
       </div>
     </div>
@@ -43,46 +43,69 @@
 </template>
 
 <script lang="ts">
+  import { MoneviDateFormatter } from '@/api/methods/monevi-date-formatter';
   import { MoneviDisplayFormatter } from '@/api/methods/monevi-display-formatter';
-  import type { Transaction, MoneviReport } from '@/api/model/monevi-model';
+  import type { Transaction } from '@/api/model/monevi-model';
+  import { reportApi } from '@/api/service/report-api';
 
   export default {
     props: {
-      previousMonthReports: Array<MoneviReport>,
       transactions: Array<Transaction>,
+      organizationRegionId: String,
+      date: String,
     },
 
     data: function () {
       return {
         totalIncome: 0,
         totalExpense: 0,
+        totalPreviousMonthBalance: '',
       };
     },
 
     watch: {
+      date(newDate, oldDate) {
+        this.initData();
+      },
+
       transactions(oldTransactions, newTransactions) {
-        this.getTotalBalance();
-        this.determineTotalIncomeAndExpense();
+        this.initData();
       },
     },
 
     methods: {
-      getTotalBalance() {
-        if (this.previousMonthReports!.length == 0) {
-          return 'N/A';
-        }
-        var previousMonthReport = this.previousMonthReports![0];
-        if (previousMonthReport.status != 'APPROVED_BY_SUPERVISOR') {
-          return 'N/A';
-        }
-        var totalBalance = 0;
-        for (var generalLedgerAccount of previousMonthReport.generalLedgerAccountValues) {
-          totalBalance += generalLedgerAccount.amount;
-        }
-        return this.formatRupiah(totalBalance);
+      async initData() {
+        var reports = await reportApi.getReports(this.organizationRegionId!, MoneviDateFormatter.minusMonth(this.date!));
+
+        this.setPreviousMonthbalance(reports);
+        this.setTotalIncomeAndExpense();
       },
 
-      determineTotalIncomeAndExpense() {
+      setPreviousMonthbalance(previousMonthReports: any) {
+        if (this.totalPreviousMonthBalance != '') {
+          return;
+        }
+
+        if (previousMonthReports == null) {
+          this.totalPreviousMonthBalance = 'N/A';
+          return;
+        }
+        if (previousMonthReports[0].status != 'APPROVED_BY_SUPERVISOR') {
+          this.totalPreviousMonthBalance = 'N/A';
+          return;
+        }
+        var totalBalance = 0;
+        for (var generalLedgerAccount of previousMonthReports[0].generalLedgerAccountValues) {
+          totalBalance += generalLedgerAccount.amount;
+        }
+        this.totalPreviousMonthBalance = this.formatRupiah(totalBalance);
+      },
+
+      setTotalIncomeAndExpense() {
+        if (this.totalExpense != 0 || this.totalIncome != 0) {
+          return;
+        }
+
         this.totalIncome = 0;
         this.totalExpense = 0;
         for (var transaction of this.transactions!) {

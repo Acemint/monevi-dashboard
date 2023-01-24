@@ -98,7 +98,7 @@
                 </table>
               </div>
 
-              <div class="card-footer text-right">
+              <div class="card-footer text-right" v-if="reportSummary.reportStatus == 'NOT_SENT'">
                 <div>
                   <button v-on:click="approveReport" v-bind:class="[isBalanced() ? '' : 'disabled', 'btn btn-primary']" type="button" class="btn btn-primary">Kirim Laporan</button>
                 </div>
@@ -109,11 +109,11 @@
       </div>
     </template>
   </section>
-  <ReportApproveModal ref="reportApproveModal" v-on:success-update="updateDate" v-bind:role="userAccount.role" v-bind:reportId="reportSummary.reportId" v-bind:userId="userAccount.id" />
+  <ReportApproveModal ref="reportApproveModal" v-on:success-update="initData" v-bind:role="userAccount.role" v-bind:reportId="reportSummary.reportId" v-bind:userId="userAccount.id" />
 </template>
 
 <script lang="ts">
-  import { MoneviReportSummary, MoneviOrganizationRegion, MoneviToken } from '@/api/model/monevi-model';
+  import { MoneviReportSummary, MoneviOrganizationRegion } from '@/api/model/monevi-model';
   import ReportApproveModal from '@/components/modal/ReportApproveModal.vue';
   import ReportRejectModal from '@/components/modal/ReportRejectModal.vue';
   import MonthNavigator from '@/components/navigator/MonthNavigator.vue';

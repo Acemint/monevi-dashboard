@@ -75,11 +75,11 @@
         for (var report of response.data.values) {
           // only return dates that are available to be seen on respective roles
           if (userData.role == 'ROLE_CHAIRMAN') {
-            if (report.status == 'UNAPPROVED' || report.status == 'APPROVED_BY_CHAIRMAN') {
+            if (report.status == 'UNAPPROVED' || report.status == 'APPROVED_BY_CHAIRMAN' || report.status == 'APPROVED_BY_SUPERVISOR') {
               dates.push(MoneviDateFormatter.formatDate(report.periodDate));
             }
           } else if (userData.role == 'ROLE_SUPERVISOR') {
-            if (report.status == 'APPROVED_BY_CHAIRMAN') {
+            if (report.status == 'APPROVED_BY_CHAIRMAN' || report.status == 'APPROVED_BY_SUPERVISOR') {
               dates.push(MoneviDateFormatter.formatDate(report.periodDate));
             }
           }

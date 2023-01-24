@@ -14,7 +14,7 @@
         <div class="col-12">
           <div class="card">
             <div class="card-header">
-              <h4>Detail Transaksi</h4>
+              <h4>Laporan Keuangan Kas dan Bank UKM {{ organizationRegion.organizationName }} {{ organizationRegion.regionName }} per Bulan {{ formatDateToMonth(date) }}</h4>
             </div>
             <div class="card-body">
               <p>Belum ada laporan yang dibuat di bulan ini</p>
@@ -37,6 +37,11 @@
 
             <div class="card-body">
               <p>{{ formatReportStatus(reportSummary.reportStatus!) }}</p>
+              <template v-if="reportSummary.reportStatus == 'DECLINED'">
+                <p>Komentar Oleh: {{ reportSummary.commentedBy }}</p>
+                <p>Komentar: {{ reportSummary.comment }}</p>
+              </template>
+
               <div class="table-responsive">
                 <table class="table table-striped table-bordered" id="table-1">
                   <template v-for="generalLedgerData of reportSummary.values()">

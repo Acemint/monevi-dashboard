@@ -129,12 +129,16 @@ class MoneviReportSummary {
 
     reportId: string | undefined;
     reportStatus: string | undefined;
+    comment: string | undefined;
+    commentedBy: string | undefined;
     cash: GeneralLedgerData;
     bank: GeneralLedgerData;
 
     constructor() {
         this.reportId = undefined;
         this.reportStatus = undefined;
+        this.commentedBy = undefined;
+        this.comment = undefined;
         this.cash = new GeneralLedgerData();
         this.bank = new GeneralLedgerData();
     }

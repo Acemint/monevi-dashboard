@@ -57,6 +57,8 @@ export class ReportApiImpl implements ReportApi {
     var report = new MoneviReportSummary();
     report.reportId = reportSummary.reportId;
     report.reportStatus = reportSummary.reportStatus;
+    report.comment = reportSummary.comment;
+    report.commentedBy = reportSummary.commentedBy;
 
     report.cash.income.daily.amount = reportSummary.generalLedgerAccountTypeData.CASH.transactionTypeData.DAILY.entryPositionData.DEBIT.amount;
     report.cash.income.nonDaily.amount = reportSummary.generalLedgerAccountTypeData.CASH.transactionTypeData.NON_DAILY.entryPositionData.DEBIT.amount;

@@ -31,6 +31,7 @@
   import { MoneviDateFormatter } from '@/api/methods/monevi-date-formatter';
   import type { MoneviParamsGetReports } from '@/api/model/monevi-config';
   import { MoneviPath } from '@/api/path/path';
+  import { FrontendRouteName } from '@/constants/path';
   import type { LocationQueryValue } from 'vue-router';
 
   export default {
@@ -61,7 +62,10 @@
         params.startDate = START_DATE;
         params.endDate = END_DATE;
       } else if (userData.role == 'ROLE_SUPERVISOR') {
-        params.organizationRegionId = userData.organizationRegionId;
+        if (this.$route.query.organization == null || this.$route.query.organization == '') {
+          this.$router.push({ name: FrontendRouteName.Error.ERROR_404 });
+        }
+        params.organizationRegionId = this.$route.query.organization!.toString();
         params.startDate = START_DATE;
         params.endDate = END_DATE;
       }
@@ -84,7 +88,24 @@
         if (this.dates.length == 0) {
           this.$emit('periodChange', 'N/A');
         } else {
-          this.currentDateIndex = this.dates.length - 1;
+          // if there is a query, route to query instead of the default length
+          var specifiedPeriodQuery;
+          try {
+            specifiedPeriodQuery = MoneviDateFormatter.formatMonthAndYearToDateDMY(this.$route.query.period);
+          } catch (error) {
+            specifiedPeriodQuery = undefined;
+          }
+          if (specifiedPeriodQuery != undefined) {
+            var i = 0;
+            for (var date of dates) {
+              if (date == specifiedPeriodQuery) {
+                this.currentDateIndex = i;
+              }
+              i++;
+            }
+          } else {
+            this.currentDateIndex = this.dates.length - 1;
+          }
           this.$emit('periodChange', this.dates[this.currentDateIndex]);
         }
       });

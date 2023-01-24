@@ -1,63 +1,69 @@
 <template>
-  <div v-if="role === 'ROLE_TREASURER'" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" id="reportApproveModal">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Kirim Laporan</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <p>Apakah Anda ingin menerima laporan ini kepada ketua?</p>
-        </div>
-        <div class="modal-footer bg-whitesmoke br">
-          <button ref="closeModalButton" type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-          <button v-on:click="approveReport" type="button" class="btn btn-primary">Ya</button>
+  <template v-if="role === 'ROLE_TREASURER'">
+    <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" id="reportApproveModal">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Kirim Laporan</h5>
+            <button type="button" class="close" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Apakah Anda ingin menerima laporan ini kepada ketua?</p>
+          </div>
+          <div class="modal-footer bg-whitesmoke br">
+            <button v-on:click="closeModal" ref="closeModalButton" type="button" class="btn btn-secondary">Tutup</button>
+            <button v-on:click="approveReport" type="button" class="btn btn-primary">Ya</button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </template>
 
-  <div v-else-if="role === 'ROLE_CHAIRMAN'" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" id="reportApproveModal">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Setujui Laporan</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <p>Apakah Anda ingin menyetujui laporan ini dan mengirimkannya ke pengawas?</p>
-        </div>
-        <div class="modal-footer bg-whitesmoke br">
-          <button ref="closeModalButton" type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-          <button v-on:click="approveReport" type="button" class="btn btn-primary">Ya</button>
+  <template v-else-if="role === 'ROLE_CHAIRMAN'">
+    <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" id="reportApproveModal">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Setujui Laporan</h5>
+            <button type="button" class="close" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Apakah Anda ingin menyetujui laporan ini dan mengirimkannya ke pengawas?</p>
+          </div>
+          <div class="modal-footer bg-whitesmoke br">
+            <button v-on:click="closeModal" ref="closeModalButton" type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+            <button v-on:click="approveReport" type="button" class="btn btn-primary">Ya</button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </template>
 
-  <div v-else-if="role === 'ROLE_SUPERVISOR'" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" id="reportApproveModal">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Setujui Laporan</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <p>Apakah Anda ingin menyetujui laporan ini?</p>
-        </div>
-        <div class="modal-footer bg-whitesmoke br">
-          <button v-on:click="closeModal" ref="closeModalButton" type="button" class="btn btn-secondary">Tutup</button>
-          <button v-on:click="approveReport" type="button" class="btn btn-primary">Ya</button>
+  <template v-else-if="role === 'ROLE_SUPERVISOR'">
+    <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" id="reportApproveModal">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Setujui Laporan</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Apakah Anda ingin menyetujui laporan ini?</p>
+          </div>
+          <div class="modal-footer bg-whitesmoke br">
+            <button v-on:click="closeModal" ref="closeModalButton" type="button" class="btn btn-secondary">Tutup</button>
+            <button v-on:click="approveReport" type="button" class="btn btn-primary">Ya</button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </template>
 </template>
 
 <script lang="ts">
@@ -83,7 +89,16 @@
         return await moneviAxios
           .post(MoneviPath.APPROVE_REPORT_PATH, body)
           .then((response) => {
-            alert('Successfully approve report');
+            if (this.role == 'ROLE_CHAIRMAN') {
+              alert('Berhasil mengirim laporan');
+              return;
+            } else if (this.role == 'ROLE_TREASURER') {
+              alert('Berhasil mengirim laporan');
+              return;
+            } else if (this.role == 'ROLE_SUPERVISOR') {
+              alert('Berhasil menyetujui laporan');
+              return;
+            }
             if (this.$refs.closeModalButton instanceof HTMLButtonElement) {
               this.$refs.closeModalButton.click();
             }

@@ -46,6 +46,7 @@
     async beforeMount() {
       let START_DATE = '01/11/2022';
       let END_DATE = MoneviDateFormatter.formatDate(Date.now(), '/');
+      var dates = new Array<string>();
 
       var userData = MoneviCookieHandler.getUserData();
 
@@ -54,6 +55,7 @@
         params.organizationRegionId = userData.organizationRegionId;
         params.startDate = START_DATE;
         params.endDate = END_DATE;
+        dates = MoneviDateFormatter.getMonthsFromDatesBetween(MoneviDateFormatter.fromDMYtoMYDDate(START_DATE), MoneviDateFormatter.fromDMYtoMYDDate(END_DATE));
       } else if (userData.role == 'ROLE_CHAIRMAN') {
         params.organizationRegionId = userData.organizationRegionId;
         params.startDate = START_DATE;
@@ -64,15 +66,11 @@
         params.endDate = END_DATE;
       }
 
-      var dates = new Array<string>();
       var promiseReports = moneviAxios.get(MoneviPath.GET_REPORTS_PATH, { params: params });
-
       return promiseReports.then((response) => {
         for (var report of response.data.values) {
           // only return dates that are available to be seen on respective roles
-          if (userData.role == 'ROLE_TREASURER') {
-            dates.push(MoneviDateFormatter.formatDate(report.periodDate));
-          } else if (userData.role == 'ROLE_CHAIRMAN') {
+          if (userData.role == 'ROLE_CHAIRMAN') {
             if (report.status == 'UNAPPROVED' || report.status == 'APPROVED_BY_CHAIRMAN') {
               dates.push(MoneviDateFormatter.formatDate(report.periodDate));
             }

@@ -96,6 +96,9 @@
       setOrganizationsData(organizationsData: any): void {
         var organizationIdAndPeriodMap: Map<String, any> = new Map();
         for (var organizationData of organizationsData) {
+          if (organizationData.reportStatus == 'NOT_SENT' || organizationData.reportStatus == 'UNAPPROVED') {
+            continue;
+          }
           if (organizationIdAndPeriodMap.get(organizationData.organizationRegionId) == undefined) {
             var periods = Array<string>();
             periods.push(organizationData.periodDate);

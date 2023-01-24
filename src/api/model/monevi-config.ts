@@ -120,6 +120,7 @@ type MoneviBodySubmitReport = {
 
   organizationRegionId: string,
   date: string,
+  userId: string,
   opnameData: {
     CASH: number,
     BANK: number

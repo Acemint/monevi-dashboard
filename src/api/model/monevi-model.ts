@@ -127,14 +127,14 @@ class MoneviToken {
 
 class MoneviReportSummary {
 
-    reportId: string;
-    reportStatus: string;
+    reportId: string | undefined;
+    reportStatus: string | undefined;
     cash: GeneralLedgerData;
     bank: GeneralLedgerData;
 
     constructor() {
-        this.reportId = "";
-        this.reportStatus = "";
+        this.reportId = undefined;
+        this.reportStatus = undefined;
         this.cash = new GeneralLedgerData();
         this.bank = new GeneralLedgerData();
     }

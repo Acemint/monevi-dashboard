@@ -44,8 +44,6 @@
     emits: ['periodChange'],
 
     async beforeMount() {
-      console.log('BEFORE MOUNT');
-
       let START_DATE = '01/11/2022';
       let END_DATE = MoneviDateFormatter.formatDate(Date.now(), '/');
 

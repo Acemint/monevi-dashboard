@@ -3,13 +3,13 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Kirim Laporan</h5>
+          <h5 class="modal-title">Buat Laporan</h5>
           <button v-on:click="closeModal" type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
         <div class="modal-body">
-          <p>Apakah Anda benar-benar ingin mengirim laporan ini?</p>
+          <p>Apakah Anda benar-benar ingin membuat laporan dari transaksi yang ada?</p>
           <form>
             <div class="form-group">
               <label for="jumlah">Opname Kas*</label>
@@ -93,7 +93,7 @@
               return;
             }
             this.$refs.closeModalButton.click();
-            this.$router.push({ name: FrontendRouteName.Report.DETAILS, query: { period: MoneviDateFormatter.formatDateDMYToMonthAndYear(this.date) } });
+            this.$router.push({ name: FrontendRouteName.Report.DETAILS });
           })
           .catch((error) => {
             for (const key in error.response.data.errorFields) {

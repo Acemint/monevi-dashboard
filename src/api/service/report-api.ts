@@ -17,7 +17,7 @@ export class ReportApiImpl implements ReportApi {
     params.startDate = datesBetween[0];
     params.endDate = datesBetween[1];
 
-    moneviAxios
+    return moneviAxios
       .get(MoneviPath.GET_REPORTS_PATH, { params: params })
       .then((response) => {
         return response.data.values;

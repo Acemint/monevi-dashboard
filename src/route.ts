@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory, type RouteLocationNormalized } from 'vue-router';
+import { createRouter, createWebHistory, type LocationQuery, type LocationQueryValue, type RouteLocationNormalized } from 'vue-router';
 import { nextTick } from 'vue';
 
 import { MoneviCookieHandler } from '@/api/methods/monevi-cookie-handler';
@@ -18,13 +18,14 @@ import Error404 from '@/views/error/Error404.vue';
 import Path, { FrontendPath, FrontendRouteName } from '@/constants/path';
 import Role from '@/constants/role';
 import ResetPassword from '@/views/ResetPassword.vue';
+import type { MoneviToken } from './api/model/monevi-model';
 
 
 // Define category of pages
 const NON_LOGGED_IN_PATHS: string[] = [ Path.LOGIN, Path.REGISTER, Path.FORGOT_PASSWORD, FrontendPath.RESET_PASSSWORD ];
 const ROLE_SPECIFIC_PATHS: { [key: string]: string[] } = 
   {
-    supervisor: [ Path.STUDENT_MANAGEMENT, FrontendPath.ORGANIZATION ],
+    supervisor: [ Path.STUDENT_MANAGEMENT, FrontendPath.ORGANIZATION, FrontendPath.Program.ROOT, FrontendPath.Report.ROOT ],
     chairman: [  ],
     treasurer: [  ]
   };
@@ -41,27 +42,31 @@ const router = createRouter({
       { 
         path: Path.DASHBOARD, 
         component: Dashboard, 
+        name: FrontendRouteName.DASHBOARD,
         meta: { title: 'Dashboard' }
       },
       { 
         path: Path.LOGIN, 
-        name: FrontendRouteName.LOGIN,
         component: Login, 
+        name: FrontendRouteName.LOGIN,
         meta: { title: 'Login' } 
       },
       {
         path: Path.FORGOT_PASSWORD,
         component: ForgotPassword,
+        name: FrontendRouteName.FORGOT_PASSWORD,
         meta: { title: 'Forgot Password' }
       },
       {
         path: FrontendPath.RESET_PASSSWORD,
         component: ResetPassword,
+        name: FrontendRouteName.RESET_PASSWORD,
         meta: { title: 'Reset Password' }
       },
       { 
         path: Path.REGISTER, 
         component: Register, 
+        name: FrontendRouteName.REGISTER,
         meta: { title: 'Register' } 
       },
       {
@@ -104,7 +109,7 @@ const router = createRouter({
         ]
       },
       {
-        path: FrontendPath.Report.ROOT + '/:period?',
+        path: FrontendPath.Report.ROOT + '/:period?' + '/:organization?',
         meta: { title: 'Report' },
         children: [
           {
@@ -122,6 +127,7 @@ const router = createRouter({
       },
       {
         path: Path.UNAUTHORIZED,
+        name: FrontendRouteName.Error.ERROR_403,
         component: Error403, 
         meta: { title: 'Unauthorized' }
       },
@@ -147,8 +153,11 @@ router.beforeEach((to, from, next) => {
       return next(Path.DASHBOARD);
     }
     if (isRoleNotAllowedToAccessTargetPage(loggedIn.role, to.path)) {
-      return next(Path.UNAUTHORIZED);
+      return next( {name: FrontendRouteName.Error.ERROR_403 });
     }
+    // if (isQueryParamsNotAllowedForRole(loggedIn, to.query.organization)) {
+    //   return next( LOGIN_PATH );
+    // }
   }
   next();
 });
@@ -162,6 +171,13 @@ function isUserAccessLoggedInPage(targetPath: string): boolean {
 
 function isUserAccessNotLoggedInPage(targetPath: string): boolean {
   if (NON_LOGGED_IN_PATHS.includes(targetPath)) {
+    return true;
+  }
+  return false;
+}
+
+function isQueryParamsNotAllowedForRole(loginData: MoneviToken, organizationRegionId: string): boolean {
+  if (organizationRegionId != loginData.organizationRegionId) {
     return true;
   }
   return false;

@@ -86,7 +86,7 @@
           return;
         }
 
-        if (previousMonthReports == null) {
+        if (previousMonthReports == null || previousMonthReports.length == 0) {
           this.totalPreviousMonthBalance = 'N/A';
           return;
         }

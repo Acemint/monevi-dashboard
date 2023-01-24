@@ -52,6 +52,7 @@
     props: {
       date: String,
       organizationRegionId: String,
+      userId: String,
     },
 
     data: function () {
@@ -74,16 +75,9 @@
 
       sendReport() {
         var body = {} as MoneviBodySubmitReport;
-        if (this.date == undefined) {
-          console.error('internal server error, period is not found');
-          return;
-        }
-        body.date = this.date;
-        if (this.organizationRegionId == undefined) {
-          console.error('internal server error, organization region id is not found');
-          return;
-        }
-        body.organizationRegionId = this.organizationRegionId;
+        body.userId = this.userId!;
+        body.date = this.date!;
+        body.organizationRegionId = this.organizationRegionId!;
         body.opnameData = { BANK: this.bankOpname, CASH: this.cashOpname };
         moneviAxios
           .post(MoneviPath.SUBMIT_REPORT_PATH, body)

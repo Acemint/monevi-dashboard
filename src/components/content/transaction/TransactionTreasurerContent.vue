@@ -75,7 +75,7 @@
   <TransactionAddModal ref="transactionAddModal" v-bind:organizationRegionId="organizationRegion.id" v-on:success-update="initData" />
   <TransactionEditModal ref="transactionEditModal" v-bind:transaction="currentlySelectedTransaction" v-on:success-update="initData" />
   <TransactionDeleteModal ref="transactionDeleteModal" v-bind:transaction="currentlySelectedTransaction" v-on:success-update="initData" />
-  <TransactionSendModal ref="transactionSendModal" v-bind:organizationRegionId="organizationRegion.id" v-bind:date="date" />
+  <TransactionSendModal ref="transactionSendModal" v-bind:organizationRegionId="organizationRegion.id" v-bind:userId="userAccount.id" v-bind:date="date" />
 </template>
 
 <script lang="ts">
@@ -104,6 +104,7 @@
         imageSrc: '',
         organizationRegion: new MoneviOrganizationRegion(),
         date: 'N/A',
+        userAccount: MoneviCookieHandler.getUserData(),
       };
     },
 
@@ -115,11 +116,9 @@
       },
 
       async initData() {
-        let userData = MoneviCookieHandler.getUserData();
-
-        this.currentMonthReports = await reportApi.getReports(userData.organizationRegionId, this.date);
-        this.transactions = await transactionApi.getTransactions(userData.organizationRegionId, this.date);
-        this.organizationRegion = await organizationApi.getOrganization(userData.organizationRegionId);
+        this.currentMonthReports = await reportApi.getReports(this.userAccount.organizationRegionId, this.date);
+        this.transactions = await transactionApi.getTransactions(this.userAccount.organizationRegionId, this.date);
+        this.organizationRegion = await organizationApi.getOrganization(this.userAccount.organizationRegionId);
       },
 
       async getTransactions(generalLedgerAccount: string, entryPosition: string, type: string): Promise<void> {

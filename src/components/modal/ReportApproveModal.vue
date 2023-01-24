@@ -91,18 +91,16 @@
           .then((response) => {
             if (this.role == 'ROLE_CHAIRMAN') {
               alert('Berhasil mengirim laporan');
-              return;
             } else if (this.role == 'ROLE_TREASURER') {
               alert('Berhasil mengirim laporan');
-              return;
             } else if (this.role == 'ROLE_SUPERVISOR') {
               alert('Berhasil menyetujui laporan');
-              return;
             }
             if (this.$refs.closeModalButton instanceof HTMLButtonElement) {
               this.$refs.closeModalButton.click();
             }
             this.$emit('successUpdate');
+            return;
           })
           .catch((error) => {
             alert('Failed to approve report');

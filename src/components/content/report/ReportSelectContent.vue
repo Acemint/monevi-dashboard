@@ -24,7 +24,7 @@
                   <tr>
                     <td>{{ index + 1 }}</td>
                     <td>{{ item.organizationAbbreviation }}</td>
-                    <td></td>
+                    <td>{{ item.termOfOffice }}</td>
                     <td>
                       <select class="form-control selectric" v-model="organizationsMonthSelections[index]">
                         <option v-for="period of item.periodDate" v-bind:value="formatEpochToDate(period)">{{ formatEpochToDate(period) }}</option>

@@ -82,9 +82,10 @@
       },
 
       setPreviousMonthbalance(previousMonthReports: any) {
-        if (this.totalPreviousMonthBalance != '') {
-          return;
-        }
+        // Uncomment this if only want to update once
+        // if (this.totalPreviousMonthBalance != '') {
+        //   return;
+        // }
 
         if (previousMonthReports == null || previousMonthReports.length == 0) {
           this.totalPreviousMonthBalance = 'N/A';
@@ -102,9 +103,10 @@
       },
 
       setTotalIncomeAndExpense() {
-        if (this.totalExpense != 0 || this.totalIncome != 0) {
-          return;
-        }
+        // Uncomment this if only want to update once
+        // if (this.totalExpense != 0 || this.totalIncome != 0) {
+        //   return;
+        // }
 
         this.totalIncome = 0;
         this.totalExpense = 0;

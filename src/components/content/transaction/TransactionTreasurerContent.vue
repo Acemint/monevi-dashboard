@@ -7,7 +7,7 @@
           <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Tambah Transaksi</button>
           <div class="dropdown-menu">
             <a v-on:click="openTransactionAddModal" class="dropdown-item">Tambah Transaksi</a>
-            <a class="dropdown-item" data-toggle="modal" data-target="#imporTransaksi">Impor</a>
+            <a v-on:click="openTransactionAddBulkModal" class="dropdown-item">Impor</a>
           </div>
         </div>
         <div class="section-header-button">
@@ -26,39 +26,41 @@
             <div class="card-body">
               <div class="table-responsive">
                 <table class="table table-striped table-bordered" id="table-1">
-                  <tr>
-                    <th class="sorting" tabindex="0">No</th>
-                    <th>Tanggal</th>
-                    <th>Dompet</th>
-                    <th>Transaksi</th>
-                    <th>Kategori</th>
-                    <th>Keterangan</th>
-                    <th>Jumlah</th>
-                    <th>Bukti Transaksi</th>
-                    <th>Aksi</th>
-                  </tr>
-                  <tr v-for="(item, index) in transactions" ref="transactionsDisplay">
-                    <td>{{ index + 1 }}</td>
-                    <td>{{ formatTransactionDate(item.transactionDate) }}</td>
-                    <td>{{ formatGeneralLedgerAccountType(item.generalLedgerAccountType) }}</td>
-                    <td>{{ item.name }}</td>
-                    <td>{{ formatTransactionType(item.type) }}</td>
-                    <td>{{ item.description }}</td>
-                    <td v-bind:class="[item.entryPosition == 'CREDIT' ? 'text-danger' : 'text-primary']">{{ formatRupiah(item.amount, item.entryPosition) }}</td>
-                    <td>
-                      <button v-if="item.proof != ''" class="btn btn-primary" v-on:click="openImageModal" v-bind:data-index="index">
-                        <i style="pointer-events: none" class="far fa-eye"></i>
-                      </button>
-                    </td>
-                    <td>
-                      <button v-bind:class="[!isCurrentMonthReportSent(currentMonthReports) ? '' : 'disabled', 'btn btn-primary']" v-bind:data-index="index" v-on:click="openTransactionEditModal($event)">
-                        <i style="pointer-events: none" class="far fa-edit"></i>
-                      </button>
-                      <button v-bind:class="[!isCurrentMonthReportSent(currentMonthReports) ? '' : 'disabled', 'btn btn-danger']" v-bind:data-index="index" v-on:click="openTransactionDeleteModal($event)">
-                        <i style="pointer-events: none" class="far fa-trash-alt"></i>
-                      </button>
-                    </td>
-                  </tr>
+                  <tbody>
+                    <tr>
+                      <th class="sorting" tabindex="0">No</th>
+                      <th>Tanggal</th>
+                      <th>Dompet</th>
+                      <th>Transaksi</th>
+                      <th>Kategori</th>
+                      <th>Keterangan</th>
+                      <th>Jumlah</th>
+                      <th>Bukti Transaksi</th>
+                      <th>Aksi</th>
+                    </tr>
+                    <template v-for="(item, index) in transactions">
+                      <tr ref="transactionsDisplay">
+                        <td>{{ index + 1 }}</td>
+                        <td>{{ formatTransactionDate(item.transactionDate) }}</td>
+                        <td>{{ formatGeneralLedgerAccountType(item.generalLedgerAccountType) }}</td>
+                        <td>{{ item.name }}</td>
+                        <td>{{ formatTransactionType(item.type) }}</td>
+                        <td>{{ item.description }}</td>
+                        <td v-bind:class="[item.entryPosition == 'CREDIT' ? 'text-danger' : 'text-primary']">{{ formatRupiah(item.amount, item.entryPosition) }}</td>
+                        <td>
+                          <img v-on:click="openImageModal" id="buktiTransaksi" v-bind:src="formatProof(item.proof)" onerror='this.style.display = "none"' v-bind:data-index="index" />
+                        </td>
+                        <td>
+                          <button v-bind:class="[!isCurrentMonthReportSent(currentMonthReports) ? '' : 'disabled', 'btn btn-primary']" v-bind:data-index="index" v-on:click="openTransactionEditModal($event)">
+                            <i style="pointer-events: none" class="far fa-edit"></i>
+                          </button>
+                          <button v-bind:class="[!isCurrentMonthReportSent(currentMonthReports) ? '' : 'disabled', 'btn btn-danger']" v-bind:data-index="index" v-on:click="openTransactionDeleteModal($event)">
+                            <i style="pointer-events: none" class="far fa-trash-alt"></i>
+                          </button>
+                        </td>
+                      </tr>
+                    </template>
+                  </tbody>
                 </table>
               </div>
             </div>
@@ -76,6 +78,8 @@
   <TransactionEditModal ref="transactionEditModal" v-bind:transaction="currentlySelectedTransaction" v-on:success-update="initData" />
   <TransactionDeleteModal ref="transactionDeleteModal" v-bind:transaction="currentlySelectedTransaction" v-on:success-update="initData" />
   <TransactionSendModal ref="transactionSendModal" v-bind:organizationRegionId="organizationRegion.id" v-bind:userId="userAccount.id" v-bind:date="date" />
+  <TransactionAddBulkModal ref="transactionAddBulkModal" v-on:new-bulk-transactions="openTransactionAddBulkRequestImageModal" v-bind:organizationRegionId="organizationRegion.id" />
+  <TransactionAddBulkRequestImageModal ref="transactionAddBulkRequestModal" v-bind:processedTransactions="processedTransactions" v-bind:organizationRegionId="organizationRegion.id" v-on:success-update="initData" />
 </template>
 
 <script lang="ts">
@@ -86,6 +90,7 @@
   import TransactionEditModal from '@/components/modal/TransactionEditModal.vue';
   import TransactionDeleteModal from '@/components/modal/TransactionDeleteModal.vue';
   import TransactionSendModal from '@/components/modal/TransactionSendModal.vue';
+  import TransactionAddBulkModal from '@/components/modal/TransactionAddBulkModal.vue';
   import MonthNavigator from '@/components/navigator/MonthNavigator.vue';
   import { MoneviDateFormatter } from '@/api/methods/monevi-date-formatter';
   import { MoneviDisplayFormatter } from '@/api/methods/monevi-display-formatter';
@@ -94,6 +99,7 @@
   import { transactionApi } from '@/api/service/transaction-api';
   import { organizationApi } from '@/api/service/organization-api';
   import { reportApi } from '@/api/service/report-api';
+  import TransactionAddBulkRequestImageModal from '@/components/modal/TransactionAddBulkRequestImageModal.vue';
 
   export default {
     data: function () {
@@ -105,6 +111,7 @@
         organizationRegion: new MoneviOrganizationRegion(),
         date: 'N/A',
         userAccount: MoneviCookieHandler.getUserData(),
+        processedTransactions: new Array<any>(),
       };
     },
 
@@ -135,6 +142,10 @@
         return true;
       },
 
+      formatProof(proof: any) {
+        return atob(proof);
+      },
+
       formatGeneralLedgerAccountType(generalLedgerAccountType: string) {
         return MoneviDisplayFormatter.convertGeneralLedgerAccountTypeForDisplay(generalLedgerAccountType);
       },
@@ -159,15 +170,8 @@
         return MoneviDateFormatter.formatMonthAndYearToDateDMY(date);
       },
 
-      openImageModal(event: Event) {
-        if (!(event.currentTarget instanceof HTMLButtonElement)) {
-          return;
-        }
-        var dataIndex = event.currentTarget.getAttribute('data-index');
-        if (dataIndex == null) {
-          return;
-        }
-        var index = parseInt(dataIndex);
+      openImageModal(event: any) {
+        var index: any = parseInt(event.currentTarget.getAttribute('data-index'));
         this.imageSrc = this.transactions[index].proof;
         this.$nextTick(() => {
           var imageModal: any = this.$refs.imageModal;
@@ -178,6 +182,17 @@
       openTransactionAddModal(event: Event) {
         var transactionAddModal: any = this.$refs.transactionAddModal;
         transactionAddModal.showModal();
+      },
+
+      openTransactionAddBulkModal(event: Event) {
+        var transactionAddBulkModal: any = this.$refs.transactionAddBulkModal;
+        transactionAddBulkModal.showModal();
+      },
+
+      openTransactionAddBulkRequestImageModal(processedTransactions: any) {
+        this.processedTransactions = processedTransactions;
+        var transactionAddBulkRequestModal: any = this.$refs.transactionAddBulkRequestModal;
+        transactionAddBulkRequestModal.showModal();
       },
 
       openTransactionEditModal(event: MouseEvent) {
@@ -234,6 +249,8 @@
       MonthNavigator,
       TransactionGeneralData,
       TransactionFilter,
+      TransactionAddBulkModal,
+      TransactionAddBulkRequestImageModal,
     },
   };
 </script>

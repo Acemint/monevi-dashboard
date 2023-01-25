@@ -16,6 +16,15 @@
         "embeddedLanguageFormatting": "auto",
         "singleAttributePerLine": false
       }
+    },
+    {
+      "files": ["*.ts"],
+      "options": {
+        "tabWidth": 2,
+        "printWidth": 120,
+        "singleQuote": true,
+        "semi": true
+      }
     }
   ]
 }

@@ -27,6 +27,7 @@ const EDIT: string = '/edit';
 const WITH_PROGRAM: string = '/program-exists';
 const WITH_REPORT: string = '/report-exists';
 const CONVERT_EXCEL = '/convert-excel';
+const HISTORY: string = '/history';
 
 const GET_REGIONS_PATH: string = REGIONS + GET_ALL;
 const GET_ORGANIZATIONS_PATH: string = ORGANIZATIONS + GET_ALL;
@@ -61,6 +62,7 @@ class MoneviPath {
   static EDIT_TRANSACTION_PATH = TRANSACTION + EDIT;
   static CREATE_PROGRAM_PATH = PROGRAM + CREATE_NEW;
   static GET_PROGRAMS_PATH = PROGRAM + GET_ALL;
+  static GET_HISTORIES_PATH = HISTORY + GET_ALL;
 }
 
 export { MoneviPath };

@@ -51,7 +51,6 @@
     methods: {
       async initData() {
         this.histories = await historyApi.getHistories(this.userAccount.id);
-        console.log(this.histories);
       },
 
       getHistoryMessage(history: any) {

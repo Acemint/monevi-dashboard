@@ -67,7 +67,7 @@
               <label class="col-form-label text-md-left">Bukti Transaksi*</label>
               <div class="mb-3">
                 <input v-on:change="loadImage" class="form-control" type="file" id="formFile" /><br />
-                <img ref="sample" src="#" id="buktiTransaksi" style="width: 100%" />
+                <img v-if="imageSrc != '#'" v-bind:src="imageSrc" ref="sample" style="width: 100%" />
               </div>
             </div>
           </form>
@@ -98,6 +98,7 @@
         transactionType: 'Non Rutin',
         description: '',
         amount: 0,
+        imageSrc: '#',
       };
     },
 
@@ -119,16 +120,15 @@
       loadImage(event: any) {
         if (event.target != null) {
           var files: FileList = event.target.files;
-          var displayImage: any = this.$refs.sample;
+          console.log(files.length);
           if (files.length != 0) {
-            displayImage.src = URL.createObjectURL(files[0]);
+            this.imageSrc = URL.createObjectURL(files[0]);
           }
         }
       },
 
       async submitTransaction() {
-        var imageHTMLElement: any = this.$refs.sample;
-        let blob = await fetch(imageHTMLElement.src).then((r) => r.blob());
+        let blob = await fetch(this.imageSrc).then((r) => r.blob());
 
         const reader = new FileReader();
         reader.readAsDataURL(blob);
@@ -151,8 +151,8 @@
             .post(MoneviPath.CREATE_NEW_TRANSACTION_PATH, new Array<MoneviBodyCreateTransaction>(body))
             .then((response) => {
               alert('success in creating transaction');
-              URL.revokeObjectURL(imageHTMLElement.src);
-              imageHTMLElement.src = '#';
+              URL.revokeObjectURL(this.imageSrc);
+              this.imageSrc = '#';
               if (!(this.$refs.closeModalButton instanceof HTMLButtonElement)) {
                 return;
               }
@@ -171,7 +171,7 @@
       },
 
       resetData() {
-        (this.date = 'NaN/NaN/NaN'), (this.generalLedgerAccountType = 'Bank'), (this.entryPosition = 'Debit'), (this.transactionName = ''), (this.transactionType = 'Non Rutin'), (this.description = ''), (this.amount = 0);
+        (this.date = 'NaN/NaN/NaN'), (this.generalLedgerAccountType = 'Bank'), (this.entryPosition = 'Debit'), (this.transactionName = ''), (this.transactionType = 'Non Rutin'), (this.description = ''), (this.amount = 0), (this.imageSrc = '#');
       },
     },
   };

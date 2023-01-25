@@ -43,7 +43,7 @@ export class ReportApiImpl implements ReportApi {
       return response.data.value;
     })
     .catch((error) => {
-      console.log("internal server error, unable to get report summary");
+      console.error("internal server error, unable to get report summary");
       return null;
     })
 

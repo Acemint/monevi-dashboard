@@ -120,7 +120,6 @@
       loadImage(event: any) {
         if (event.target != null) {
           var files: FileList = event.target.files;
-          console.log(files.length);
           if (files.length != 0) {
             this.imageSrc = URL.createObjectURL(files[0]);
           }

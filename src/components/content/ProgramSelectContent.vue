@@ -116,7 +116,7 @@
           return;
         }
         var index = parseInt(indexAttribute);
-        this.$router.push({ name: FrontendRouteName.Program.DETAILS, query: { organization: this.organizations[index].organizationRegionId } });
+        this.$router.push({ name: FrontendRouteName.Program.DETAILS, query: { organization: this.organizations[index].organizationRegionId, periodYear: this.organizations[index].periodYear } });
       },
     },
   };

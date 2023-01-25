@@ -53,7 +53,6 @@ export class TransactionApiImpl implements TransactionApi {
         },
       })
       .then((response) => {
-        console.log(response.data.value);
         return response.data.value;
       })
       .catch((error) => {

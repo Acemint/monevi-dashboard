@@ -3,7 +3,7 @@
     <div class="section-header" style="justify-content: space-between">
       <h1>Program Kerja</h1>
       <div style="display: flex">
-        <div class="section-header-button" v-if="role === 'ROLE_CHAIRMAN' || role === 'ROLE_TREASURER'">
+        <div class="section-header-button" v-if="userAccount.role === 'ROLE_CHAIRMAN' || userAccount.role === 'ROLE_TREASURER'">
           <button class="btn btn-primary" v-on:click="openNewProgramModal">Tambah Program Kerja</button>
         </div>
       </div>
@@ -18,46 +18,33 @@
 
           <div class="card-body" v-if="programs.length != 0">
             <div class="table-responsive">
-              <table v-if="role === 'ROLE_SUPERVISOR'" class="table table-striped table-bordered" id="table-1">
-                <tr>
-                  <th class="sorting" tabindex="0">No</th>
-                  <th>Program Kerja</th>
-                  <th>Budget</th>
-                  <th>Jumlah Subsidi</th>
-                  <th>Ubah Subsidi</th>
-                  <th>Tanggal Mulai</th>
-                  <th>Tanggal Selesai</th>
-                </tr>
-                <tr v-for="(item, index) in programs">
-                  <td>{{ index + 1 }}</td>
-                  <td>{{ item.name }}</td>
-                  <td>{{ formatToRupiah(item.budget) }}</td>
-                  <td>{{ formatToRupiah(item.subsidy) }}</td>
-                  <td>
-                    <button class="btn btn-primary" v-on:click="openEditSubsidyModal"><i style="pointer-events: none" class="far fa-edit"></i></button>
-                  </td>
-                  <td>{{ formatDate(item.startDate) }}</td>
-                  <td>{{ formatDate(item.endDate) }}</td>
-                </tr>
-              </table>
-
-              <table v-else class="table table-striped table-bordered" id="table-1">
-                <tr>
-                  <th class="sorting" tabindex="0">No</th>
-                  <th>Program Kerja</th>
-                  <th>Budget</th>
-                  <th>Jumlah Subsidi</th>
-                  <th>Tanggal Mulai</th>
-                  <th>Tanggal Selesai</th>
-                </tr>
-                <tr v-for="(item, index) in programs">
-                  <td>{{ index + 1 }}</td>
-                  <td>{{ item.name }}</td>
-                  <td>{{ formatToRupiah(item.budget) }}</td>
-                  <td>{{ formatToRupiah(item.subsidy) }}</td>
-                  <td>{{ formatDate(item.startDate) }}</td>
-                  <td>{{ formatDate(item.endDate) }}</td>
-                </tr>
+              <table class="table table-striped table-bordered" id="table-1">
+                <tbody>
+                  <tr>
+                    <th class="sorting" tabindex="0">No</th>
+                    <th>Program Kerja</th>
+                    <th>Budget</th>
+                    <th>Jumlah Subsidi</th>
+                    <th>Tanggal Mulai</th>
+                    <th>Tanggal Selesai</th>
+                    <th>Aksi</th>
+                  </tr>
+                  <template v-for="(item, index) in programs">
+                    <tr>
+                      <td>{{ index + 1 }}</td>
+                      <td>{{ item.name }}</td>
+                      <td>{{ formatToRupiah(item.budget) }}</td>
+                      <td>{{ formatToRupiah(item.subsidy) }}</td>
+                      <td>{{ formatDate(item.startDate) }}</td>
+                      <td>{{ formatDate(item.endDate) }}</td>
+                      <td>
+                        <button v-if="userAccount.role == 'ROLE_SUPERVISOR'" v-on:click="openLockProgramModal" ref="lockButton" class="btn btn-primary">Kunci</button>
+                        <button v-on:click="openEditProgramModal" ref="editButton" class="btn btn-primary">Ubah</button>
+                        <button v-on:click="openDeleteProgramModal" ref="deleteButton" class="btn btn-danger">Hapus</button>
+                      </td>
+                    </tr>
+                  </template>
+                </tbody>
               </table>
             </div>
           </div>
@@ -69,21 +56,23 @@
     </div>
   </section>
 
-  <ProgramEditSubsidyModal v-bind:programId="selectedProgramId" v-on:success-update="getPrograms" ref="editSubsidyModal" />
-  <ProgramAddProgramKerjaModal v-bind:organizationRegionId="organizationRegionId" v-bind:userId="userId" v-on:success-update="getPrograms" ref="addProgramModal" />
+  <ProgramLockModal v-bind:programId="selectedProgramId" v-bind:userId="userAccount.id" v-on:success-update="getPrograms" ref="lockProgramModal" />
+  <ProgramEditModal v-bind:programId="selectedProgramId" v-bind:userId="userAccount.id" v-on:success-update="getPrograms" ref="editProgramModal" />
+  <ProgramDeleteModal v-bind:programId="selectedProgramId" v-bind:userId="userAccount.id" v-on:success-update="getPrograms" ref="deleteProgramModal" />
+  <ProgramAddProgramKerjaModal v-bind:organizationRegionId="organizationRegionId" v-bind:userId="userAccount.id" v-on:success-update="getPrograms" ref="addProgramModal" />
 </template>
 
 <script lang="ts">
   import ProgramAddProgramKerjaModal from '@/components/modal/ProgramAddProgramKerjaModal.vue';
-  import ProgramEditSubsidyModal from '@/components/modal/ProgramEditSubsidyModal.vue';
+  import ProgramEditModal from '@/components/modal/ProgramEditModal.vue';
+  import ProgramDeleteModal from '@/components/modal/ProgramDeleteModal.vue';
+  import ProgramLockModal from '@/components/modal/ProgramLockModal.vue';
   import type { Program } from '@/api/model/monevi-model';
-  import moneviAxios from '@/api/configuration/monevi-axios';
-  import { MoneviPath } from '@/api/path/path';
-  import type { MoneviParamsGetPrograms } from '@/api/model/monevi-config';
   import { MoneviDisplayFormatter } from '@/api/methods/monevi-display-formatter';
   import { MoneviDateFormatter } from '@/api/methods/monevi-date-formatter';
   import { FrontendRouteName } from '@/constants/path';
   import { MoneviCookieHandler } from '@/api/methods/monevi-cookie-handler';
+  import { programApi } from '@/api/service/program-api';
 
   export default {
     data: function () {
@@ -91,18 +80,16 @@
         programs: new Array<Program>(),
         selectedProgramId: '',
         organizationRegionId: '',
-        role: '',
+        periodYear: null,
+        userAccount: MoneviCookieHandler.getUserData(),
       };
     },
 
     components: {
       ProgramAddProgramKerjaModal,
-      ProgramEditSubsidyModal,
-    },
-
-    props: {
-      role: String,
-      userId: String,
+      ProgramEditModal,
+      ProgramDeleteModal,
+      ProgramLockModal,
     },
 
     beforeMount() {
@@ -112,50 +99,30 @@
 
     methods: {
       async getPrograms() {
-        this.validateRole();
-        this.programs = new Array<Program>();
-        var params = {} as MoneviParamsGetPrograms;
-        if (this.organizationRegionId == null) {
-          console.error('internal server error, unable to get organization region id');
-          return;
-        }
-        params.organizationRegionId = this.organizationRegionId;
-        this.programs = await moneviAxios
-          .get(MoneviPath.GET_PROGRAMS_PATH, {
-            params: params,
-            paramsSerializer: {
-              indexes: null,
-            },
-          })
-          .then((response) => {
-            return response.data.values;
-          })
-          .catch((error) => {
-            if (error.response.status == 500 || error.response.status == 400) {
-              for (const key in error.response.data.errorFields) {
-                var errorMessage = error.response.data.errorFields[key];
-                alert(errorMessage);
-                break;
-              }
-            }
-          });
+        this.programs = await programApi.getPrograms(this.organizationRegionId, this.periodYear);
       },
 
       validateRole() {
-        var userAccount = MoneviCookieHandler.getUserData();
-        this.role = userAccount.role;
-        if (userAccount.role === 'ROLE_SUPERVISOR') {
+        if (this.userAccount.role === 'ROLE_SUPERVISOR') {
+          // validate organization region
           if (this.$route.query.organization == undefined) {
             return this.$router.push({ name: FrontendRouteName.Error.ERROR_404 });
-          } else {
-            var organizationId = this.$route.query.organization;
-            if (typeof organizationId != 'string') {
-              return;
-            }
-            this.organizationRegionId = organizationId;
           }
+          var organizationId: any = this.$route.query.organization;
+          this.organizationRegionId = organizationId;
+
+          // validate period year
+          if (this.$route.query.periodYear == undefined) {
+            return this.$router.push({ name: FrontendRouteName.Error.ERROR_404 });
+          }
+          var currentYear = new Date().getFullYear();
+          var periodYear: any = this.$route.query.periodYear;
+          if (currentYear < parseInt(periodYear)) {
+            return this.$router.push({ name: FrontendRouteName.Error.ERROR_404 });
+          }
+          this.periodYear = periodYear;
         } else {
-          this.organizationRegionId = userAccount.organizationRegionId;
+          this.organizationRegionId = this.userAccount.organizationRegionId;
         }
       },
 
@@ -172,13 +139,30 @@
         addProgramModal.showModal();
       },
 
-      openEditSubsidyModal(event: Event) {
-        if (event.currentTarget instanceof HTMLButtonElement) {
-          this.selectedProgramId = event.currentTarget.id;
-        }
+      openEditProgramModal(event: Event) {
+        var editButton: any = event.currentTarget;
+        this.selectedProgramId = editButton.id;
         this.$nextTick(() => {
-          var editSubsidyModal: any = this.$refs.editSubsidyModal;
-          editSubsidyModal.showModal();
+          var editProgramModal: any = this.$refs.editProgramModal;
+          editProgramModal.showModal();
+        });
+      },
+
+      openDeleteProgramModal(event: Event) {
+        var deleteButton: any = event.currentTarget;
+        this.selectedProgramId = deleteButton.id;
+        this.$nextTick(() => {
+          var deleteProgramModal: any = this.$refs.deleteProgramModal;
+          deleteProgramModal.showModal();
+        });
+      },
+
+      openLockProgramModal(event: Event) {
+        var lockButton: any = event.currentTarget;
+        this.selectedProgramId = lockButton.id;
+        this.$nextTick(() => {
+          var lockProgramModal: any = this.$refs.lockProgramModal;
+          lockProgramModal.showModal();
         });
       },
     },

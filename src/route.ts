@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory, type RouteLocationNormalized } from 'vue-router';
+import { createRouter, createWebHistory, type LocationQuery, type LocationQueryValue, type RouteLocationNormalized } from 'vue-router';
 import { nextTick } from 'vue';
 
 import { MoneviCookieHandler } from '@/api/methods/monevi-cookie-handler';
@@ -7,22 +7,25 @@ import Login from '@/views/Login.vue';
 import Register from '@/views/Register.vue';
 import ForgotPassword from '@/views/ForgotPassword.vue';
 import StudentManagement from '@/views/StudentManagement.vue';
-import Program from '@/views/Program.vue';
+import ProgramDetails from '@/views/ProgramDetails.vue';
+import ProgramSelect from '@/views/ProgramSelect.vue';
 import Transaction from '@/views/Transaction.vue';
-import Report from '@/views/Report.vue';
+import ReportSelect from '@/views/ReportSelect.vue';
+import ReportDetails from '@/views/ReportDetails.vue';
 import Organization from '@/views/Organization.vue';
 import Error403 from '@/views/error/Error403.vue';
 import Error404 from '@/views/error/Error404.vue';
 import Path, { FrontendPath, FrontendRouteName } from '@/constants/path';
 import Role from '@/constants/role';
 import ResetPassword from '@/views/ResetPassword.vue';
+import type { MoneviToken } from './api/model/monevi-model';
 
 
 // Define category of pages
 const NON_LOGGED_IN_PATHS: string[] = [ Path.LOGIN, Path.REGISTER, Path.FORGOT_PASSWORD, FrontendPath.RESET_PASSSWORD ];
 const ROLE_SPECIFIC_PATHS: { [key: string]: string[] } = 
   {
-    supervisor: [ Path.STUDENT_MANAGEMENT, FrontendPath.ORGANIZATION ],
+    supervisor: [ Path.STUDENT_MANAGEMENT, FrontendPath.ORGANIZATION, FrontendPath.Program.ROOT, FrontendPath.Report.ROOT ],
     chairman: [  ],
     treasurer: [  ]
   };
@@ -39,33 +42,48 @@ const router = createRouter({
       { 
         path: Path.DASHBOARD, 
         component: Dashboard, 
+        name: FrontendRouteName.DASHBOARD,
         meta: { title: 'Dashboard' }
       },
       { 
         path: Path.LOGIN, 
-        name: FrontendRouteName.LOGIN,
         component: Login, 
+        name: FrontendRouteName.LOGIN,
         meta: { title: 'Login' } 
       },
       {
         path: Path.FORGOT_PASSWORD,
         component: ForgotPassword,
+        name: FrontendRouteName.FORGOT_PASSWORD,
         meta: { title: 'Forgot Password' }
       },
       {
         path: FrontendPath.RESET_PASSSWORD,
         component: ResetPassword,
+        name: FrontendRouteName.RESET_PASSWORD,
         meta: { title: 'Reset Password' }
       },
       { 
         path: Path.REGISTER, 
         component: Register, 
+        name: FrontendRouteName.REGISTER,
         meta: { title: 'Register' } 
       },
       {
-        path: Path.PROGRAM,
-        component: Program,
-        meta: { title: 'Program' }
+        path: FrontendPath.Program.ROOT,
+        meta: { title: 'Program' },
+        children: [
+          {
+            path: "",
+            name: FrontendRouteName.Program.ROOT,
+            component: ProgramSelect
+          },
+          {
+            path: FrontendPath.Program.DETAILS,
+            name: FrontendRouteName.Program.DETAILS,
+            component: ProgramDetails,
+          }
+        ],
       },
       {
         path: Path.STUDENT_MANAGEMENT,
@@ -80,25 +98,43 @@ const router = createRouter({
         meta: { title: 'Organization' }
       },
       {
-        path: FrontendPath.TRANSACTION + '/:period?',
-        component: Transaction,
-        name: FrontendRouteName.TRANSACTION,
-        meta: { title: 'Transaction' }
+        path: FrontendPath.Transaction.ROOT + '/:period?',
+        meta: { title: 'Transaction' },
+        children: [
+          {
+            path: "",
+            name: FrontendRouteName.Transaction.ROOT,
+            component: Transaction
+          }
+        ]
       },
       {
-        path: FrontendPath.REPORT + '/:period?',
-        component: Report,
-        name: FrontendRouteName.REPORT, 
-        meta: { title: 'Report' }
+        path: FrontendPath.Report.ROOT + '/:period?' + '/:organization?',
+        meta: { title: 'Report' },
+        children: [
+          {
+            path: "",
+            name: FrontendRouteName.Report.ROOT,
+            component: ReportSelect,
+          },
+          {
+            path: FrontendPath.Report.DETAILS,
+            name: FrontendRouteName.Report.DETAILS,
+            component: ReportDetails
+          }
+
+        ]
       },
       {
         path: Path.UNAUTHORIZED,
+        name: FrontendRouteName.Error.ERROR_403,
         component: Error403, 
         meta: { title: 'Unauthorized' }
       },
       {
         path: "/:pathMatch(.*)*",
         component: Error404,
+        name: FrontendRouteName.Error.ERROR_404,
         meta: { title: 'Not Found' }
       }
   ]
@@ -117,8 +153,11 @@ router.beforeEach((to, from, next) => {
       return next(Path.DASHBOARD);
     }
     if (isRoleNotAllowedToAccessTargetPage(loggedIn.role, to.path)) {
-      return next(Path.UNAUTHORIZED);
+      return next( {name: FrontendRouteName.Error.ERROR_403 });
     }
+    // if (isQueryParamsNotAllowedForRole(loggedIn, to.query.organization)) {
+    //   return next( LOGIN_PATH );
+    // }
   }
   next();
 });
@@ -132,6 +171,13 @@ function isUserAccessLoggedInPage(targetPath: string): boolean {
 
 function isUserAccessNotLoggedInPage(targetPath: string): boolean {
   if (NON_LOGGED_IN_PATHS.includes(targetPath)) {
+    return true;
+  }
+  return false;
+}
+
+function isQueryParamsNotAllowedForRole(loginData: MoneviToken, organizationRegionId: string): boolean {
+  if (organizationRegionId != loginData.organizationRegionId) {
     return true;
   }
   return false;

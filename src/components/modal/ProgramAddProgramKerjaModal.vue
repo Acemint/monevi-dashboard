@@ -62,7 +62,6 @@
   import moneviAxios from '@/api/configuration/monevi-axios';
   import { MoneviDateFormatter } from '@/api/methods/monevi-date-formatter';
   import type { MoneviBodyCreateProgram } from '@/api/model/monevi-config';
-  import type { BaseErrorResponse } from '@/api/model/monevi-model';
   import { MoneviPath } from '@/api/path/path';
 
   export default {
@@ -78,6 +77,7 @@
 
     props: {
       organizationRegionId: String,
+      userId: String,
     },
 
     methods: {
@@ -88,6 +88,11 @@
           console.error('internal server error, organization region is not found');
           return;
         }
+        if (this.userId == undefined) {
+          console.error('internal server error, user id is not found');
+          return;
+        }
+        body.userId = this.userId;
         body.organizationRegionId = this.organizationRegionId;
         body.programName = this.programName;
         body.budget = this.budget;

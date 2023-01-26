@@ -4,7 +4,6 @@ const REGISTER = "/register";
 const LOGIN = "/login";
 const FORGOT_PASSWORD = "/forgot-password";
 const STUDENT_MANAGEMENT = "/student-management";
-const PROGRAM = "/program-kerja";
 const REPORT = "/report";
 const ORGANIZATION = '/organization';
 
@@ -17,7 +16,6 @@ export default {
   REGISTER: REGISTER,
   LOGIN: LOGIN,
   FORGOT_PASSWORD: FORGOT_PASSWORD,
-  PROGRAM: PROGRAM,
   REPORT: REPORT,
   ORGANIZATION: ORGANIZATION,
   STUDENT_MANAGEMENT: STUDENT_MANAGEMENT,
@@ -29,20 +27,66 @@ class FrontendPath {
 
   static LOGIN = "/login";
   static RESET_PASSSWORD = "/reset-password";
-  static TRANSACTION = "/transaction";
-  static REPORT = "/report";
   static ORGANIZATION = "/organization";
+
+  static Transaction = class MoneviTransactionPath { 
+
+    static ROOT = "/transaksi";
+
+  }
+
+  static Report = class MoneviReportPath {
+
+    static ROOT = "/laporan";
+    static DETAILS = "details";
+
+  }
+
+  static Program = class MoneviProgramPath {
+      
+    static ROOT = "/program-kerja";
+    static DETAILS = "details";
+
+  }
 
 }
 
 class FrontendRouteName {
 
+  static DASHBOARD = "dashboard";
   static LOGIN = "login";
+  static REGISTER = "register";
+  static FORGOT_PASSWORD = "forgot-password";
   static RESET_PASSWORD = "reset-password";
-  static TRANSACTION = "transaction";
-  static REPORT = "report";
   static STUDENT_MANAGEMENT = "student-management";
   static ORGANIZATION = "organization";
+
+  static Error = class FrontendErrorRouteName {
+    
+    static ERROR_404 = "404"
+    static ERROR_403 = "403"
+  
+  }
+
+  static Transaction = class FrontendRouteNameTransaction {
+
+    static ROOT = "transaction";
+
+  }
+
+  static Report = class FrontendRouteNameReport {
+
+    static ROOT = "report";
+    static DETAILS = "report-details";
+
+  }
+
+  static Program = class FrontendRouteNameProgram {
+
+    static ROOT = "program";
+    static DETAILS = "progrma-details";
+    
+  }
 
 }
 

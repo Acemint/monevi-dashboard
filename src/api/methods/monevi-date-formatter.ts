@@ -10,7 +10,7 @@ class MoneviDateFormatter {
     else {
       date = inputDate.getDate().toString();
     }
-    if (inputDate.getMonth() < 10) {
+    if (inputDate.getMonth() < 9) {
       month = '0' + (inputDate.getMonth() + 1).toString();
     }
     else {
@@ -38,7 +38,7 @@ class MoneviDateFormatter {
     return month + " " + year;
   }
   
-  static formatMonthAndYearToDateDMY(input: string): string {
+  static formatMonthAndYearToDateDMY(input: string | any): string {
     var month = MoneviDateFormatter.stringMonthMapping(input.split(" ")[0]);
     var year = input.split(" ")[1];
     
@@ -108,15 +108,19 @@ class MoneviDateFormatter {
   static minusMonth(input: string): string {
     var inputDate: Date = MoneviDateFormatter.fromDMYtoMYDDate(input);
 
-    let previousMonth = MoneviDateFormatter.formatDate( new Date( inputDate.getFullYear(), inputDate.getMonth(), 0), " ", true );
+    let previousMonth = MoneviDateFormatter.formatDate( new Date( inputDate.getFullYear(), inputDate.getMonth(), 0), "/", false );
     return previousMonth;
   }
 
-  
-    
-  private static fromDMYtoMYDDate(displayDate: string): Date {
+  static fromDMYtoMYDDate(displayDate: string): Date {
     var datearray = displayDate.split("/");
-    return new Date(datearray[1] + '/' + datearray[0] + '/' + datearray[2]);
+    try {
+      var date =  new Date(datearray[1] + '/' + datearray[0] + '/' + datearray[2]);
+      return date;
+    }
+    catch {
+      return new Date(Date.now());
+    }
   }
 
   private static anyInputToDate(input: any): Date {

@@ -2,13 +2,13 @@
   <ul class="sidebar-menu">
     <template v-for="item in dashboardItems">
       <li v-if="item.dropdownProps != null" v-bind:class="[item.active ? 'active show' : '', 'nav-item dropdown']">
-        <a href="#" class="nav-link has-dropdown" data-toggle="dropdown">
+        <a class="nav-link has-dropdown" data-toggle="dropdown">
           <i v-bind:class="item.logo"></i>
           <span> {{ item.name }} </span>
         </a>
         <ul v-bind:class="[item.active ? 'show' : '', 'dropdown-menu']">
           <li v-for="childItem in item.dropdownProps" v-bind:class="[childItem.active ? 'active' : '']">
-            <router-link class="nav-link" v-bind:to="childItem.path">
+            <router-link class="nav-link" v-bind:to="{ name: childItem.routeName }">
               {{ childItem.name }}
             </router-link>
           </li>
@@ -16,7 +16,7 @@
       </li>
 
       <li v-else v-bind:class="[item.active ? 'active' : '']">
-        <router-link class="nav-link" v-bind:to="item.path">
+        <router-link class="nav-link" v-bind:to="{ name: item.routeName }">
           <i v-bind:class="item.logo"></i>
           <span> {{ item.name }} </span>
         </router-link>
@@ -26,7 +26,7 @@
 </template>
 
 <script lang="ts">
-  import Path, { FrontendPath } from '@/constants/path';
+  import { FrontendRouteName } from '@/constants/path';
   import Role from '@/constants/role';
 
   export default {
@@ -51,35 +51,35 @@
           this.dashboardItems = [
             {
               name: 'Dashboard',
-              path: Path.DASHBOARD,
+              routeName: FrontendRouteName.DASHBOARD,
               logo: 'fas fa-fire',
               active: false,
               dropdownProps: null,
             },
             {
               name: 'Organisasi',
-              path: Path.ORGANIZATION,
+              routeName: FrontendRouteName.ORGANIZATION,
               logo: 'fas fa-sitemap',
               active: false,
               dropdownProps: null,
             },
             {
               name: 'Kelola Pengurus',
-              path: Path.STUDENT_MANAGEMENT,
+              routeName: FrontendRouteName.STUDENT_MANAGEMENT,
               logo: 'fas fa-user-alt',
               active: false,
               dropdownProps: null,
             },
             {
               name: 'Program Kerja',
-              path: Path.PROGRAM,
+              routeName: FrontendRouteName.Program.ROOT,
               logo: 'fas fa-briefcase',
               active: false,
               dropdownProps: null,
             },
             {
               name: 'Laporan',
-              path: Path.REPORT,
+              routeName: FrontendRouteName.Report.ROOT,
               logo: 'fas fa-file-alt',
               active: false,
               dropdownProps: null,
@@ -89,32 +89,32 @@
           this.dashboardItems = [
             {
               name: 'Dashboard',
-              path: Path.DASHBOARD,
+              routeName: FrontendRouteName.DASHBOARD,
               logo: 'fas fa-fire',
               active: false,
               dropdownProps: null,
             },
             {
               name: 'Program Kerja',
-              path: Path.PROGRAM,
+              routeName: FrontendRouteName.Program.DETAILS,
               logo: 'fas fa-briefcase',
               active: false,
               dropdownProps: null,
             },
             {
               name: 'Transaksi',
-              path: '',
+              routeName: '',
               logo: 'fas fa-wallet',
               active: false,
               dropdownProps: [
                 {
                   name: 'Transaksi',
-                  path: FrontendPath.TRANSACTION,
+                  routeName: FrontendRouteName.Transaction.ROOT,
                   active: false,
                 },
                 {
                   name: 'Laporan',
-                  path: FrontendPath.REPORT,
+                  routeName: FrontendRouteName.Report.DETAILS,
                   active: false,
                 },
               ],
@@ -124,32 +124,32 @@
           this.dashboardItems = [
             {
               name: 'Dashboard',
-              path: Path.DASHBOARD,
+              routeName: FrontendRouteName.DASHBOARD,
               logo: 'fas fa-fire',
               active: false,
               dropdownProps: null,
             },
             {
               name: 'Program Kerja',
-              path: Path.PROGRAM,
+              routeName: FrontendRouteName.Program.DETAILS,
               logo: 'fas fa-briefcase',
               active: false,
               dropdownProps: null,
             },
             {
               name: 'Laporan',
-              path: '',
+              routeName: '',
               logo: 'fas fa-file-alt',
               active: false,
               dropdownProps: [
                 {
                   name: 'Laporan',
-                  path: FrontendPath.REPORT,
+                  routeName: FrontendRouteName.Report.DETAILS,
                   active: false,
                 },
                 {
                   name: 'Detail Transaksi',
-                  path: FrontendPath.TRANSACTION,
+                  routeName: FrontendRouteName.Transaction.ROOT,
                   active: false,
                 },
               ],
@@ -160,10 +160,21 @@
 
       updateActiveDashboardItemStyling() {
         for (let item of this.dashboardItems) {
-          if (item.path === this.$router.currentRoute.value.path) {
+          if (item.routeName === this.$route.name) {
             item.active = true;
           } else {
             item.active = false;
+          }
+          if (item.dropdownProps == undefined) {
+            continue;
+          }
+          for (let child of item.dropdownProps) {
+            if (child.routeName === this.$route.name) {
+              item.active = true;
+              child.active = true;
+            } else {
+              child.active = false;
+            }
           }
         }
       },
@@ -172,7 +183,7 @@
 
   export type DashboardItem = {
     name: string;
-    path: string;
+    routeName: string;
     logo: string;
     active: boolean;
     dropdownProps: Array<ChildDashboardItem> | null;
@@ -180,7 +191,7 @@
 
   export type ChildDashboardItem = {
     name: string;
-    path: string;
+    routeName: string;
     active: boolean;
   };
 </script>

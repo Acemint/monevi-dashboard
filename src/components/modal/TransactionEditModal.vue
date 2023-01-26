@@ -3,7 +3,7 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title">Tambah Transaksi</h5>
+          <h5 class="modal-title">Ubah Transaksi</h5>
           <button v-on:click="closeModal" type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -74,7 +74,7 @@
         </div>
         <div class="modal-footer bg-whitesmoke br">
           <button v-on:click="closeModal" ref="closeModalButton" type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
-          <button v-on:click="editTransaction" type="button" class="btn btn-primary">Tambah Transaksi</button>
+          <button v-on:click="editTransaction" type="button" class="btn btn-primary">Ubah</button>
         </div>
       </div>
     </div>
@@ -82,9 +82,12 @@
 </template>
 
 <script lang="ts">
-  import { MoneviDateFormatter } from '@/api/methods/monevi-date-formatter';
+  import moneviAxios from '@/api/configuration/monevi-axios';
   import { MoneviDisplayFormatter } from '@/api/methods/monevi-display-formatter';
-  import type { Transaction } from '@/api/model/monevi-model';
+  import { MoneviPath } from '@/api/path/path';
+  import type { MoneviBodyEditTransaction, MoneviParamsEditTransaction } from '@/api/model/monevi-config';
+  import { MoneviDateFormatter } from '@/api/methods/monevi-date-formatter';
+  import { MoneviEnumConverter } from '@/api/methods/monevi-enum-converter';
 
   export default {
     data: function () {
@@ -100,30 +103,33 @@
     },
 
     props: {
-      transactionId: String,
+      transaction: Object,
     },
 
     methods: {
-      initializeExistingValues(transaction: Transaction) {
-        this.date = new Date(transaction.transactionDate).toISOString().substring(0, 10);
-        var generalLedgerAccountType = MoneviDisplayFormatter.convertGeneralLedgerAccountTypeForDisplay(transaction.generalLedgerAccountType);
+      initializeExistingValues() {
+        if (this.transaction == undefined) {
+          return;
+        }
+        this.date = new Date(this.transaction.transactionDate).toISOString().substring(0, 10);
+        var generalLedgerAccountType = MoneviDisplayFormatter.convertGeneralLedgerAccountTypeForDisplay(this.transaction.generalLedgerAccountType);
         if (generalLedgerAccountType != null) {
           this.generalLedgerAccountType = generalLedgerAccountType;
         }
-        var transactionType = MoneviDisplayFormatter.convertTransactionTypeForDisplay(transaction.type);
+        var transactionType = MoneviDisplayFormatter.convertTransactionTypeForDisplay(this.transaction.type);
         if (transactionType != null) {
           this.transactionType = transactionType;
         }
-        var entryPosition = MoneviDisplayFormatter.convertEntryPositionForDisplay(transaction.entryPosition);
+        var entryPosition = MoneviDisplayFormatter.convertEntryPositionForDisplay(this.transaction.entryPosition);
         if (entryPosition != null) {
           this.entryPosition = entryPosition;
         }
-        this.transactionName = transaction.name;
-        this.amount = transaction.amount;
-        this.description = transaction.description;
+        this.transactionName = this.transaction.name;
+        this.amount = this.transaction.amount;
+        this.description = this.transaction.description;
         var imagePlaceholder: any = this.$refs.sample;
         if (imagePlaceholder instanceof HTMLImageElement) {
-          imagePlaceholder.src = atob(transaction.proof);
+          imagePlaceholder.src = atob(this.transaction.proof);
         }
       },
 
@@ -148,7 +154,42 @@
       },
 
       async editTransaction() {
-        console.log(this.transactionId);
+        var imageHTMLElement: any = this.$refs.sample;
+        let blob = await fetch(imageHTMLElement.src).then((r) => r.blob());
+
+        const reader = new FileReader();
+        reader.readAsDataURL(blob);
+        reader.addEventListener('load', () => {
+          var params = {} as MoneviParamsEditTransaction;
+          var body = {} as MoneviBodyEditTransaction;
+          if (this.transaction == undefined) {
+            return;
+          }
+          params.transactionId = this.transaction.id;
+          body.name = this.transactionName;
+          body.transactionDate = MoneviDateFormatter.formatDate(this.date);
+          body.amount = this.amount;
+          body.generalLedgerAccountType = MoneviEnumConverter.convertGeneralLedgerAccountType(this.generalLedgerAccountType);
+          body.entryPosition = MoneviEnumConverter.convertEntryPosition(this.entryPosition);
+          body.type = MoneviEnumConverter.convertTransactionType(this.transactionType);
+          body.description = this.description;
+          body.proof = reader.result;
+          return moneviAxios
+            .put(MoneviPath.EDIT_TRANSACTION_PATH, body, { params: params })
+            .then((response) => {
+              alert('Success in updating transaction');
+              URL.revokeObjectURL(imageHTMLElement.src);
+              if (!(this.$refs.closeModalButton instanceof HTMLButtonElement)) {
+                return;
+              }
+              this.$refs.closeModalButton.click();
+              this.$emit('successUpdate');
+            })
+            .catch((error) => {
+              console.error(error);
+              alert('Failed to update transaction');
+            });
+        });
       },
     },
   };

@@ -44,7 +44,7 @@ export class ProgramApiImpl implements ProgramApi {
     params.programId = programId;
 
     return await moneviAxios
-      .get(MoneviPath.LOCK_PROGRAM_PATH)
+      .get(MoneviPath.LOCK_PROGRAM_PATH, { params: params, paramsSerializer: { indexes: null } })
       .then((response) => {
         return response.data.value;
       })

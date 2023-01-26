@@ -21,9 +21,12 @@
 </template>
 
 <script lang="ts">
+  import { programApi } from '@/api/service/program-api';
+
   export default {
     props: {
-      transaction: Object,
+      userAccount: Object,
+      program: Object,
     },
 
     methods: {
@@ -37,7 +40,17 @@
         programLockModal.modal('hide');
       },
 
-      lockProgram(event: Event) {},
+      async lockProgram(event: Event) {
+        var success = await programApi.lockProgram(this.userAccount!.id, this.program!.id!);
+        if (success == null) {
+          alert('Failed to lock program');
+          return;
+        }
+        alert('Successfully locked program');
+        var closeButton: any = this.$refs.closeModalButton;
+        closeButton.click();
+        this.$emit('successUpdate');
+      },
     },
   };
 </script>

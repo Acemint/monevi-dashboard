@@ -24,6 +24,7 @@ const SUBMIT: string = '/submit';
 const DELETE: string = '/delete';
 const SUMMARIZE: string = '/summarize';
 const EDIT: string = '/edit';
+const LOCK: string = '/lock';
 const WITH_PROGRAM: string = '/program-exists';
 const WITH_REPORT: string = '/report-exists';
 const CONVERT_EXCEL = '/convert-excel';
@@ -63,6 +64,8 @@ class MoneviPath {
   static CREATE_PROGRAM_PATH = PROGRAM + CREATE_NEW;
   static GET_PROGRAMS_PATH = PROGRAM + GET_ALL;
   static UPDATE_PROGRAM_PATH = PROGRAM + EDIT;
+  static LOCK_PROGRAM_PATH = PROGRAM + LOCK;
+  static DELETE_PROGRAM_PATH = PROGRAM + DELETE;
   static GET_HISTORIES_PATH = HISTORY + GET_ALL;
 }
 

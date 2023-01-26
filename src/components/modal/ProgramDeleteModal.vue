@@ -9,7 +9,7 @@
           </button>
         </div>
         <div class="modal-body">
-          <p>Apakah Anda benar-benar ingin menghapus program kerja ini?</p>
+          <p>Apakah Anda benar-benar ingin menghapus program kerja {{ program!.name }}?</p>
         </div>
         <div class="modal-footer bg-whitesmoke br">
           <button v-on:click="deleteProgram" type="button" class="btn btn-danger">Yes</button>
@@ -21,9 +21,11 @@
 </template>
 
 <script lang="ts">
+  import { programApi } from '@/api/service/program-api';
+
   export default {
     props: {
-      transaction: Object,
+      program: Object,
     },
 
     methods: {
@@ -37,7 +39,17 @@
         programDeleteModal.modal('hide');
       },
 
-      deleteProgram(event: Event) {},
+      async deleteProgram(event: Event) {
+        var success = await programApi.deleteProgram(this.program!.id!);
+        if (success == false) {
+          alert('Failed to delete program');
+          return;
+        }
+        alert('Successfully delete program');
+        var closeButton: any = this.$refs.closeModalButton;
+        closeButton.click();
+        this.$emit('successUpdate');
+      },
     },
   };
 </script>

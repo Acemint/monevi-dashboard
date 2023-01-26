@@ -33,14 +33,23 @@
                     <tr>
                       <td>{{ index + 1 }}</td>
                       <td>{{ item.name }}</td>
-                      <td>{{ formatToRupiah(item.budget) }}</td>
-                      <td>{{ formatToRupiah(item.subsidy) }}</td>
-                      <td>{{ formatDate(item.startDate) }}</td>
-                      <td>{{ formatDate(item.endDate) }}</td>
-                      <td>
-                        <button v-if="userAccount.role == 'ROLE_SUPERVISOR'" v-on:click="openLockProgramModal" ref="lockButton" class="btn btn-primary">Kunci</button>
-                        <button v-on:click="openEditProgramModal" ref="editButton" class="btn btn-primary">Ubah</button>
-                        <button v-on:click="openDeleteProgramModal" ref="deleteButton" class="btn btn-danger">Hapus</button>
+                      <td>{{ formatToRupiah(item.budget!) }}</td>
+                      <td>{{ formatToRupiah(item.subsidy!) }}</td>
+                      <td>{{ formatDate(item.startDate!) }}</td>
+                      <td>{{ formatDate(item.endDate!) }}</td>
+                      <td v-if="userAccount.role == 'ROLE_SUPERVISOR'">
+                        <button v-if="item.lockedProgram == false" v-on:click="openLockProgramModal" ref="lockButton" v-bind:data-index="index" class="btn btn-primary">Kunci</button>
+                        <button v-on:click="openEditProgramModal" ref="editButton" v-bind:data-index="index" class="btn btn-primary">Ubah</button>
+                        <button v-on:click="openDeleteProgramModal" ref="deleteButton" v-bind:data-index="index" class="btn btn-danger">Hapus</button>
+                      </td>
+                      <td v-else>
+                        <template v-if="item.lockedProgram != true">
+                          <button v-on:click="openEditProgramModal" ref="editButton" v-bind:data-index="index" class="btn btn-primary">Ubah</button>
+                          <button v-on:click="openDeleteProgramModal" ref="deleteButton" v-bind:data-index="index" class="btn btn-danger">Hapus</button>
+                        </template>
+                        <template v-else>
+                          <p>Sudah dikunci oleh pengawas</p>
+                        </template>
                       </td>
                     </tr>
                   </template>
@@ -56,9 +65,9 @@
     </div>
   </section>
 
-  <ProgramLockModal v-bind:programId="selectedProgramId" v-bind:userId="userAccount.id" v-on:success-update="getPrograms" ref="lockProgramModal" />
-  <ProgramEditModal v-bind:programId="selectedProgramId" v-bind:userId="userAccount.id" v-on:success-update="getPrograms" ref="editProgramModal" />
-  <ProgramDeleteModal v-bind:programId="selectedProgramId" v-bind:userId="userAccount.id" v-on:success-update="getPrograms" ref="deleteProgramModal" />
+  <ProgramLockModal v-bind:program="selectedProgram" v-bind:userAccount="userAccount" v-on:success-update="getPrograms" ref="lockProgramModal" />
+  <ProgramEditModal v-bind:program="selectedProgram" v-bind:userAccount="userAccount" v-on:success-update="getPrograms" ref="editProgramModal" />
+  <ProgramDeleteModal v-bind:program="selectedProgram" v-on:success-update="getPrograms" ref="deleteProgramModal" />
   <ProgramAddProgramKerjaModal v-bind:organizationRegionId="organizationRegionId" v-bind:userId="userAccount.id" v-on:success-update="getPrograms" ref="addProgramModal" />
 </template>
 
@@ -66,8 +75,8 @@
   import ProgramAddProgramKerjaModal from '@/components/modal/ProgramAddProgramKerjaModal.vue';
   import ProgramEditModal from '@/components/modal/ProgramEditModal.vue';
   import ProgramDeleteModal from '@/components/modal/ProgramDeleteModal.vue';
-  import ProgramLockModal from '@/components/modal/ProgramLockModal.vue';
-  import type { Program } from '@/api/model/monevi-model';
+  import ProgramLockModal from '@/components/modal/ProgramLockmodal.vue';
+  import { Program } from '@/api/model/monevi-model';
   import { MoneviDisplayFormatter } from '@/api/methods/monevi-display-formatter';
   import { MoneviDateFormatter } from '@/api/methods/monevi-date-formatter';
   import { FrontendRouteName } from '@/constants/path';
@@ -78,7 +87,7 @@
     data: function () {
       return {
         programs: new Array<Program>(),
-        selectedProgramId: '',
+        selectedProgram: new Program(),
         organizationRegionId: '',
         periodYear: null,
         userAccount: MoneviCookieHandler.getUserData(),
@@ -100,6 +109,7 @@
     methods: {
       async getPrograms() {
         this.programs = await programApi.getPrograms(this.organizationRegionId, this.periodYear);
+        console.log(this.programs);
       },
 
       validateRole() {
@@ -140,8 +150,9 @@
       },
 
       openEditProgramModal(event: Event) {
-        var editButton: any = event.currentTarget;
-        this.selectedProgramId = editButton.id;
+        var button: any = event.currentTarget;
+        var index: any = button.getAttribute('data-index');
+        this.selectedProgram = this.programs[index];
         this.$nextTick(() => {
           var editProgramModal: any = this.$refs.editProgramModal;
           editProgramModal.showModal();
@@ -149,8 +160,9 @@
       },
 
       openDeleteProgramModal(event: Event) {
-        var deleteButton: any = event.currentTarget;
-        this.selectedProgramId = deleteButton.id;
+        var button: any = event.currentTarget;
+        var index: any = button.getAttribute('data-index');
+        this.selectedProgram = this.programs[index];
         this.$nextTick(() => {
           var deleteProgramModal: any = this.$refs.deleteProgramModal;
           deleteProgramModal.showModal();
@@ -158,8 +170,9 @@
       },
 
       openLockProgramModal(event: Event) {
-        var lockButton: any = event.currentTarget;
-        this.selectedProgramId = lockButton.id;
+        var button: any = event.currentTarget;
+        var index: any = button.getAttribute('data-index');
+        this.selectedProgram = this.programs[index];
         this.$nextTick(() => {
           var lockProgramModal: any = this.$refs.lockProgramModal;
           lockProgramModal.showModal();

@@ -9,7 +9,7 @@
           </button>
         </div>
         <div class="modal-body">
-          <p>Apakah Anda ingin menkonfirmasi program ini supaya tidak bisa lagi diubah oleh Bendahara / Ketua?</p>
+          <p>Apakah Anda ingin menkonfirmasi program {{ program!.name }} supaya tidak bisa lagi diubah oleh Bendahara / Ketua?</p>
         </div>
         <div class="modal-footer bg-whitesmoke br">
           <button v-on:click="lockProgram" type="button" class="btn btn-danger">Kunci</button>
@@ -43,10 +43,10 @@
       async lockProgram(event: Event) {
         var success = await programApi.lockProgram(this.userAccount!.id, this.program!.id!);
         if (success == null) {
-          alert('Failed to lock program');
+          alert('Gagal untuk mengunci transaksi');
           return;
         }
-        alert('Successfully locked program');
+        alert('Berhasil mengunci transaksi');
         var closeButton: any = this.$refs.closeModalButton;
         closeButton.click();
         this.$emit('successUpdate');

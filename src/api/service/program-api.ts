@@ -6,7 +6,7 @@ export interface ProgramApi {
   getPrograms(organizationRegionId: string, period: string): any;
   lockProgram(userId: string, programId: string): any;
   deleteProgram(programId: string): any;
-  editProgram(userId: string, programId: string, updateSubsidyRequest: any): any;
+  editProgram(userId: string, programId: string, updateProgramRequest: any): any;
 }
 
 export class ProgramApiImpl implements ProgramApi {
@@ -82,25 +82,25 @@ export class ProgramApiImpl implements ProgramApi {
       });
   }
 
-  async editProgram(userId: string, programId: string, updateSubsidyRequest: any): Promise<any> {
+  async editProgram(userId: string, programId: string, updateProgramRequest: any): Promise<any> {
     var params = {} as { userId: string; programId: string };
     params.userId = userId;
     params.programId = programId;
 
     var body = {} as { name: string; subsidy: number; budget: number; startDate: string; endDate: string };
-    body.name = updateSubsidyRequest.name;
-    body.subsidy = updateSubsidyRequest.subsidy;
-    body.budget = updateSubsidyRequest.budget;
-    body.startDate = updateSubsidyRequest.startDate;
-    body.endDate = updateSubsidyRequest.endDate;
+    body.name = updateProgramRequest.name;
+    body.subsidy = updateProgramRequest.subsidy;
+    body.budget = updateProgramRequest.budget;
+    body.startDate = updateProgramRequest.startDate;
+    body.endDate = updateProgramRequest.endDate;
 
     return await moneviAxios
-      .post(MoneviPath.DECLINE_STUDENT_PATH, body, {
+      .post(MoneviPath.UPDATE_PROGRAM_PATH, body, {
         params: params,
         paramsSerializer: { indexes: null },
       })
       .then((response) => {
-        return response.data.values;
+        return response.data.value;
       })
       .catch((error) => {
         for (const key in error.response.data.errorFields) {

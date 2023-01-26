@@ -48,7 +48,7 @@
             </div>
 
             <div class="form-group">
-              <label for="keterangan">Keterangan</label>
+              <label for="keterangan">Keterangan*</label>
               <input v-model="description" id="keterangan" type="text" class="form-control" name="keterangan" />
               <div class="invalid-feedback"></div>
             </div>
@@ -59,15 +59,15 @@
                 <div class="input-group-prepend">
                   <span class="input-group-text">Rp</span>
                 </div>
-                <input v-model="amount" id="jumlah" type="text" class="form-control" name="jumlah" aria-label="Jumlah (dalam rupiah)" />
+                <input v-model="amount" id="jumlah" type="number" class="form-control" name="jumlah" aria-label="Jumlah (dalam rupiah)" />
               </div>
             </div>
 
             <div class="form-group">
               <label class="col-form-label text-md-left">Bukti Transaksi*</label>
               <div class="mb-3">
-                <input v-on:change="loadImage" class="form-control" type="file" id="formFile" /><br />
-                <img ref="sample" src="#" id="buktiTransaksi" style="width: 100%" />
+                <input v-on:change="loadImage" accept="image/jpeg, image/png" class="form-control" type="file" id="formFile" /><br />
+                <img ref="sample" src="#" style="width: 100%" />
               </div>
             </div>
           </form>
@@ -186,7 +186,6 @@
               this.$emit('successUpdate');
             })
             .catch((error) => {
-              console.error(error);
               alert('Failed to update transaction');
             });
         });

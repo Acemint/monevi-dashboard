@@ -55,7 +55,6 @@
             },
           })
           .then((response) => {
-            alert('Successfully delete the transaction');
             if (!(this.$refs.closeModalButton instanceof HTMLButtonElement)) {
               return;
             }

@@ -48,7 +48,7 @@
             </div>
 
             <div class="form-group">
-              <label for="keterangan">Keterangan</label>
+              <label for="keterangan">Keterangan*</label>
               <input v-model="description" id="keterangan" type="text" class="form-control" name="keterangan" />
               <div class="invalid-feedback"></div>
             </div>
@@ -59,17 +59,18 @@
                 <div class="input-group-prepend">
                   <span class="input-group-text">Rp</span>
                 </div>
-                <input v-model="amount" id="jumlah" type="text" class="form-control" name="jumlah" aria-label="Jumlah (dalam rupiah)" />
+                <input v-model="amount" id="jumlah" type="number" class="form-control" name="jumlah" aria-label="Jumlah (dalam rupiah)" />
               </div>
             </div>
 
-            <div class="form-group">
+            <div class="form-group" style="margin-bottom: 8px!important;">
               <label class="col-form-label text-md-left">Bukti Transaksi*</label>
-              <div class="mb-3">
-                <input v-on:change="loadImage" class="form-control" type="file" id="formFile" /><br />
+              <div class="mb-3" style="margin-bottom: 0px!important;">
+                <input v-on:change="loadImage"  accept="image/jpeg, image/png" class="form-control" type="file" id="formFile" /><br />
                 <img v-if="imageSrc != '#'" v-bind:src="imageSrc" ref="sample" style="width: 100%" />
               </div>
             </div>
+            <p class="text-danger" ref="errorMessageText" style="margin: 0px; padding: 0px;"></p>
           </form>
         </div>
         <div class="modal-footer bg-whitesmoke br">
@@ -162,7 +163,9 @@
             .catch((error) => {
               for (const key in error.response.data.errorFields) {
                 var errorMessage = error.response.data.errorFields[key];
-                alert(errorMessage);
+                var errorHtml: any = this.$refs.errorMessageText;
+                errorHtml.innerHTML = "";
+                errorHtml.innerHTML = errorMessage;
                 break;
               }
             });

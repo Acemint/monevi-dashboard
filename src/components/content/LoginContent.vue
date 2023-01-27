@@ -54,34 +54,21 @@
 </template>
 
 <script lang="ts">
-  // TODO: Check if click remember me, and then prolong the cookie to 7 days or more.
   import SimpleHeader from '@/components/header/SimpleHeader.vue';
   import SimpleFooter from '@/components/footer/SimpleFooter.vue';
-  import moneviAxios from '@/api/configuration/monevi-axios';
-  import type { MoneviBodyLoginUserAccount } from '@/api/model/monevi-config';
-  import { MoneviCookieHandler } from '@/api/methods/monevi-cookie-handler';
-  import { MoneviPath, MONEVI_BASE_URL } from '@/api/path/path';
+  import { authorizationApi } from '@/api/service/authorization-api';
   import type { MoneviToken } from '@/api/model/monevi-model';
-  import { MoneviAPI } from '@/api/methods/monevi-api';
+  import { MoneviCookieHandler } from '@/api/methods/monevi-cookie-handler';
 
   export default {
     methods: {
       async submit(event: Event) {
         event.preventDefault();
-        const token = MoneviCookieHandler.getCachedLogin();
-        if (token != undefined) {
-          return token;
-        }
 
-        var body = {} as MoneviBodyLoginUserAccount;
-        body.username = this.username;
-        body.password = this.password;
-        console.log(MONEVI_BASE_URL);
-        var userData = await moneviAxios
-          .post(MoneviPath.LOGIN_PATH, body)
+        await authorizationApi
+          .login(this.username, this.password)
           .then((response) => {
             const user: MoneviToken = response.data.value;
-
             MoneviCookieHandler.setCookie('id', user.id);
             MoneviCookieHandler.setCookie('fullname', user.fullname);
             MoneviCookieHandler.setCookie('username', user.username);
@@ -91,13 +78,10 @@
             MoneviCookieHandler.setCookie('type', user.accessToken);
             MoneviCookieHandler.setCookie('organizationRegionId', user.organizationRegionId);
             MoneviCookieHandler.setCookie('regionId', user.regionId);
-            return response.data.value;
           })
           .catch((error) => {
             if (error.response.status == 401) {
-              alert('Invalid Credential');
-            } else if (error.response.status == 500) {
-              console.error(error);
+              alert('Username / Password yang Anda masukkan salah');
             }
           });
         this.$router.push('/dashboard');
@@ -108,9 +92,9 @@
       return {
         username: '',
         password: '',
-        monevi_api: new MoneviAPI(),
       };
     },
+
     components: { SimpleHeader, SimpleFooter },
   };
 </script>

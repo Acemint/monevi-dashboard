@@ -14,7 +14,10 @@
         <div class="col-12">
           <div class="card">
             <div class="card-body">
-              <p>Data transaksi tidak dapat dilihat dikarenakan belum ada laporan yang dikirim oleh Bendahara {{ organizationRegion.organizationName }}</p>
+              <p>
+                Data transaksi tidak dapat dilihat dikarenakan belum ada laporan yang dikirim oleh Bendahara
+                {{ organizationRegion.organizationName }}
+              </p>
             </div>
           </div>
         </div>
@@ -22,7 +25,10 @@
     </template>
 
     <template v-else>
-      <TransactionGeneralData v-bind:transactions="transactions" v-bind:organizationRegionId="organizationRegion.id" v-bind:date="date" />
+      <TransactionGeneralData
+        v-bind:transactions="transactions"
+        v-bind:organizationRegionId="organizationRegion.id"
+        v-bind:date="date" />
       <TransactionFilter v-on:filter-change="getTransactions" />
 
       <div class="row">
@@ -48,9 +54,15 @@
                     <td>{{ item.name }}</td>
                     <td>{{ formatTransactionType(item.type) }}</td>
                     <td>{{ item.description }}</td>
-                    <td v-bind:class="[item.entryPosition == 'CREDIT' ? 'text-danger' : 'text-primary']">{{ formatRupiah(item.amount, item.entryPosition) }}</td>
+                    <td v-bind:class="[item.entryPosition == 'CREDIT' ? 'text-danger' : 'text-primary']">
+                      {{ formatRupiah(item.amount, item.entryPosition) }}
+                    </td>
                     <td>
-                      <button v-if="item.proof != ''" class="btn btn-primary" v-on:click="openImageModal" v-bind:data-index="index">
+                      <button
+                        v-if="item.proof != ''"
+                        class="btn btn-primary"
+                        v-on:click="openImageModal"
+                        v-bind:data-index="index">
                         <i style="pointer-events: none" class="far fa-eye"></i>
                       </button>
                     </td>
@@ -77,7 +89,7 @@
   import ImageModal from '@/components/modal/ImageModal.vue';
   import { MoneviCookieHandler } from '@/api/methods/monevi-cookie-handler';
   import { transactionApi } from '@/api/service/transaction-api';
-  import { organizationApi } from '@/api/service/organization-api';
+  import { organizationRegionApi } from '@/api/service/organization-region-api';
 
   export default {
     data: function () {
@@ -95,12 +107,18 @@
 
         this.date = date;
         this.transactions = await transactionApi.getTransactions(userData.organizationRegionId, this.date);
-        this.organizationRegion = await organizationApi.getOrganization(userData.organizationRegionId);
+        this.organizationRegion = await organizationRegionApi.getOrganization(userData.organizationRegionId);
         return;
       },
 
       async getTransactions(generalLedgerAccount: string, entryPosition: string, type: string): Promise<void> {
-        this.transactions = await transactionApi.getTransactions(this.organizationRegion.id, this.date, generalLedgerAccount, entryPosition, type);
+        this.transactions = await transactionApi.getTransactions(
+          this.organizationRegion.id,
+          this.date,
+          generalLedgerAccount,
+          entryPosition,
+          type
+        );
       },
 
       formatGeneralLedgerAccountType(generalLedgerAccountType: string) {
@@ -108,7 +126,9 @@
       },
 
       formatRupiah(amount: number, entryPosition: string = 'DEBIT') {
-        return MoneviDisplayFormatter.toRupiah(MoneviDisplayFormatter.determineNumberByPositionType(amount, entryPosition));
+        return MoneviDisplayFormatter.toRupiah(
+          MoneviDisplayFormatter.determineNumberByPositionType(amount, entryPosition)
+        );
       },
 
       formatTransactionDate(dateInMillis: number) {

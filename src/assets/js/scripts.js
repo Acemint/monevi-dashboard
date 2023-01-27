@@ -366,40 +366,6 @@ $(function() {
     });
   }
 
-  });
-
-  // Dismiss function
-  $("[data-dismiss]").each(function() {
-    var me = $(this),
-        target = me.data('dismiss');
-
-    me.click(function() {
-      $(target).fadeOut(function() {
-        $(target).remove();
-      });
-      return false;
-    });
-  });
-
-  // Collapsable
-  $("[data-collapse]").each(function() {
-    var me = $(this),
-        target = me.data('collapse');
-
-    me.click(function() {
-      $(target).collapse('toggle');
-      $(target).on('shown.bs.collapse', function(e) {
-        e.stopPropagation();
-        me.html('<i class="fas fa-minus"></i>');
-      });
-      $(target).on('hidden.bs.collapse', function(e) {
-        e.stopPropagation();
-        me.html('<i class="fas fa-plus"></i>');
-      });
-      return false;
-    });
-  });
-
   // Gallery
   $(".gallery .gallery-item").each(function() {
     var me = $(this);
@@ -425,92 +391,12 @@ $(function() {
     });
   }
 
-  // Background
-  $("[data-background]").each(function() {
-    var me = $(this);
-    me.css({
-      backgroundImage: 'url(' + me.data('background') + ')'
-    });
-  });
-
-  // Custom Tab
-  $("[data-tab]").each(function() {
-    var me = $(this);
-
-    me.click(function() {
-      if(!me.hasClass('active')) {
-        var tab_group = $('[data-tab-group="' + me.data('tab') + '"]'),
-            tab_group_active = $('[data-tab-group="' + me.data('tab') + '"].active'),
-            target = $(me.attr('href')),
-            links = $('[data-tab="'+me.data('tab') +'"]');
-
-        links.removeClass('active');
-        me.addClass('active');
-        target.addClass('active');
-        tab_group_active.removeClass('active');
-      }
-      return false;
-    });
-  });
-
-  // Bootstrap 4 Validation
-  $(".needs-validation").submit(function() {
-    var form = $(this);
-    if (form[0].checkValidity() === false) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
-    form.addClass('was-validated');
-  });
-
-  // alert dismissible
-  $(".alert-dismissible").each(function() {
-    var me = $(this);
-
-    me.find('.close').click(function() {
-      me.alert('close');
-    });
-  });
-
-  if($('.main-navbar').length) {
-  }
-
-  // Image cropper
-  $('[data-crop-image]').each(function(e) {
-    $(this).css({
-      overflow: 'hidden',
-      position: 'relative',
-      height: $(this).data('crop-image')
-    });
-  });
-
   // Slide Toggle
   $('[data-toggle-slide]').click(function() {
     let target = $(this).data('toggle-slide');
 
     $(target).slideToggle();
     return false;
-  });
-
-  // Dismiss modal
-  $("[data-dismiss=modal]").click(function() {
-    $(this).closest('.modal').modal('hide');
-
-    return false;
-  });
-
-  // Width attribute
-  $('[data-width]').each(function() {
-    $(this).css({
-      width: $(this).data('width')
-    });
-  });
-
-  // Height attribute
-  $('[data-height]').each(function() {
-    $(this).css({
-      height: $(this).data('height')
-    });
   });
 
   // Chocolat

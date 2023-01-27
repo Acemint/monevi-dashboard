@@ -1,4 +1,4 @@
-const MONEVI_BASE_URL: string = 'http://localhost:8080/api/monevi';
+const MONEVI_BASE_URL: string = import.meta.env.VITE_MONEVI_BACKEND_URL;
 const REGIONS: string = '/region';
 const ORGANIZATIONS: string = '/organization';
 const ORGANIZATION_REGION: string = '/organization-region';

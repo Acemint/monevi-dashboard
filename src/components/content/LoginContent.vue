@@ -60,7 +60,7 @@
   import moneviAxios from '@/api/configuration/monevi-axios';
   import type { MoneviBodyLoginUserAccount } from '@/api/model/monevi-config';
   import { MoneviCookieHandler } from '@/api/methods/monevi-cookie-handler';
-  import { MoneviPath } from '@/api/path/path';
+  import { MoneviPath, MONEVI_BASE_URL } from '@/api/path/path';
   import type { MoneviToken } from '@/api/model/monevi-model';
   import { MoneviAPI } from '@/api/methods/monevi-api';
 
@@ -76,6 +76,7 @@
         var body = {} as MoneviBodyLoginUserAccount;
         body.username = this.username;
         body.password = this.password;
+        console.log(MONEVI_BASE_URL);
         var userData = await moneviAxios
           .post(MoneviPath.LOGIN_PATH, body)
           .then((response) => {

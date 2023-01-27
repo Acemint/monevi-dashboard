@@ -48,7 +48,7 @@
                         <td>{{ item.description }}</td>
                         <td v-bind:class="[item.entryPosition == 'CREDIT' ? 'text-danger' : 'text-primary']">{{ formatRupiah(item.amount, item.entryPosition) }}</td>
                         <td>
-                          <img v-on:click="openImageModal" id="buktiTransaksi" v-bind:src="formatProof(item.proof)" onerror='this.style.display = "none"' v-bind:data-index="index" />
+                          <img v-on:click="openImageModal" id="buktiTransaksi" v-bind:src="formatProof(item.proof)" onerror="this.style.display = 'none'" v-bind:data-index="index" />
                         </td>
                         <td>
                           <button v-bind:class="[!isCurrentMonthReportSent(currentMonthReports) ? '' : 'disabled', 'btn btn-primary']" v-bind:data-index="index" v-on:click="openTransactionEditModal($event)">

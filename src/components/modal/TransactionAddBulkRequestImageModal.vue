@@ -39,7 +39,7 @@
                           <input v-on:change="loadImage" class="form-control" type="file" id="formFile" v-bind:data-index="index" />
                           <br />
                         </div>
-                        <img v-on:click="openImageModal" v-bind:src="item.proof" onerror='this.style.display = "none"' v-bind:data-index="index" style="width: 100%" />
+                        <img v-on:click="openImageModal" v-bind:src="item.proof" onerror="this.style.display = 'none'" v-bind:data-index="index" style="width: 100%" />
                       </td>
                     </tr>
                   </template>

@@ -5,6 +5,7 @@ import { MoneviCookieHandler } from '@/api/methods/monevi-cookie-handler';
 import Dashboard from '@/views/Dashboard.vue';
 import Login from '@/views/Login.vue';
 import Register from '@/views/Register.vue';
+import Index from '@/views/Index.vue';
 import ForgotPassword from '@/views/ForgotPassword.vue';
 import StudentManagement from '@/views/StudentManagement.vue';
 import ProgramDetails from '@/views/ProgramDetails.vue';
@@ -20,7 +21,15 @@ import Role from '@/constants/role';
 import ResetPassword from '@/views/ResetPassword.vue';
 
 // Define category of pages
-const NON_LOGGED_IN_PATHS: string[] = [Path.LOGIN, Path.REGISTER, Path.FORGOT_PASSWORD, FrontendPath.RESET_PASSSWORD];
+const NON_LOGGED_IN_PATHS: string[] = [
+  Path.LOGIN,
+  Path.REGISTER,
+  Path.FORGOT_PASSWORD,
+  FrontendPath.RESET_PASSSWORD,
+  '/',
+  '/home',
+  '/index',
+];
 const ROLE_SPECIFIC_PATHS: { [key: string]: string[] } = {
   supervisor: [Path.STUDENT_MANAGEMENT, FrontendPath.ORGANIZATION, FrontendPath.Program.ROOT, FrontendPath.Report.ROOT],
   chairman: [],
@@ -30,11 +39,13 @@ const ROLE_SPECIFIC_PATHS: { [key: string]: string[] } = {
 const router = createRouter({
   history: createWebHistory(),
   routes: [
-    // {
-    //   path: Path.INDEX,
-    //   component: Index,
-    //   meta: { title: 'Homepage' }
-    // },
+    {
+      path: Path.INDEX,
+      alias: ['/home', '/index'],
+      component: Index,
+      name: FrontendRouteName.INDEX,
+      meta: { title: 'Homepage' },
+    },
     {
       path: Path.DASHBOARD,
       component: Dashboard,

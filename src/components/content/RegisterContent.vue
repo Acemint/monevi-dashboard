@@ -30,7 +30,14 @@
 
                 <div class="form-group">
                   <label for="password" class="d-block">Password</label>
-                  <input v-model="password" id="password" type="password" class="form-control pwstrength" data-indicator="pwindicator" required autofocus />
+                  <input
+                    v-model="password"
+                    id="password"
+                    type="password"
+                    class="form-control pwstrength"
+                    data-indicator="pwindicator"
+                    required
+                    autofocus />
                   <div id="pwindicator" class="pwindicator">
                     <div class="bar"></div>
                     <div class="label"></div>
@@ -41,7 +48,12 @@
                 <div class="row">
                   <div class="form-group col-6">
                     <label>Kampus</label>
-                    <select v-model="regionSelection" v-on:change="getOrganizations($event)" class="form-control selectric" required autofocus>
+                    <select
+                      v-model="regionSelection"
+                      v-on:change="getOrganizations($event)"
+                      class="form-control selectric"
+                      required
+                      autofocus>
                       <option selected="true" disabled>Pilih Kampus</option>
                       <option v-for="region in regions">
                         {{ region.name }}
@@ -98,44 +110,51 @@
 </template>
 
 <script lang="ts">
-  import moneviAxios from '@/api/configuration/monevi-axios';
-  import { MoneviAPI } from '@/api/methods/monevi-api';
   import { MoneviEnumConverter } from '@/api/methods/monevi-enum-converter';
   import type { Region, Organization } from '@/api/model/monevi-model';
-  import type { MoneviBodyRegisterStudent } from '@/api/model/monevi-config';
-  import { MoneviPath } from '@/api/path/path';
   import SimpleFooter from '@/components/footer/SimpleFooter.vue';
   import SimpleHeader from '@/components/header/SimpleHeader.vue';
   import RegisterSuccessModal from '@/components/modal/RegisterSuccessModal.vue';
+  import { authorizationApi } from '@/api/service/authorization-api';
+  import { regionApi } from '@/api/service/region-api';
+  import { organizationApi } from '@/api/service/organization-api';
 
   export default {
+    beforeMount: function () {
+      this.getRegions();
+    },
+
     methods: {
       async getRegions(event: any = null) {
-        await this.monevi_api.getRegions().then((response) => {
-          this.regions = response;
+        await regionApi.getRegions().then((response: any) => {
+          this.regions = response.data.values;
         });
       },
+
       async getOrganizations(event: any) {
-        let options: HTMLOptionsCollection = event.target.options;
-        await this.monevi_api.getOrganizations(options[options.selectedIndex].value).then((response) => {
-          this.organizations = response;
+        if (this.regionSelection == '') {
+          return;
+        }
+        await organizationApi.getOrganizations(this.regionSelection).then((response: any) => {
+          this.organizations = response.data.values;
         });
       },
+
       async submit(event: Event) {
         event.preventDefault();
 
-        var body = {} as MoneviBodyRegisterStudent;
-        body.nim = this.nim;
-        body.fullName = this.fullName;
-        body.email = this.email;
-        body.password = this.password;
-        body.periodMonth = 1;
-        body.periodYear = this.periodYear;
-        body.organizationName = this.organizationSelection;
-        body.regionName = this.regionSelection;
-        body.role = MoneviEnumConverter.convertUserAccountRole(this.role);
-        return moneviAxios
-          .post(MoneviPath.REGISTER_STUDENT_PATH, body)
+        await authorizationApi
+          .register(
+            this.nim,
+            this.fullName,
+            this.email,
+            this.password,
+            1,
+            this.periodYear,
+            this.organizationSelection,
+            this.regionSelection,
+            MoneviEnumConverter.convertUserAccountRole(this.role)
+          )
           .then((response) => {
             var registerSuccessModal: any = this.$refs.registerSuccessModal;
             registerSuccessModal.showModal();
@@ -153,9 +172,9 @@
           });
       },
     },
+
     data: function () {
       return {
-        monevi_api: new MoneviAPI(),
         regions: new Array<Region>(),
         organizations: new Array<Organization>(),
         nim: '',
@@ -168,9 +187,7 @@
         organizationSelection: '',
       };
     },
-    mounted: function () {
-      this.getRegions();
-    },
+
     components: { SimpleHeader, SimpleFooter, RegisterSuccessModal },
   };
 </script>

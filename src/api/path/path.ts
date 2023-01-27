@@ -30,12 +30,7 @@ const WITH_REPORT: string = '/report-exists';
 const CONVERT_EXCEL = '/convert-excel';
 const HISTORY: string = '/history';
 
-const GET_REGIONS_PATH: string = REGIONS + GET_ALL;
-const GET_ORGANIZATIONS_PATH: string = ORGANIZATIONS + GET_ALL;
-const LOGIN_PATH: string = USER + AUTH + LOGIN;
-const CREATE_NEW_PROGRAM_PATH: string = PROGRAM + CREATE_NEW;
-
-export { MONEVI_BASE_URL, GET_REGIONS_PATH, GET_ORGANIZATIONS_PATH, LOGIN_PATH, CREATE_NEW_PROGRAM_PATH };
+export { MONEVI_BASE_URL };
 
 class MoneviPath {
   static GET_ORGANIZATIONS_PATH = ORGANIZATIONS + GET_ALL;

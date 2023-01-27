@@ -1,8 +1,20 @@
 import moneviAxios from '../configuration/monevi-axios';
+import type { MoneviBodyRegisterStudent } from '../model/monevi-config';
 import { MoneviPath } from '../path/path';
 
 export interface AuthorizationApi {
   login(username: string, password: string): any;
+  register(
+    nim: string,
+    fullName: string,
+    email: string,
+    password: string,
+    periodMonth: number,
+    periodYear: number,
+    organizationName: string,
+    regionName: string,
+    role: string
+  ): any;
   forgetPassword(email: string): any;
 }
 
@@ -13,6 +25,31 @@ export class AuthorizationApiImpl implements AuthorizationApi {
     body.password = password;
 
     return await moneviAxios.post(MoneviPath.LOGIN_PATH, body);
+  }
+
+  async register(
+    nim: string,
+    fullName: string,
+    email: string,
+    password: string,
+    periodMonth: number,
+    periodYear: number,
+    organizationName: string,
+    regionName: string,
+    role: string
+  ): Promise<any> {
+    var body = {} as MoneviBodyRegisterStudent;
+    body.nim = nim;
+    body.fullName = fullName;
+    body.email = email;
+    body.password = password;
+    body.periodMonth = periodMonth;
+    body.periodYear = periodYear;
+    body.organizationName = organizationName;
+    body.regionName = regionName;
+    body.role = role;
+
+    return await moneviAxios.post(MoneviPath.REGISTER_STUDENT_PATH, body);
   }
 
   async forgetPassword(email: string): Promise<any> {

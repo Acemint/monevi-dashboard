@@ -36,14 +36,11 @@
 </template>
 
 <script lang="ts">
-  import moneviAxios from '@/api/configuration/monevi-axios';
-  import { MoneviPath } from '@/api/path/path';
-  import type { MoneviParamsRequestResetPassword } from '@/api/model/monevi-config';
-  import type { Success } from '@/api/model/monevi-result';
   import { MoneviAPI } from '@/api/methods/monevi-api';
   import SimpleHeader from '@/components/header/SimpleHeader.vue';
   import SimpleFooter from '@/components/footer/SimpleFooter.vue';
   import ForgotPasswordSuccessModal from '@/components/modal/ForgotPasswordSuccessModal.vue';
+  import { authorizationApi } from '@/api/service/authorization-api';
 
   export default {
     data: function () {
@@ -54,25 +51,11 @@
     },
 
     methods: {
-      // TODO: handle error on fail to request forget password
       async requestForgetPassword(event: Event) {
         event.preventDefault();
-        var params = {} as MoneviParamsRequestResetPassword;
-        params.email = this.inputEmail;
-        return await moneviAxios
-          .get<Success>(MoneviPath.REQUEST_RESET_PASSWORD_PATH, {
-            params: params,
-            paramsSerializer: {
-              indexes: null,
-            },
-          })
-          .then((response) => {
-            var forgotPasswordModal: any = this.$refs.forgetPasswordSuccessModal;
-            forgotPasswordModal.showModal();
-          })
-          .catch((error) => {
-            console.error('internal server error, unable to send request');
-          });
+        var forgotPasswordModal: any = this.$refs.forgetPasswordSuccessModal;
+        forgotPasswordModal.showModal();
+        await authorizationApi.forgetPassword(this.inputEmail);
       },
     },
     components: { SimpleFooter, SimpleHeader, ForgotPasswordSuccessModal },

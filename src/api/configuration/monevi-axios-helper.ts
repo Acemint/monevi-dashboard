@@ -1,5 +1,4 @@
 import { MoneviCookieHandler } from '../methods/monevi-cookie-handler';
-import { MONEVI_BASE_URL } from '../path/path';
 
 export function getAuthorizationCredentialForAxios() {
   var userData = MoneviCookieHandler.getUserData();

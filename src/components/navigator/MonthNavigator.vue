@@ -1,9 +1,9 @@
 <template>
-  <div class="section-header-button">
+  <template v-if="dates.length != 0">
     <nav class="d-inline-block">
       <ul class="pagination mb-0">
         <li v-bind:class="[currentDateIndex == 0 ? 'disabled' : '', 'page-item']">
-          <a v-on:click="navigateDate($event)" id="navigate-page-left" class="page-link" href="#" tabindex="-1"><i class="fas fa-chevron-left"></i></a>
+          <a v-on:click="navigateDateByButton($event)" id="navigate-page-left" class="page-link" href="#" tabindex="-1"><i class="fas fa-chevron-left"></i></a>
         </li>
 
         <li class="page-item">
@@ -11,20 +11,28 @@
             {{ formatDateToMonth(dates[currentDateIndex]) }}
           </button>
           <div class="dropdown-menu">
-            <a v-on:click="changeDate($event)" v-for="item in dates" v-bind:id="item" class="dropdown-item"> {{ formatDateToMonth(item) }}</a>
+            <a v-on:click="navigateDateByDropdown($event)" v-for="item in dates" v-bind:data-date="item" class="dropdown-item"> {{ formatDateToMonth(item) }}</a>
           </div>
         </li>
 
         <li v-bind:class="[currentDateIndex == dates.length - 1 ? 'disabled' : '', 'page-item']">
-          <a v-on:click="navigateDate($event)" id="navigate-page-right" class="page-link" href="#"><i class="fas fa-chevron-right"></i></a>
+          <a v-on:click="navigateDateByButton($event)" id="navigate-page-right" class="page-link" href="#"><i class="fas fa-chevron-right"></i></a>
         </li>
       </ul>
     </nav>
-  </div>
+  </template>
+
+  <template v-else> </template>
 </template>
 
 <script lang="ts">
+  import moneviAxios from '@/api/configuration/monevi-axios';
+  import { MoneviCookieHandler } from '@/api/methods/monevi-cookie-handler';
   import { MoneviDateFormatter } from '@/api/methods/monevi-date-formatter';
+  import type { MoneviParamsGetReports } from '@/api/model/monevi-config';
+  import { MoneviPath } from '@/api/path/path';
+  import { FrontendRouteName } from '@/constants/path';
+  import type { LocationQueryValue } from 'vue-router';
 
   export default {
     data: function () {
@@ -34,44 +42,77 @@
       };
     },
 
-    beforeMount() {
-      let START_DATE = '2022-11-01';
-      let END_DATE = Date.now();
-      this.dates = MoneviDateFormatter.getMonthsFromDatesBetween(START_DATE, END_DATE);
-      if (this.$route.query.period != undefined && typeof this.$route.query.period == 'string') {
-        var originalDate = this.formatMonthToDate(this.$route.query.period);
-        var i = 0;
-        for (var date of this.dates) {
-          if (date === originalDate) {
-            this.currentDateIndex = i;
-          }
-          i++;
-        }
-      } else {
-        this.currentDateIndex = 0;
-      }
-      this.$router.push({ name: this.currentRouteName, query: { period: this.formatDateToMonth(this.dates[this.currentDateIndex]) } });
-    },
+    emits: ['periodChange'],
 
-    watch: {
-      '$route.query.period': {
-        handler: function (queryPeriod) {
-          var i = 0;
-          for (var date of this.dates) {
-            if (queryPeriod == this.formatDateToMonth(date)) {
-              this.currentDateIndex = i;
-              this.$emit('periodChange', date);
-              break;
+    async beforeMount() {
+      let START_DATE = '01/11/2022';
+      let END_DATE = MoneviDateFormatter.formatDate(Date.now(), '/');
+      var dates = new Array<string>();
+
+      var userData = MoneviCookieHandler.getUserData();
+
+      var params = {} as MoneviParamsGetReports;
+      if (userData.role == 'ROLE_TREASURER') {
+        params.organizationRegionId = userData.organizationRegionId;
+        params.startDate = START_DATE;
+        params.endDate = END_DATE;
+        dates = MoneviDateFormatter.getMonthsFromDatesBetween(MoneviDateFormatter.fromDMYtoMYDDate(START_DATE), MoneviDateFormatter.fromDMYtoMYDDate(END_DATE));
+      } else if (userData.role == 'ROLE_CHAIRMAN') {
+        params.organizationRegionId = userData.organizationRegionId;
+        params.startDate = START_DATE;
+        params.endDate = END_DATE;
+      } else if (userData.role == 'ROLE_SUPERVISOR') {
+        if (this.$route.query.organization == null || this.$route.query.organization == '') {
+          this.$router.push({ name: FrontendRouteName.Error.ERROR_404 });
+        }
+        params.organizationRegionId = this.$route.query.organization!.toString();
+        params.startDate = START_DATE;
+        params.endDate = END_DATE;
+      }
+
+      var promiseReports = moneviAxios.get(MoneviPath.GET_REPORTS_PATH, { params: params });
+      return promiseReports.then((response) => {
+        for (var report of response.data.values) {
+          // only return dates that are available to be seen on respective roles
+          if (userData.role == 'ROLE_CHAIRMAN') {
+            if (report.status == 'UNAPPROVED' || report.status == 'APPROVED_BY_CHAIRMAN' || report.status == 'APPROVED_BY_SUPERVISOR') {
+              dates.push(MoneviDateFormatter.formatDate(report.periodDate));
             }
-            i++;
+          } else if (userData.role == 'ROLE_SUPERVISOR') {
+            if (report.status == 'APPROVED_BY_CHAIRMAN' || report.status == 'APPROVED_BY_SUPERVISOR') {
+              dates.push(MoneviDateFormatter.formatDate(report.periodDate));
+            }
           }
-        },
-        deep: true,
-      },
+        }
+        this.dates = dates;
+        if (this.dates.length == 0) {
+          this.$emit('periodChange', 'N/A');
+        } else {
+          // if there is a query, route to query instead of the default length
+          var specifiedPeriodQuery;
+          try {
+            specifiedPeriodQuery = MoneviDateFormatter.formatMonthAndYearToDateDMY(this.$route.query.period);
+          } catch (error) {
+            specifiedPeriodQuery = undefined;
+          }
+          if (specifiedPeriodQuery != undefined) {
+            var i = 0;
+            for (var date of dates) {
+              if (date == specifiedPeriodQuery) {
+                this.currentDateIndex = i;
+              }
+              i++;
+            }
+          } else {
+            this.currentDateIndex = this.dates.length - 1;
+          }
+          this.$emit('periodChange', this.dates[this.currentDateIndex]);
+        }
+      });
     },
 
     methods: {
-      navigateDate(event: MouseEvent) {
+      navigateDateByButton(event: MouseEvent) {
         if (event.currentTarget instanceof HTMLAnchorElement) {
           var target = this.currentDateIndex;
           if (event.currentTarget.id === 'navigate-page-right') {
@@ -79,17 +120,23 @@
           } else if (event.currentTarget.id === 'navigate-page-left') {
             target -= 1;
           }
-          try {
-            this.$router.push({ name: this.currentRouteName, query: { period: this.formatDateToMonth(this.dates[target]) } });
-          } catch {
-            return;
-          }
+          this.currentDateIndex = target;
+          this.$emit('periodChange', this.dates[target]);
         }
       },
 
-      changeDate(event: MouseEvent) {
+      navigateDateByDropdown(event: MouseEvent) {
         if (event.currentTarget instanceof HTMLAnchorElement) {
-          this.$router.push({ name: this.currentRouteName, query: { period: MoneviDateFormatter.formatDateDMYToMonthAndYear(event.currentTarget.id) } });
+          var selectedDate = event.currentTarget.getAttribute('data-date');
+          var i = 0;
+          for (var date of this.dates) {
+            if (selectedDate == date) {
+              this.currentDateIndex = i;
+              this.$emit('periodChange', date);
+              break;
+            }
+            i++;
+          }
         }
       },
 
@@ -97,13 +144,12 @@
         return MoneviDateFormatter.formatDateDMYToMonthAndYear(date);
       },
 
-      formatMonthToDate(date: string): string {
+      formatMonthToDate(date: string | LocationQueryValue[]): string {
+        if (typeof date === 'object') {
+          return '';
+        }
         return MoneviDateFormatter.formatMonthAndYearToDateDMY(date);
       },
-    },
-
-    props: {
-      currentRouteName: String,
     },
   };
 </script>

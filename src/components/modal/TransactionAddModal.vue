@@ -67,7 +67,7 @@
               <label class="col-form-label text-md-left">Bukti Transaksi*</label>
               <div class="mb-3">
                 <input v-on:change="loadImage" class="form-control" type="file" id="formFile" /><br />
-                <img ref="sample" src="#" id="buktiTransaksi" style="width: 100%" />
+                <img v-if="imageSrc != '#'" v-bind:src="imageSrc" ref="sample" style="width: 100%" />
               </div>
             </div>
           </form>
@@ -98,6 +98,7 @@
         transactionType: 'Non Rutin',
         description: '',
         amount: 0,
+        imageSrc: '#',
       };
     },
 
@@ -119,16 +120,14 @@
       loadImage(event: any) {
         if (event.target != null) {
           var files: FileList = event.target.files;
-          var displayImage: any = this.$refs.sample;
           if (files.length != 0) {
-            displayImage.src = URL.createObjectURL(files[0]);
+            this.imageSrc = URL.createObjectURL(files[0]);
           }
         }
       },
 
       async submitTransaction() {
-        var imageHTMLElement: any = this.$refs.sample;
-        let blob = await fetch(imageHTMLElement.src).then((r) => r.blob());
+        let blob = await fetch(this.imageSrc).then((r) => r.blob());
 
         const reader = new FileReader();
         reader.readAsDataURL(blob);
@@ -142,40 +141,36 @@
           body.name = this.transactionName;
           body.transactionDate = MoneviDateFormatter.formatDate(this.date);
           body.amount = this.amount;
-          var generalLedgerAccountType = MoneviEnumConverter.convertGeneralLedgerAccountType(this.generalLedgerAccountType);
-          if (generalLedgerAccountType == null) {
-            console.error('invalid general ledger account type');
-            return;
-          }
-          body.generalLedgerAccountType = generalLedgerAccountType;
-          var entryPosition = MoneviEnumConverter.convertEntryPosition(this.entryPosition);
-          if (entryPosition == null) {
-            console.error('invalid entry position');
-            return;
-          }
-          body.entryPosition = entryPosition;
-          var transactionType = MoneviEnumConverter.convertTransactionType(this.transactionType);
-          if (transactionType == null) {
-            console.error('invalid category');
-            return;
-          }
-          body.type = transactionType;
+          body.generalLedgerAccountType = MoneviEnumConverter.convertGeneralLedgerAccountType(this.generalLedgerAccountType);
+          body.entryPosition = MoneviEnumConverter.convertEntryPosition(this.entryPosition);
+          body.type = MoneviEnumConverter.convertTransactionType(this.transactionType);
           body.description = this.description;
           body.proof = reader.result;
           return moneviAxios
-            .post(MoneviPath.CREATE_NEW_TRANSACTION_PATH, body)
+            .post(MoneviPath.CREATE_NEW_TRANSACTION_PATH, new Array<MoneviBodyCreateTransaction>(body))
             .then((response) => {
               alert('success in creating transaction');
-              // TODO: Update parent on success
-              URL.revokeObjectURL(imageHTMLElement.src);
-              if (this.$refs.closeModalButton instanceof HTMLButtonElement) {
-                this.$refs.closeModalButton.click();
+              URL.revokeObjectURL(this.imageSrc);
+              this.imageSrc = '#';
+              if (!(this.$refs.closeModalButton instanceof HTMLButtonElement)) {
+                return;
               }
+              this.$refs.closeModalButton.click();
+              this.$emit('successUpdate');
+              this.resetData();
             })
             .catch((error) => {
-              console.error(error.response.data.errorFields);
+              for (const key in error.response.data.errorFields) {
+                var errorMessage = error.response.data.errorFields[key];
+                alert(errorMessage);
+                break;
+              }
             });
         });
+      },
+
+      resetData() {
+        (this.date = 'NaN/NaN/NaN'), (this.generalLedgerAccountType = 'Bank'), (this.entryPosition = 'Debit'), (this.transactionName = ''), (this.transactionType = 'Non Rutin'), (this.description = ''), (this.amount = 0), (this.imageSrc = '#');
       },
     },
   };

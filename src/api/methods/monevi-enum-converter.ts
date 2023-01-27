@@ -13,34 +13,34 @@ class MoneviEnumConverter {
         return "";
     }
 
-    static convertTransactionType(transactionType: string): string | null {
+    static convertTransactionType(transactionType: string): string {
         if (transactionType === "Non Rutin") {
             return "NON_DAILY";
         }
         else if (transactionType === "Rutin") {
             return "DAILY";
         }
-        return null;
+        return "";
     }
 
-    static convertGeneralLedgerAccountType(generalLedgerAccountType: string): string | null{
+    static convertGeneralLedgerAccountType(generalLedgerAccountType: string): string {
         if (generalLedgerAccountType === "Kas") {
             return "CASH";
         }
         else if (generalLedgerAccountType === "Bank") {
             return "BANK";
         }
-        return null;
+        return "";
     }
 
-    static convertEntryPosition(entryPosition: string): string | null{
+    static convertEntryPosition(entryPosition: string): string {
         if (entryPosition === "Debit") {
             return "DEBIT";
         }
         else if (entryPosition === "Kredit") {
             return "CREDIT";
         }
-        return null;
+        return "";
     }
 
 }

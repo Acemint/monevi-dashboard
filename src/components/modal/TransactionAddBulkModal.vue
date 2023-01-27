@@ -4,7 +4,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">Impor Transaksi</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <button type="button" class="close" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
@@ -17,7 +17,7 @@
           <p>Berikut <a download href="public/src/template/monevi_template_bulk_add_transaction.xlsx">file contoh</a> template untuk impor transaksi.</p>
         </div>
         <div class="modal-footer bg-whitesmoke br">
-          <button v-on:click="closeModal" ref="closeModalButton" type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+          <button v-on:click="closeModal" ref="closeModalButton" type="button" class="btn btn-secondary">Tutup</button>
           <button v-on:click="sendReport" type="button" class="btn btn-danger">Tambah Transaksi</button>
         </div>
       </div>

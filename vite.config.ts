@@ -11,6 +11,7 @@ export default defineConfig({
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
       public: fileURLToPath(new URL('./public', import.meta.url)),
+      node_modules: fileURLToPath(new URL('./node_modules', import.meta.url)),
     },
   },
 });

@@ -35,7 +35,7 @@
             <p>Apakah Anda ingin menyetujui laporan ini dan mengirimkannya ke pengawas?</p>
           </div>
           <div class="modal-footer bg-whitesmoke br">
-            <button v-on:click="closeModal" ref="closeModalButton" type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+            <button v-on:click="closeModal" ref="closeModalButton" type="button" class="btn btn-secondary">Tutup</button>
             <button v-on:click="approveReport" type="button" class="btn btn-primary">Ya</button>
           </div>
         </div>
@@ -49,7 +49,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title">Setujui Laporan</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <button type="button" class="close" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>

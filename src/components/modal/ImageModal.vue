@@ -1,6 +1,6 @@
 <template>
   <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" id="imageModal">
-    <div class="modal-dialog modal-dialog-centered" data-dismiss="modal">
+    <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <img v-if="imageSrc" v-bind:src="convertByteToImageSrc(imageSrc)" class="img-responsive" style="width: 100%" />
       </div>

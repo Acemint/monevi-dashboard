@@ -1,9 +1,11 @@
 import moneviAxios from '../configuration/monevi-axios';
+import { MoneviCookieHandler } from '../methods/monevi-cookie-handler';
 import type { MoneviBodyRegisterStudent } from '../model/monevi-config';
 import { MoneviPath } from '../path/path';
 
 export interface AuthorizationApi {
   login(username: string, password: string): any;
+  logout(): any;
   register(
     nim: string,
     fullName: string,
@@ -25,7 +27,33 @@ export class AuthorizationApiImpl implements AuthorizationApi {
     body.username = username;
     body.password = password;
 
-    return await moneviAxios.post(MoneviPath.LOGIN_PATH, body);
+    return await moneviAxios.post(MoneviPath.LOGIN_PATH, body).then((response) => {
+      var user = response.data.value;
+
+      MoneviCookieHandler.setCookie('id', user.id);
+      MoneviCookieHandler.setCookie('fullname', user.fullname);
+      MoneviCookieHandler.setCookie('username', user.username);
+      MoneviCookieHandler.setCookie('email', user.email);
+      MoneviCookieHandler.setCookie('role', user.role);
+      MoneviCookieHandler.setCookie('jwt', user.accessToken);
+      MoneviCookieHandler.setCookie('type', user.accessToken);
+      MoneviCookieHandler.setCookie('organizationRegionId', user.organizationRegionId);
+      MoneviCookieHandler.setCookie('regionId', user.regionId);
+      moneviAxios.defaults.headers.common['Authorization'] = `Bearer ${user.accessToken}`;
+    });
+  }
+
+  async logout(): Promise<any> {
+    MoneviCookieHandler.deleteCookie('id');
+    MoneviCookieHandler.deleteCookie('fullname');
+    MoneviCookieHandler.deleteCookie('username');
+    MoneviCookieHandler.deleteCookie('email');
+    MoneviCookieHandler.deleteCookie('role');
+    MoneviCookieHandler.deleteCookie('jwt');
+    MoneviCookieHandler.deleteCookie('type');
+    MoneviCookieHandler.deleteCookie('organizationRegionId');
+    MoneviCookieHandler.deleteCookie('regionId');
+    moneviAxios.defaults.headers.common['Authorization'] = null;
   }
 
   async register(

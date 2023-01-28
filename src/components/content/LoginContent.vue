@@ -14,7 +14,15 @@
               <form v-on:submit="submit">
                 <div class="form-group">
                   <label for="email">Email</label>
-                  <input v-model="username" id="email" type="email" class="form-control" name="email" tabindex="1" required autofocus />
+                  <input
+                    v-model="username"
+                    id="email"
+                    type="email"
+                    class="form-control"
+                    name="email"
+                    tabindex="1"
+                    required
+                    autofocus />
                   <div class="invalid-feedback">Please fill in your email</div>
                 </div>
 
@@ -25,7 +33,14 @@
                       <router-link to="/forgot-password" class="text-small"> Forgot Password? </router-link>
                     </div>
                   </div>
-                  <input v-model="password" id="password" type="password" class="form-control" name="password" tabindex="2" required />
+                  <input
+                    v-model="password"
+                    id="password"
+                    type="password"
+                    class="form-control"
+                    name="password"
+                    tabindex="2"
+                    required />
                   <div class="invalid-feedback">please fill in your password</div>
                 </div>
 
@@ -57,33 +72,17 @@
   import SimpleHeader from '@/components/header/SimpleHeader.vue';
   import SimpleFooter from '@/components/footer/SimpleFooter.vue';
   import { authorizationApi } from '@/api/service/authorization-api';
-  import type { MoneviToken } from '@/api/model/monevi-model';
-  import { MoneviCookieHandler } from '@/api/methods/monevi-cookie-handler';
 
   export default {
     methods: {
       async submit(event: Event) {
         event.preventDefault();
 
-        await authorizationApi
-          .login(this.username, this.password)
-          .then((response) => {
-            const user: MoneviToken = response.data.value;
-            MoneviCookieHandler.setCookie('id', user.id);
-            MoneviCookieHandler.setCookie('fullname', user.fullname);
-            MoneviCookieHandler.setCookie('username', user.username);
-            MoneviCookieHandler.setCookie('email', user.email);
-            MoneviCookieHandler.setCookie('role', user.role);
-            MoneviCookieHandler.setCookie('jwt', user.accessToken);
-            MoneviCookieHandler.setCookie('type', user.accessToken);
-            MoneviCookieHandler.setCookie('organizationRegionId', user.organizationRegionId);
-            MoneviCookieHandler.setCookie('regionId', user.regionId);
-          })
-          .catch((error) => {
-            if (error.response.status == 401) {
-              alert('Username / Password yang Anda masukkan salah');
-            }
-          });
+        await authorizationApi.login(this.username, this.password).catch((error) => {
+          if (error.response.status == 401) {
+            alert('Username / Password yang Anda masukkan salah');
+          }
+        });
         this.$router.push('/dashboard');
       },
     },

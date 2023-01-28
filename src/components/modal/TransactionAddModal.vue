@@ -59,7 +59,13 @@
                 <div class="input-group-prepend">
                   <span class="input-group-text">Rp</span>
                 </div>
-                <input v-model="amount" id="jumlah" type="text" class="form-control" name="jumlah" aria-label="Jumlah (dalam rupiah)" />
+                <input
+                  v-model="amount"
+                  id="jumlah"
+                  type="text"
+                  class="form-control"
+                  name="jumlah"
+                  aria-label="Jumlah (dalam rupiah)" />
               </div>
             </div>
 
@@ -141,7 +147,9 @@
           body.name = this.transactionName;
           body.transactionDate = MoneviDateFormatter.formatDate(this.date);
           body.amount = this.amount;
-          body.generalLedgerAccountType = MoneviEnumConverter.convertGeneralLedgerAccountType(this.generalLedgerAccountType);
+          body.generalLedgerAccountType = MoneviEnumConverter.convertGeneralLedgerAccountType(
+            this.generalLedgerAccountType
+          );
           body.entryPosition = MoneviEnumConverter.convertEntryPosition(this.entryPosition);
           body.type = MoneviEnumConverter.convertTransactionType(this.transactionType);
           body.description = this.description;
@@ -170,7 +178,14 @@
       },
 
       resetData() {
-        (this.date = 'NaN/NaN/NaN'), (this.generalLedgerAccountType = 'Bank'), (this.entryPosition = 'Debit'), (this.transactionName = ''), (this.transactionType = 'Non Rutin'), (this.description = ''), (this.amount = 0), (this.imageSrc = '#');
+        (this.date = 'NaN/NaN/NaN'),
+          (this.generalLedgerAccountType = 'Bank'),
+          (this.entryPosition = 'Debit'),
+          (this.transactionName = ''),
+          (this.transactionType = 'Non Rutin'),
+          (this.description = ''),
+          (this.amount = 0),
+          (this.imageSrc = '#');
       },
     },
   };

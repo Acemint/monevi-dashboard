@@ -1,5 +1,4 @@
 import moneviAxios from '../configuration/monevi-axios';
-import { getAuthorizationCredentialForAxios } from '../configuration/monevi-axios-helper';
 import { MoneviPath } from '../path/path';
 
 export interface RegionApi {
@@ -8,7 +7,7 @@ export interface RegionApi {
 
 export class RegionApiImpl implements RegionApi {
   async getRegions(): Promise<any> {
-    return await moneviAxios.get(MoneviPath.GET_REGIONS_PATH, { headers: getAuthorizationCredentialForAxios() });
+    return await moneviAxios.get(MoneviPath.GET_REGIONS_PATH);
   }
 }
 

@@ -1,5 +1,4 @@
 import moneviAxios from '../configuration/monevi-axios';
-import { getAuthorizationCredentialForAxios } from '../configuration/monevi-axios-helper';
 import { MoneviPath } from '../path/path';
 
 export interface OrganizationApi {
@@ -17,7 +16,6 @@ export class OrganizationApiImpl implements OrganizationApi {
     }
     return await moneviAxios.get(MoneviPath.GET_ORGANIZATIONS_PATH, {
       params: params,
-      headers: getAuthorizationCredentialForAxios(),
     });
   }
 }

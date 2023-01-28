@@ -22,7 +22,6 @@
 
 <script lang="ts">
   import moneviAxios from '@/api/configuration/monevi-axios';
-  import { MoneviAPI } from '@/api/methods/monevi-api';
   import type { MoneviParamsDeclineStudent } from '@/api/model/monevi-config';
   import { MoneviPath } from '@/api/path/path';
 
@@ -67,12 +66,6 @@
         var rejectStudentModal: JQuery<HTMLDivElement> = $('#rejectStudent');
         rejectStudentModal.modal('hide');
       },
-    },
-
-    data: function () {
-      return {
-        monevi_api: new MoneviAPI(),
-      };
     },
   };
 </script>

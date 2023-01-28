@@ -16,7 +16,15 @@
               <form v-on:submit="requestForgetPassword">
                 <div class="form-group">
                   <label for="email">Email</label>
-                  <input v-model="inputEmail" id="email" type="email" class="form-control" name="email" tabindex="1" required autofocus />
+                  <input
+                    v-model="inputEmail"
+                    id="email"
+                    type="email"
+                    class="form-control"
+                    name="email"
+                    tabindex="1"
+                    required
+                    autofocus />
                 </div>
 
                 <div class="form-group">
@@ -36,7 +44,6 @@
 </template>
 
 <script lang="ts">
-  import { MoneviAPI } from '@/api/methods/monevi-api';
   import SimpleHeader from '@/components/header/SimpleHeader.vue';
   import SimpleFooter from '@/components/footer/SimpleFooter.vue';
   import ForgotPasswordSuccessModal from '@/components/modal/ForgotPasswordSuccessModal.vue';
@@ -45,7 +52,6 @@
   export default {
     data: function () {
       return {
-        monevi_api: new MoneviAPI(),
         inputEmail: '',
       };
     },

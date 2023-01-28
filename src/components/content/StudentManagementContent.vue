@@ -64,7 +64,9 @@
                   <td>{{ item.orgAbbreviation }}</td>
                   <td>{{ item.periodYear }}</td>
                   <td>
-                    <button v-on:click="openStudentAcceptModal" ref="acceptButton" class="btn btn-primary">Terima</button>
+                    <button v-on:click="openStudentAcceptModal" ref="acceptButton" class="btn btn-primary">
+                      Terima
+                    </button>
                     <button v-on:click="openStudentRejectModal" ref="rejectButton" class="btn btn-danger">Tolak</button>
                   </td>
                 </tr>
@@ -76,15 +78,18 @@
     </div>
   </section>
 
-  <StudentManagementAcceptStudentModal ref="studentAcceptModal" v-bind:studentId="studentId" v-on:success-update="getLockedStudents" />
-  <StudentManagementRejectStudentModal ref="studentRejectModal" v-bind:studentId="studentId" v-on:success-update="getLockedStudents" />
+  <StudentManagementAcceptStudentModal
+    ref="studentAcceptModal"
+    v-bind:studentId="studentId"
+    v-on:success-update="getLockedStudents" />
+  <StudentManagementRejectStudentModal
+    ref="studentRejectModal"
+    v-bind:studentId="studentId"
+    v-on:success-update="getLockedStudents" />
 </template>
 
 <script lang="ts">
-  // TODO: Search button applies to all properties not only to name
-  // TODO: Ignore case on search from API
   import moneviAxios from '@/api/configuration/monevi-axios';
-  import { MoneviAPI } from '@/api/methods/monevi-api';
   import { MoneviDisplayFormatter } from '@/api/methods/monevi-display-formatter';
   import { MoneviEnumConverter } from '@/api/methods/monevi-enum-converter';
   import type { MoneviParamsGetStudents } from '@/api/model/monevi-config';
@@ -195,7 +200,6 @@
 
     data: function () {
       return {
-        monevi_api: new MoneviAPI(),
         roleFilter: 'Semua',
         searchTerm: '',
         lockedStudents: new Array<UserAccountDetails>(),

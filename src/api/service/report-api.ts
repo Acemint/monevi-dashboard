@@ -1,31 +1,43 @@
 import { moneviAxios } from '../configuration/monevi-axios';
 import type { MoneviParamsGetReports, MoneviParamsSummarizeReport } from '@/api/model/monevi-config';
 import { MoneviPath } from '../path/path';
-import { MoneviDateFormatter } from '../methods/monevi-date-formatter';
 import { MoneviReportSummary } from '../model/monevi-model';
 
 export interface ReportApi {
-  getReports(organizationRegionId: string, date: string): any;
+  getReports(
+    regionId: string | null,
+    organizationRegionId: string | null,
+    startDate: string | null,
+    endDate: string | null,
+    reportStatus: string | null
+  ): any;
   summarizeReport(organizationRegionId: string, date: string): any;
 }
 
 export class ReportApiImpl implements ReportApi {
-  async getReports(organizationRegionId: string, date: string): Promise<any> {
+  async getReports(
+    regionId: string | null,
+    organizationRegionId: string | null,
+    startDate: string | null,
+    endDate: string | null,
+    reportStatus: string | null
+  ): Promise<any> {
     var params = {} as MoneviParamsGetReports;
-    params.organizationRegionId = organizationRegionId;
-    var datesBetween = MoneviDateFormatter.getFirstDateAndLastDateOfADate(date);
-    params.startDate = datesBetween[0];
-    params.endDate = datesBetween[1];
+    if (regionId != null) {
+      params.regionId = regionId;
+    }
+    if (organizationRegionId != null) {
+      params.organizationRegionId = organizationRegionId;
+    }
+    if (startDate != null && endDate != null) {
+      params.startDate = startDate;
+      params.endDate = endDate;
+    }
+    if (reportStatus != null) {
+      params.reportStatus = reportStatus;
+    }
 
-    return moneviAxios
-      .get(MoneviPath.GET_REPORTS_PATH, { params: params })
-      .then((response) => {
-        return response.data.values;
-      })
-      .catch((error) => {
-        console.error('Internal Server Error, unable to get reports data');
-        return null;
-      });
+    return moneviAxios.get(MoneviPath.GET_REPORTS_PATH, { params: params });
   }
 
   async summarizeReport(organizationRegionId: string, date: string): Promise<any> {

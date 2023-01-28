@@ -156,6 +156,7 @@
   import { organizationRegionApi } from '@/api/service/organization-region-api';
   import { reportApi } from '@/api/service/report-api';
   import TransactionAddBulkRequestImageModal from '@/components/modal/TransactionAddBulkRequestImageModal.vue';
+  import { FrontendRouteName } from '@/constants/path';
 
   export default {
     data: function () {
@@ -179,7 +180,19 @@
       },
 
       async initData() {
-        this.currentMonthReports = await reportApi.getReports(this.userAccount.organizationRegionId, this.date);
+        var datesBetween = MoneviDateFormatter.getFirstDateAndLastDateOfADate(this.date);
+
+        await reportApi
+          .getReports(null, this.userAccount.organizationRegionId, datesBetween[0], datesBetween[1], null)
+          .then((response) => {
+            this.currentMonthReports = response.data.values;
+          })
+          .catch((error) => {
+            if (error.response.status == 500) {
+              this.$router.push({ name: FrontendRouteName.Error.ERROR_500 });
+              return;
+            }
+          });
         this.transactions = await transactionApi.getTransactions(this.userAccount.organizationRegionId, this.date);
         this.organizationRegion = await organizationRegionApi.getOrganization(this.userAccount.organizationRegionId);
       },

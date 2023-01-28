@@ -5,6 +5,10 @@
     </div>
 
     <div class="row">
+      <ReportUnapprovedBySupervisorCard />
+    </div>
+
+    <div class="row">
       <div class="col">
         <div class="card">
           <div class="card-header">
@@ -39,6 +43,7 @@
   import { MoneviDateFormatter } from '@/api/methods/monevi-date-formatter';
   import { historyApi } from '@/api/service/history-api';
   import { getHistoryMessage } from '@/util/history-util';
+  import ReportUnapprovedBySupervisorCard from '@/components/card/ReportUnapprovedBySupervisorCard.vue';
 
   export default {
     async beforeMount() {
@@ -65,5 +70,6 @@
         return MoneviDateFormatter.formatDate(date);
       },
     },
+    components: { ReportUnapprovedBySupervisorCard },
   };
 </script>

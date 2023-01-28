@@ -75,7 +75,18 @@
 
     methods: {
       async initData() {
-        var reports = await reportApi.getReports(this.organizationRegionId!, MoneviDateFormatter.minusMonth(this.date!));
+        var previousMonthDate = MoneviDateFormatter.minusMonth(this.date!);
+        var datesBetween = MoneviDateFormatter.getFirstDateAndLastDateOfADate(previousMonthDate);
+
+        var reports = await reportApi
+          .getReports(null, this.organizationRegionId!, datesBetween[0], datesBetween[1], null)
+          .then((response) => {
+            return response.data.values;
+          })
+          .catch((error) => {
+            console.log('Internal server error, unable to get previous month report');
+            return;
+          });
 
         this.setPreviousMonthbalance(reports);
         this.setTotalIncomeAndExpense();
@@ -120,7 +131,9 @@
       },
 
       formatRupiah(amount: number, entryPosition: string = 'DEBIT') {
-        return MoneviDisplayFormatter.toRupiah(MoneviDisplayFormatter.determineNumberByPositionType(amount, entryPosition));
+        return MoneviDisplayFormatter.toRupiah(
+          MoneviDisplayFormatter.determineNumberByPositionType(amount, entryPosition)
+        );
       },
     },
   };

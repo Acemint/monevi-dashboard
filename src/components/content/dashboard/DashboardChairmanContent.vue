@@ -10,7 +10,7 @@
           <div class="card-header">
             <h4>Recent Activities</h4>
           </div>
-          <div class="card-body">
+          <div class="card-body" v-if="histories.length != 0">
             <ul class="list-unstyled list-unstyled-border">
               <template v-for="history of histories">
                 <li class="media">
@@ -23,6 +23,10 @@
                 </li>
               </template>
             </ul>
+          </div>
+
+          <div class="card-body" v-else>
+            <p>Belum ada aktivitas yang dapat dilihat</p>
           </div>
         </div>
       </div>

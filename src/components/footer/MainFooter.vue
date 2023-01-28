@@ -1,7 +1,7 @@
 <template>
   <footer class="main-footer">
     <div class="footer-left">
-      Copyright &copy; 2022
+      Copyright &copy; 2023
       <div class="bullet"></div>
       Monevi
     </div>
@@ -10,5 +10,5 @@
 </template>
 
 <script lang="ts">
-export default {};
+  export default {};
 </script>

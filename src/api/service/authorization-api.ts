@@ -36,10 +36,10 @@ export class AuthorizationApiImpl implements AuthorizationApi {
       MoneviCookieHandler.setCookie('email', user.email);
       MoneviCookieHandler.setCookie('role', user.role);
       MoneviCookieHandler.setCookie('jwt', user.accessToken);
-      MoneviCookieHandler.setCookie('type', user.accessToken);
+      MoneviCookieHandler.setCookie('type', user.type);
       MoneviCookieHandler.setCookie('organizationRegionId', user.organizationRegionId);
       MoneviCookieHandler.setCookie('regionId', user.regionId);
-      moneviAxios.defaults.headers.common['Authorization'] = `Bearer ${user.accessToken}`;
+      moneviAxios.defaults.headers.common['Authorization'] = `${user.type} ${user.accessToken}`;
     });
   }
 

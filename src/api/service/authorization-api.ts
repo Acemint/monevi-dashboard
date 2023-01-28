@@ -16,6 +16,7 @@ export interface AuthorizationApi {
     role: string
   ): any;
   forgetPassword(email: string): any;
+  resetPassword(token: string, newPassword: string, confirmationPassword: string): any;
 }
 
 export class AuthorizationApiImpl implements AuthorizationApi {
@@ -58,6 +59,21 @@ export class AuthorizationApiImpl implements AuthorizationApi {
 
     return await moneviAxios.get(MoneviPath.REQUEST_RESET_PASSWORD_PATH, {
       params: params,
+      paramsSerializer: {
+        indexes: null,
+      },
+    });
+  }
+
+  async resetPassword(token: string, newPassword: string, confirmationPassword: string): Promise<any> {
+    var params = {} as { token: string };
+    var body = {} as { newPassword: string; confirmationPassword: string };
+    params.token = token;
+    body.newPassword = newPassword;
+    body.confirmationPassword = confirmationPassword;
+
+    return await moneviAxios.post(MoneviPath.RESET_PASSWORD_PATH, body, {
+      params,
       paramsSerializer: {
         indexes: null,
       },

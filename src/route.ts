@@ -16,6 +16,7 @@ import ReportDetails from '@/views/ReportDetails.vue';
 import Organization from '@/views/Organization.vue';
 import Error403 from '@/views/error/Error403.vue';
 import Error404 from '@/views/error/Error404.vue';
+import Error500 from './views/error/Error500.vue';
 import Path, { FrontendPath, FrontendRouteName } from '@/constants/path';
 import Role from '@/constants/role';
 import ResetPassword from '@/views/ResetPassword.vue';
@@ -132,7 +133,7 @@ const router = createRouter({
       ],
     },
     {
-      path: Path.UNAUTHORIZED,
+      path: FrontendPath.Error.ERROR_403,
       component: Error403,
       name: FrontendRouteName.Error.ERROR_403,
       meta: { title: 'Unauthorized' },
@@ -142,6 +143,12 @@ const router = createRouter({
       component: Error404,
       name: FrontendRouteName.Error.ERROR_404,
       meta: { title: 'Not Found' },
+    },
+    {
+      path: FrontendPath.Error.ERROR_500,
+      component: Error500,
+      name: FrontendRouteName.Error.ERROR_500,
+      meta: { title: 'Internal Server Error' },
     },
   ],
 });
@@ -163,7 +170,6 @@ router.beforeEach((to, from, next) => {
     if (!isUserAccessLoggedInPage(to.name)) {
       return next({ name: FrontendRouteName.DASHBOARD });
     }
-    console.log(isRoleUnallowedToAccessDestinationRoute(loggedIn.role, to.path));
     if (isRoleUnallowedToAccessDestinationRoute(loggedIn.role, to.name)) {
       return next({ name: FrontendRouteName.Error.ERROR_403 });
     }

@@ -4,6 +4,8 @@
       <h1>Dashboard - Bendahara</h1>
     </div>
 
+    <DashboardAmountCard />
+
     <div class="row">
       <div class="col">
         <div class="card">
@@ -38,6 +40,7 @@
   import { MoneviCookieHandler } from '@/api/methods/monevi-cookie-handler';
   import { MoneviDateFormatter } from '@/api/methods/monevi-date-formatter';
   import { historyApi } from '@/api/service/history-api';
+  import DashboardAmountCard from '@/components/card/DashboardAmountCard.vue';
   import { getHistoryMessage } from '@/util/history-util';
 
   export default {
@@ -65,5 +68,7 @@
         return MoneviDateFormatter.formatDate(date);
       },
     },
+
+    components: { DashboardAmountCard },
   };
 </script>

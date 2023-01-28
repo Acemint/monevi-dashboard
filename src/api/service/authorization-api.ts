@@ -22,12 +22,12 @@ export interface AuthorizationApi {
 }
 
 export class AuthorizationApiImpl implements AuthorizationApi {
-  async login(username: string, password: string): Promise<any> {
+  login(username: string, password: string): any {
     var body = {} as { username: string; password: string };
     body.username = username;
     body.password = password;
 
-    return await moneviAxios.post(MoneviPath.LOGIN_PATH, body).then((response) => {
+    return moneviAxios.post(MoneviPath.LOGIN_PATH, body).then((response) => {
       var user = response.data.value;
 
       MoneviCookieHandler.setCookie('id', user.id);
@@ -43,7 +43,7 @@ export class AuthorizationApiImpl implements AuthorizationApi {
     });
   }
 
-  async logout(): Promise<any> {
+  logout(): any {
     MoneviCookieHandler.deleteCookie('id');
     MoneviCookieHandler.deleteCookie('fullname');
     MoneviCookieHandler.deleteCookie('username');

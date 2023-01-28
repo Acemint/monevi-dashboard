@@ -78,12 +78,16 @@
       async submit(event: Event) {
         event.preventDefault();
 
-        await authorizationApi.login(this.username, this.password).catch((error) => {
-          if (error.response.status == 401) {
-            alert('Username / Password yang Anda masukkan salah');
-          }
-        });
-        this.$router.push('/dashboard');
+        authorizationApi
+          .login(this.username, this.password)
+          .then((response: any) => {
+            this.$router.push('/dashboard');
+          })
+          .catch((error: any) => {
+            if (error.response.status == 401) {
+              alert('Username / Password yang Anda masukkan salah');
+            }
+          });
       },
     },
 

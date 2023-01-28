@@ -98,8 +98,7 @@
 </template>
 
 <script lang="ts">
-  import moneviAxios from '@/api/configuration/monevi-axios';
-  import type { MoneviParamsGetOrganizations } from '@/api/model/monevi-config';
+  import { moneviAxios } from '@/api/configuration/monevi-axios';
   import type { Organization, Region } from '@/api/model/monevi-model';
   import { MoneviPath } from '@/api/path/path';
   import { organizationApi } from '@/api/service/organization-api';

@@ -1,4 +1,4 @@
-import moneviAxios from '../configuration/monevi-axios';
+import { moneviAxios } from '../configuration/monevi-axios';
 import type { MoneviParamsGetOrganizationRegion } from '@/api/model/monevi-config';
 import { MoneviPath } from '../path/path';
 

@@ -89,7 +89,7 @@
 </template>
 
 <script lang="ts">
-  import moneviAxios from '@/api/configuration/monevi-axios';
+  import { moneviAxios } from '@/api/configuration/monevi-axios';
   import { MoneviDisplayFormatter } from '@/api/methods/monevi-display-formatter';
   import { MoneviEnumConverter } from '@/api/methods/monevi-enum-converter';
   import type { MoneviParamsGetStudents } from '@/api/model/monevi-config';

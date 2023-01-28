@@ -20,4 +20,4 @@ moneviAxios.interceptors.response.use(
     }
   }
 );
-export default moneviAxios;
+export { moneviAxios };

@@ -1,4 +1,4 @@
-import moneviAxios from '../configuration/monevi-axios';
+import { moneviAxios } from '../configuration/monevi-axios';
 import { MoneviPath } from '../path/path';
 
 export interface RegionApi {

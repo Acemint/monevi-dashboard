@@ -24,7 +24,7 @@
 </template>
 
 <script lang="ts">
-  import moneviAxios from '@/api/configuration/monevi-axios';
+  import { moneviAxios } from '@/api/configuration/monevi-axios';
   import type { MoneviBodyRejectReport } from '@/api/model/monevi-config';
   import { MoneviPath } from '@/api/path/path';
 

@@ -1,4 +1,4 @@
-import moneviAxios from '../configuration/monevi-axios';
+import { moneviAxios } from '../configuration/monevi-axios';
 import { MoneviCookieHandler } from '../methods/monevi-cookie-handler';
 import type { MoneviBodyRegisterStudent } from '../model/monevi-config';
 import { MoneviPath } from '../path/path';
@@ -39,7 +39,6 @@ export class AuthorizationApiImpl implements AuthorizationApi {
       MoneviCookieHandler.setCookie('type', user.type);
       MoneviCookieHandler.setCookie('organizationRegionId', user.organizationRegionId);
       MoneviCookieHandler.setCookie('regionId', user.regionId);
-      moneviAxios.defaults.headers.common['Authorization'] = `${user.type} ${user.accessToken}`;
     });
   }
 
@@ -53,7 +52,6 @@ export class AuthorizationApiImpl implements AuthorizationApi {
     MoneviCookieHandler.deleteCookie('type');
     MoneviCookieHandler.deleteCookie('organizationRegionId');
     MoneviCookieHandler.deleteCookie('regionId');
-    moneviAxios.defaults.headers.common['Authorization'] = null;
   }
 
   async register(

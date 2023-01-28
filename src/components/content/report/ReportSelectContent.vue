@@ -27,10 +27,16 @@
                     <td>{{ item.termOfOffice }}</td>
                     <td>
                       <select class="form-control selectric" v-model="organizationsMonthSelections[index]">
-                        <option v-for="period of item.periodDate" v-bind:value="formatEpochToDate(period)">{{ formatEpochToDate(period) }}</option>
+                        <option v-for="period of item.periodDate" v-bind:value="formatEpochToDate(period)">
+                          {{ formatEpochToDate(period) }}
+                        </option>
                       </select>
                     </td>
-                    <td><button class="btn btn-primary" v-on:click="seeReportDetails" v-bind:data-index="index">Lihat Laporan</button></td>
+                    <td>
+                      <button class="btn btn-primary" v-on:click="seeReportDetails" v-bind:data-index="index">
+                        Lihat Laporan
+                      </button>
+                    </td>
                   </tr>
                 </template>
               </table>
@@ -43,7 +49,7 @@
 </template>
 
 <script lang="ts">
-  import moneviAxios from '@/api/configuration/monevi-axios';
+  import { moneviAxios } from '@/api/configuration/monevi-axios';
   import { MoneviDateFormatter } from '@/api/methods/monevi-date-formatter';
   import type { MoneviParamsGetOrganizationsWithReports } from '@/api/model/monevi-config';
   import { MoneviPath } from '@/api/path/path';
@@ -96,7 +102,12 @@
       setOrganizationsData(organizationsData: any): void {
         var organizationIdAndPeriodMap: Map<String, any> = new Map();
         for (var organizationData of organizationsData) {
-          if (!(organizationData.reportStatus == 'APPROVED_BY_CHAIRMAN' || organizationData.reportStatus == 'APPROVED_BY_SUPERVISOR')) {
+          if (
+            !(
+              organizationData.reportStatus == 'APPROVED_BY_CHAIRMAN' ||
+              organizationData.reportStatus == 'APPROVED_BY_SUPERVISOR'
+            )
+          ) {
             continue;
           }
           if (organizationIdAndPeriodMap.get(organizationData.organizationRegionId) == undefined) {
@@ -125,7 +136,10 @@
         }
         var index = parseInt(event.currentTarget.getAttribute('data-index')!);
         var selectedDate = this.organizationsMonthSelections[index];
-        this.$router.push({ name: FrontendRouteName.Report.DETAILS, query: { organization: this.organizations[index].organizationRegionId, period: selectedDate } });
+        this.$router.push({
+          name: FrontendRouteName.Report.DETAILS,
+          query: { organization: this.organizations[index].organizationRegionId, period: selectedDate },
+        });
       },
 
       formatEpochToDate(milliseconds: number) {

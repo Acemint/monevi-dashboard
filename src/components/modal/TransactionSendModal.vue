@@ -17,7 +17,13 @@
                 <div class="input-group-prepend">
                   <span class="input-group-text">Rp</span>
                 </div>
-                <input v-model="cashOpname" id="jumlah" type="text" class="form-control" name="jumlah" aria-label="Jumlah (dalam rupiah)" />
+                <input
+                  v-model="cashOpname"
+                  id="jumlah"
+                  type="text"
+                  class="form-control"
+                  name="jumlah"
+                  aria-label="Jumlah (dalam rupiah)" />
               </div>
             </div>
             <div class="form-group">
@@ -26,7 +32,13 @@
                 <div class="input-group-prepend">
                   <span class="input-group-text">Rp</span>
                 </div>
-                <input v-model="bankOpname" id="jumlah" type="text" class="form-control" name="jumlah" aria-label="Jumlah (dalam rupiah)" />
+                <input
+                  v-model="bankOpname"
+                  id="jumlah"
+                  type="text"
+                  class="form-control"
+                  name="jumlah"
+                  aria-label="Jumlah (dalam rupiah)" />
               </div>
             </div>
           </form>
@@ -42,7 +54,7 @@
 </template>
 
 <script lang="ts">
-  import moneviAxios from '@/api/configuration/monevi-axios';
+  import { moneviAxios } from '@/api/configuration/monevi-axios';
   import { MoneviDateFormatter } from '@/api/methods/monevi-date-formatter';
   import type { MoneviBodySubmitReport } from '@/api/model/monevi-config';
   import { MoneviPath } from '@/api/path/path';

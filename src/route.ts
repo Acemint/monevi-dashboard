@@ -198,7 +198,8 @@ function isRoleUnallowedToAccessDestinationRoute(
 router.afterEach((to, from, next) => {
   // assign title to web after moving between page
   nextTick(() => {
-    document.title = to.meta.title!.toString() || 'Monevi';
+    var meta: any = to.meta;
+    document.title = meta.title!.toString() || 'Monevi';
   });
 });
 

@@ -21,7 +21,7 @@
 </template>
 
 <script lang="ts">
-  import moneviAxios from '@/api/configuration/monevi-axios';
+  import { moneviAxios } from '@/api/configuration/monevi-axios';
   import type { MoneviParamsAcceptStudent } from '@/api/model/monevi-config';
   import { MoneviPath } from '@/api/path/path';
   import StudentManagementContent from '../content/StudentManagementContent.vue';

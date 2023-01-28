@@ -92,7 +92,7 @@
   import type { MoneviBodyCreateTransaction } from '@/api/model/monevi-config';
   import { MoneviDateFormatter } from '@/api/methods/monevi-date-formatter';
   import { MoneviEnumConverter } from '@/api/methods/monevi-enum-converter';
-  import moneviAxios from '@/api/configuration/monevi-axios';
+  import { moneviAxios } from '@/api/configuration/monevi-axios';
 
   export default {
     data: function () {

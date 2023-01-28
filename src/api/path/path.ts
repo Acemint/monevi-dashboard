@@ -29,13 +29,10 @@ const WITH_PROGRAM: string = '/program-exists';
 const WITH_REPORT: string = '/report-exists';
 const CONVERT_EXCEL = '/convert-excel';
 const HISTORY: string = '/history';
+const WALLET: string = '/wallet';
+const CALCULATE: string = '/calculate';
 
-const GET_REGIONS_PATH: string = REGIONS + GET_ALL;
-const GET_ORGANIZATIONS_PATH: string = ORGANIZATIONS + GET_ALL;
-const LOGIN_PATH: string = USER + AUTH + LOGIN;
-const CREATE_NEW_PROGRAM_PATH: string = PROGRAM + CREATE_NEW;
-
-export { MONEVI_BASE_URL, GET_REGIONS_PATH, GET_ORGANIZATIONS_PATH, LOGIN_PATH, CREATE_NEW_PROGRAM_PATH };
+export { MONEVI_BASE_URL };
 
 class MoneviPath {
   static GET_ORGANIZATIONS_PATH = ORGANIZATIONS + GET_ALL;
@@ -67,6 +64,7 @@ class MoneviPath {
   static LOCK_PROGRAM_PATH = PROGRAM + LOCK;
   static DELETE_PROGRAM_PATH = PROGRAM + DELETE;
   static GET_HISTORIES_PATH = HISTORY + GET_ALL;
+  static GET_WALLET_AMOUNT_PATH = WALLET + CALCULATE;
 }
 
 export { MoneviPath };

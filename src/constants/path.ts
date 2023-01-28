@@ -41,6 +41,12 @@ class FrontendPath {
     static ROOT = '/program-kerja';
     static DETAILS = 'details';
   };
+
+  static Error = class FrontendErrorPath {
+    static ERROR_404 = '/404-not-found';
+    static ERROR_403 = '/403-unauthorized';
+    static ERROR_500 = '/500-internal-server-error';
+  };
 }
 
 class FrontendRouteName {
@@ -56,6 +62,7 @@ class FrontendRouteName {
   static Error = class FrontendErrorRouteName {
     static ERROR_404 = '404';
     static ERROR_403 = '403';
+    static ERROR_500 = '500';
   };
 
   static Transaction = class FrontendRouteNameTransaction {

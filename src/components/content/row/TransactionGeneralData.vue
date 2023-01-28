@@ -1,41 +1,54 @@
 <template>
   <div class="row">
-    <div class="col-lg-4 col-md-6 col-sm-6 col-12">
+    <div class="col-lg-3 col-md-6 col-sm-6 col-12">
       <div class="card card-statistic-1">
         <div class="card-icon bg-primary">
           <i class="fas fa-regular fa-wallet"></i>
         </div>
         <div class="card-wrap">
           <div class="card-header">
-            <h4>Total Saldo</h4>
+            <h4>Total Saldo Keseluruhan</h4>
           </div>
-          <div class="card-body">{{ totalPreviousMonthBalance }}</div>
+          <div class="card-body">{{ formatRupiah(totalCurrentMonthBalance) }}</div>
         </div>
       </div>
     </div>
-    <div class="col-lg-4 col-md-6 col-sm-6 col-12">
+    <div class="col-lg-3 col-md-6 col-sm-6 col-12">
       <div class="card card-statistic-1">
-        <div class="card-icon bg-danger">
-          <i class="fas fa-minus"></i>
+        <div class="card-icon bg-primary">
+          <i class="fas fa-regular fa-calendar"></i>
         </div>
         <div class="card-wrap">
           <div class="card-header">
-            <h4>Total Pengeluaran</h4>
+            <h4>Total Saldo Bulan Sebelumnya</h4>
           </div>
-          <div class="card-body">{{ formatRupiah(totalExpense) }}</div>
+          <div class="card-body">{{ formatRupiah(getSumPreviousMonthBalance()) }}</div>
         </div>
       </div>
     </div>
-    <div class="col-lg-4 col-md-6 col-sm-6 col-12">
+    <div class="col-lg-3 col-md-6 col-sm-6 col-12">
       <div class="card card-statistic-1">
         <div class="card-icon bg-primary">
           <i class="fas fa-plus"></i>
         </div>
         <div class="card-wrap">
           <div class="card-header">
-            <h4>Total Pendapatan</h4>
+            <h4>Total Pendapatan Bulan Ini</h4>
           </div>
           <div class="card-body">{{ formatRupiah(totalIncome) }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-6 col-sm-6 col-12">
+      <div class="card card-statistic-1">
+        <div class="card-icon bg-danger">
+          <i class="fas fa-minus"></i>
+        </div>
+        <div class="card-wrap">
+          <div class="card-header">
+            <h4>Total Pengeluaran Bulan Ini</h4>
+          </div>
+          <div class="card-body">{{ formatRupiah(totalExpense) }}</div>
         </div>
       </div>
     </div>
@@ -46,7 +59,8 @@
   import { MoneviDateFormatter } from '@/api/methods/monevi-date-formatter';
   import { MoneviDisplayFormatter } from '@/api/methods/monevi-display-formatter';
   import type { Transaction } from '@/api/model/monevi-model';
-  import { reportApi } from '@/api/service/report-api';
+  import { transactionApi } from '@/api/service/transaction-api';
+  import { walletApi } from '@/api/service/wallet-api';
 
   export default {
     props: {
@@ -59,55 +73,33 @@
       return {
         totalIncome: 0,
         totalExpense: 0,
-        totalPreviousMonthBalance: '',
+        totalCurrentMonthBalance: 0,
+        previousMonthTransactions: new Array<Transaction>(),
       };
     },
 
     watch: {
-      date(newDate, oldDate) {
-        this.initData();
+      async date(newDate, oldDate) {
+        await this.initData();
       },
 
-      transactions(oldTransactions, newTransactions) {
-        this.initData();
+      async organizationRegionId(newOrganizationRegionId, oldOrganizationRegionId) {
+        await this.initData();
+      },
+
+      async transactions(oldTransactions, newTransactions) {
+        await this.initData();
       },
     },
 
     methods: {
       async initData() {
-        var reports = await reportApi.getReports(this.organizationRegionId!, MoneviDateFormatter.minusMonth(this.date!));
-
-        this.setPreviousMonthbalance(reports);
         this.setTotalIncomeAndExpense();
-      },
-
-      setPreviousMonthbalance(previousMonthReports: any) {
-        // Uncomment this if only want to update once
-        // if (this.totalPreviousMonthBalance != '') {
-        //   return;
-        // }
-
-        if (previousMonthReports == null || previousMonthReports.length == 0) {
-          this.totalPreviousMonthBalance = 'N/A';
-          return;
-        }
-        if (previousMonthReports[0].status != 'APPROVED_BY_SUPERVISOR') {
-          this.totalPreviousMonthBalance = 'N/A';
-          return;
-        }
-        var totalBalance = 0;
-        for (var generalLedgerAccount of previousMonthReports[0].generalLedgerAccountValues) {
-          totalBalance += generalLedgerAccount.amount;
-        }
-        this.totalPreviousMonthBalance = this.formatRupiah(totalBalance);
+        await this.setCurrentMonthBalance();
+        await this.setPreviousMonthBalance();
       },
 
       setTotalIncomeAndExpense() {
-        // Uncomment this if only want to update once
-        // if (this.totalExpense != 0 || this.totalIncome != 0) {
-        //   return;
-        // }
-
         this.totalIncome = 0;
         this.totalExpense = 0;
         for (var transaction of this.transactions!) {
@@ -119,8 +111,62 @@
         }
       },
 
+      async setCurrentMonthBalance() {
+        if (this.organizationRegionId == null) {
+          return;
+        }
+
+        var cash = await walletApi
+          .getWallet('CASH', this.organizationRegionId!)
+          .then((response) => {
+            return response.data.value.total;
+          })
+          .catch((error) => {
+            return 'N/A';
+          });
+
+        var bank = await walletApi
+          .getWallet('BANK', this.organizationRegionId!)
+          .then((response) => {
+            return response.data.value.total;
+          })
+          .catch((error) => {
+            return 'N/A';
+          });
+
+        if (bank == 'N/A' || cash == 'N/A') {
+          this.totalCurrentMonthBalance = 0;
+          return;
+        }
+        var total = bank + cash;
+        this.totalCurrentMonthBalance = bank + cash;
+      },
+
+      async setPreviousMonthBalance() {
+        this.previousMonthTransactions = new Array<Transaction>();
+        this.previousMonthTransactions = await transactionApi.getTransactions(
+          this.organizationRegionId!,
+          MoneviDateFormatter.minusMonth(this.date!)
+        );
+        console.log(this.previousMonthTransactions);
+      },
+
+      getSumPreviousMonthBalance() {
+        var total = 0;
+        for (var previousMonthTransaction of this.previousMonthTransactions) {
+          if (previousMonthTransaction.entryPosition == 'DEBIT') {
+            total += previousMonthTransaction.amount;
+          } else {
+            total -= previousMonthTransaction.amount;
+          }
+        }
+        return total;
+      },
+
       formatRupiah(amount: number, entryPosition: string = 'DEBIT') {
-        return MoneviDisplayFormatter.toRupiah(MoneviDisplayFormatter.determineNumberByPositionType(amount, entryPosition));
+        return MoneviDisplayFormatter.toRupiah(
+          MoneviDisplayFormatter.determineNumberByPositionType(amount, entryPosition)
+        );
       },
     },
   };

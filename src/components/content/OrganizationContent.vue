@@ -4,7 +4,9 @@
       <h1>Kelola Organisasi</h1>
       <div style="display: flex">
         <div class="section-header-button">
-          <button class="btn btn-primary" v-on:click="openOrganizationAddNewModal($event)">Tambah Organisasi Kemahasiswaan</button>
+          <button class="btn btn-primary" v-on:click="openOrganizationAddNewModal($event)">
+            Tambah Organisasi Kemahasiswaan
+          </button>
         </div>
       </div>
     </div>
@@ -89,14 +91,19 @@
     </div>
   </section>
 
-  <OrganizationAddOrganizationModal v-on:success-add-organization="initializeData" v-bind:regions="regions" ref="organizationAddOrganizationModal" />
+  <OrganizationAddOrganizationModal
+    v-on:success-add-organization="initializeData"
+    v-bind:regions="regions"
+    ref="organizationAddOrganizationModal" />
 </template>
 
 <script lang="ts">
-  import moneviAxios from '@/api/configuration/monevi-axios';
-  import type { MoneviParamsGetOrganizations } from '@/api/model/monevi-config';
+  import { moneviAxios } from '@/api/configuration/monevi-axios';
   import type { Organization, Region } from '@/api/model/monevi-model';
   import { MoneviPath } from '@/api/path/path';
+  import { organizationApi } from '@/api/service/organization-api';
+  import { regionApi } from '@/api/service/region-api';
+  import { FrontendRouteName } from '@/constants/path';
   import OrganizationAddOrganizationModal from '../modal/OrganizationAddOrganizationModal.vue';
 
   export default {
@@ -123,8 +130,17 @@
 
     methods: {
       async initializeData() {
-        this.regions = await this.getRegions();
-        this.organizations = await this.getOrganizations();
+        this.regions = new Array<Region>();
+        this.organizations = new Array<Organization>();
+
+        try {
+          await this.getRegions();
+          await this.getOrganizations();
+          console.log(this.organizations, this.regions);
+        } catch (error) {
+          this.$router.push({ name: FrontendRouteName.Error.ERROR_500 });
+        }
+
         this.$nextTick(() => {
           this.initializeTable();
         });
@@ -160,46 +176,23 @@
       },
 
       async getRegions() {
-        var regions: Array<Region> = new Array<Region>();
-        await moneviAxios
-          .get(MoneviPath.GET_REGIONS_PATH, {
-            params: {},
-            paramsSerializer: {
-              indexes: null,
-            },
-          })
-          .then((response) => {
-            regions = response.data.values;
-          })
-          .catch((error) => {
-            console.error('internal server error, unable to get regions');
-            return;
-          });
-        return regions;
+        await regionApi.getRegions().then((response) => {
+          this.regions = response.data.values;
+        });
       },
 
       async getOrganizations() {
-        var params = {} as MoneviParamsGetOrganizations;
+        var regionName = null;
         if (this.regionFilter != 'Semua') {
-          params.regionName = this.regionFilter.split('Binus @')[1];
+          regionName = this.regionFilter.split('Binus @')[1];
         }
-        params.searchTerm = this.searchTerm;
-        var organizations: Array<Organization> = new Array<Organization>();
-        await moneviAxios
-          .get(MoneviPath.GET_ORGANIZATIONS_PATH, {
-            params: params,
-            paramsSerializer: {
-              indexes: null,
-            },
-          })
-          .then((response) => {
-            organizations = response.data.values;
-          })
-          .catch((error) => {
-            console.error('internal server error, unable to get organization');
-            return;
-          });
-        return organizations;
+        var searchTerm = null;
+        if (this.searchTerm != '') {
+          searchTerm = this.searchTerm;
+        }
+        await organizationApi.getOrganizations(regionName, searchTerm).then((response) => {
+          this.organizations = response.data.values;
+        });
       },
 
       openOrganizationAddNewModal(event: MouseEvent) {

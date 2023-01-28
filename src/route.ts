@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router';
+import { createRouter, createWebHistory, type RouteRecordName } from 'vue-router';
 import { nextTick } from 'vue';
 
 import { MoneviCookieHandler } from '@/api/methods/monevi-cookie-handler';
@@ -16,25 +16,26 @@ import ReportDetails from '@/views/ReportDetails.vue';
 import Organization from '@/views/Organization.vue';
 import Error403 from '@/views/error/Error403.vue';
 import Error404 from '@/views/error/Error404.vue';
+import Error500 from './views/error/Error500.vue';
 import Path, { FrontendPath, FrontendRouteName } from '@/constants/path';
 import Role from '@/constants/role';
 import ResetPassword from '@/views/ResetPassword.vue';
 
 // Define category of pages
-const NON_LOGGED_IN_PATHS: string[] = [
-  Path.LOGIN,
-  Path.REGISTER,
-  Path.FORGOT_PASSWORD,
-  FrontendPath.RESET_PASSSWORD,
-  '/',
-  '/home',
-  '/index',
+const NON_LOGGED_IN_ROUTE_NAMES: string[] = [
+  FrontendRouteName.INDEX,
+  FrontendRouteName.LOGIN,
+  FrontendRouteName.REGISTER,
+  FrontendRouteName.FORGOT_PASSWORD,
+  FrontendRouteName.RESET_PASSWORD,
 ];
-const ROLE_SPECIFIC_PATHS: { [key: string]: string[] } = {
-  supervisor: [Path.STUDENT_MANAGEMENT, FrontendPath.ORGANIZATION, FrontendPath.Program.ROOT, FrontendPath.Report.ROOT],
-  chairman: [],
-  treasurer: [],
-};
+
+const SUPERVISOR_ONLY_ROUTE_NAME: string[] = [
+  FrontendRouteName.STUDENT_MANAGEMENT,
+  FrontendRouteName.ORGANIZATION,
+  FrontendRouteName.Program.ROOT,
+  FrontendRouteName.Report.ROOT,
+];
 
 const router = createRouter({
   history: createWebHistory(),
@@ -105,7 +106,7 @@ const router = createRouter({
       meta: { title: 'Organization' },
     },
     {
-      path: FrontendPath.Transaction.ROOT + '/:period?',
+      path: FrontendPath.Transaction.ROOT,
       meta: { title: 'Transaction' },
       children: [
         {
@@ -116,7 +117,7 @@ const router = createRouter({
       ],
     },
     {
-      path: FrontendPath.Report.ROOT + '/:period?' + '/:organization?',
+      path: FrontendPath.Report.ROOT,
       meta: { title: 'Report' },
       children: [
         {
@@ -132,9 +133,9 @@ const router = createRouter({
       ],
     },
     {
-      path: Path.UNAUTHORIZED,
-      name: FrontendRouteName.Error.ERROR_403,
+      path: FrontendPath.Error.ERROR_403,
       component: Error403,
+      name: FrontendRouteName.Error.ERROR_403,
       meta: { title: 'Unauthorized' },
     },
     {
@@ -143,57 +144,62 @@ const router = createRouter({
       name: FrontendRouteName.Error.ERROR_404,
       meta: { title: 'Not Found' },
     },
+    {
+      path: FrontendPath.Error.ERROR_500,
+      component: Error500,
+      name: FrontendRouteName.Error.ERROR_500,
+      meta: { title: 'Internal Server Error' },
+    },
   ],
 });
 
 router.beforeEach((to, from, next) => {
   const loggedIn = MoneviCookieHandler.getCachedLogin();
+  if (to.name == undefined || to.name == null) {
+    console.error('Unknown route');
+    return next({ name: FrontendRouteName.Error.ERROR_404 });
+  }
+  // Not logged in user cannot access logged in route
   if (!loggedIn) {
-    if (isUserAccessLoggedInPage(to.path)) {
-      return next(Path.LOGIN);
+    if (isUserAccessLoggedInPage(to.name)) {
+      return next({ name: FrontendRouteName.LOGIN });
     }
-  } else {
-    if (isUserAccessNotLoggedInPage(to.path)) {
-      return next(Path.DASHBOARD);
+  }
+  // Logged in user cannot access non-logged in route
+  else {
+    if (!isUserAccessLoggedInPage(to.name)) {
+      return next({ name: FrontendRouteName.DASHBOARD });
     }
-    if (isRoleNotAllowedToAccessTargetPage(loggedIn.role, to.path)) {
+    if (isRoleUnallowedToAccessDestinationRoute(loggedIn.role, to.name)) {
       return next({ name: FrontendRouteName.Error.ERROR_403 });
     }
   }
-  next();
+  return next();
 });
 
-function isUserAccessLoggedInPage(targetPath: string): boolean {
-  if (!NON_LOGGED_IN_PATHS.includes(targetPath)) {
+function isUserAccessLoggedInPage(destinationRouteName: RouteRecordName | null | undefined): boolean {
+  if (!NON_LOGGED_IN_ROUTE_NAMES.includes(destinationRouteName!.toString())) {
     return true;
   }
+
   return false;
 }
 
-function isUserAccessNotLoggedInPage(targetPath: string): boolean {
-  if (NON_LOGGED_IN_PATHS.includes(targetPath)) {
-    return true;
-  }
-  return false;
-}
-
-function isRoleNotAllowedToAccessTargetPage(role: string, targetPath: string): boolean {
-  if (ROLE_SPECIFIC_PATHS.chairman.includes(targetPath) && !(role === Role.CHAIRMAN)) {
-    return true;
-  } else if (ROLE_SPECIFIC_PATHS.supervisor.includes(targetPath) && !(role === Role.SUPERVISOR)) {
-    return true;
-  } else if (ROLE_SPECIFIC_PATHS.treasurer.includes(targetPath) && !(role === Role.TREASURER)) {
+function isRoleUnallowedToAccessDestinationRoute(
+  role: string,
+  destinationRouteName: RouteRecordName | null | undefined
+): boolean {
+  if (SUPERVISOR_ONLY_ROUTE_NAME.includes(destinationRouteName!.toString()) && role != Role.SUPERVISOR) {
     return true;
   }
   return false;
 }
 
 router.afterEach((to, from, next) => {
-  // assign title after moving between page
+  // assign title to web after moving between page
   nextTick(() => {
-    if (typeof to.meta.title === 'string') {
-      document.title = to.meta.title || 'Monevi';
-    }
+    var meta: any = to.meta;
+    document.title = meta.title!.toString() || 'Monevi';
   });
 });
 

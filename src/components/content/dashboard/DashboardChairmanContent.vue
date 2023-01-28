@@ -4,13 +4,15 @@
       <h1>Dashboard - Ketua</h1>
     </div>
 
+    <DashboardAmountCard />
+
     <div class="row">
       <div class="col">
         <div class="card">
           <div class="card-header">
             <h4>Recent Activities</h4>
           </div>
-          <div class="card-body">
+          <div class="card-body" v-if="histories.length != 0">
             <ul class="list-unstyled list-unstyled-border">
               <template v-for="history of histories">
                 <li class="media">
@@ -24,6 +26,10 @@
               </template>
             </ul>
           </div>
+
+          <div class="card-body" v-else>
+            <p>Belum ada aktivitas yang dapat dilihat</p>
+          </div>
         </div>
       </div>
     </div>
@@ -34,6 +40,7 @@
   import { MoneviCookieHandler } from '@/api/methods/monevi-cookie-handler';
   import { MoneviDateFormatter } from '@/api/methods/monevi-date-formatter';
   import { historyApi } from '@/api/service/history-api';
+  import DashboardAmountCard from '@/components/card/DashboardAmountCard.vue';
   import { getHistoryMessage } from '@/util/history-util';
 
   export default {
@@ -61,5 +68,6 @@
         return MoneviDateFormatter.formatDate(date);
       },
     },
+    components: { DashboardAmountCard },
   };
 </script>

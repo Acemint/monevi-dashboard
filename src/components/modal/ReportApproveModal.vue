@@ -13,7 +13,9 @@
             <p>Apakah Anda ingin menerima laporan ini kepada ketua?</p>
           </div>
           <div class="modal-footer bg-whitesmoke br">
-            <button v-on:click="closeModal" ref="closeModalButton" type="button" class="btn btn-secondary">Tutup</button>
+            <button v-on:click="closeModal" ref="closeModalButton" type="button" class="btn btn-secondary">
+              Tutup
+            </button>
             <button v-on:click="approveReport" type="button" class="btn btn-primary">Ya</button>
           </div>
         </div>
@@ -35,7 +37,9 @@
             <p>Apakah Anda ingin menyetujui laporan ini dan mengirimkannya ke pengawas?</p>
           </div>
           <div class="modal-footer bg-whitesmoke br">
-            <button v-on:click="closeModal" ref="closeModalButton" type="button" class="btn btn-secondary">Tutup</button>
+            <button v-on:click="closeModal" ref="closeModalButton" type="button" class="btn btn-secondary">
+              Tutup
+            </button>
             <button v-on:click="approveReport" type="button" class="btn btn-primary">Ya</button>
           </div>
         </div>
@@ -57,7 +61,9 @@
             <p>Apakah Anda ingin menyetujui laporan ini?</p>
           </div>
           <div class="modal-footer bg-whitesmoke br">
-            <button v-on:click="closeModal" ref="closeModalButton" type="button" class="btn btn-secondary">Tutup</button>
+            <button v-on:click="closeModal" ref="closeModalButton" type="button" class="btn btn-secondary">
+              Tutup
+            </button>
             <button v-on:click="approveReport" type="button" class="btn btn-primary">Ya</button>
           </div>
         </div>
@@ -67,7 +73,7 @@
 </template>
 
 <script lang="ts">
-  import moneviAxios from '@/api/configuration/monevi-axios';
+  import { moneviAxios } from '@/api/configuration/monevi-axios';
   import type { MoneviBodyRejectReport } from '@/api/model/monevi-config';
   import { MoneviPath } from '@/api/path/path';
 

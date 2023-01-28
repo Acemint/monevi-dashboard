@@ -14,7 +14,15 @@
               <form v-on:submit="submit">
                 <div class="form-group">
                   <label for="email">Email</label>
-                  <input v-model="username" id="email" type="email" class="form-control" name="email" tabindex="1" required autofocus />
+                  <input
+                    v-model="username"
+                    id="email"
+                    type="email"
+                    class="form-control"
+                    name="email"
+                    tabindex="1"
+                    required
+                    autofocus />
                   <div class="invalid-feedback">Please fill in your email</div>
                 </div>
 
@@ -25,7 +33,14 @@
                       <router-link to="/forgot-password" class="text-small"> Forgot Password? </router-link>
                     </div>
                   </div>
-                  <input v-model="password" id="password" type="password" class="form-control" name="password" tabindex="2" required />
+                  <input
+                    v-model="password"
+                    id="password"
+                    type="password"
+                    class="form-control"
+                    name="password"
+                    tabindex="2"
+                    required />
                   <div class="invalid-feedback">please fill in your password</div>
                 </div>
 
@@ -54,53 +69,25 @@
 </template>
 
 <script lang="ts">
-  // TODO: Check if click remember me, and then prolong the cookie to 7 days or more.
   import SimpleHeader from '@/components/header/SimpleHeader.vue';
   import SimpleFooter from '@/components/footer/SimpleFooter.vue';
-  import moneviAxios from '@/api/configuration/monevi-axios';
-  import type { MoneviBodyLoginUserAccount } from '@/api/model/monevi-config';
-  import { MoneviCookieHandler } from '@/api/methods/monevi-cookie-handler';
-  import { MoneviPath, MONEVI_BASE_URL } from '@/api/path/path';
-  import type { MoneviToken } from '@/api/model/monevi-model';
-  import { MoneviAPI } from '@/api/methods/monevi-api';
+  import { authorizationApi } from '@/api/service/authorization-api';
 
   export default {
     methods: {
       async submit(event: Event) {
         event.preventDefault();
-        const token = MoneviCookieHandler.getCachedLogin();
-        if (token != undefined) {
-          return token;
-        }
 
-        var body = {} as MoneviBodyLoginUserAccount;
-        body.username = this.username;
-        body.password = this.password;
-        console.log(MONEVI_BASE_URL);
-        var userData = await moneviAxios
-          .post(MoneviPath.LOGIN_PATH, body)
-          .then((response) => {
-            const user: MoneviToken = response.data.value;
-
-            MoneviCookieHandler.setCookie('id', user.id);
-            MoneviCookieHandler.setCookie('fullname', user.fullname);
-            MoneviCookieHandler.setCookie('username', user.username);
-            MoneviCookieHandler.setCookie('email', user.email);
-            MoneviCookieHandler.setCookie('role', user.role);
-            MoneviCookieHandler.setCookie('jwt', user.accessToken);
-            MoneviCookieHandler.setCookie('type', user.accessToken);
-            MoneviCookieHandler.setCookie('organizationRegionId', user.organizationRegionId);
-            MoneviCookieHandler.setCookie('regionId', user.regionId);
-            return response.data.value;
+        authorizationApi
+          .login(this.username, this.password)
+          .then((response: any) => {
+            this.$router.push('/dashboard');
           })
-          .catch((error) => {
+          .catch((error: any) => {
             if (error.response.status == 401) {
-              alert('Invalid Credential');
-            } else if (error.response.status == 500) {
-              console.error(error);
+              alert('Username / Password yang Anda masukkan salah');
             }
           });
-        this.$router.push('/dashboard');
       },
     },
 
@@ -108,9 +95,9 @@
       return {
         username: '',
         password: '',
-        monevi_api: new MoneviAPI(),
       };
     },
+
     components: { SimpleHeader, SimpleFooter },
   };
 </script>

@@ -1,4 +1,4 @@
-import moneviAxios from '../configuration/monevi-axios';
+import { moneviAxios } from '../configuration/monevi-axios';
 import type { MoneviParamsGetPrograms } from '../model/monevi-config';
 import { MoneviPath } from '../path/path';
 

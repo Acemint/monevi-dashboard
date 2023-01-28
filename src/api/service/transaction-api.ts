@@ -1,7 +1,7 @@
 import type { MoneviParamsGetTransactions, MoneviBodyCreateTransaction } from '@/api/model/monevi-config';
 import { MoneviDateFormatter } from '@/api/methods/monevi-date-formatter';
 import { MoneviEnumConverter } from '@/api/methods/monevi-enum-converter';
-import moneviAxios from '@/api/configuration/monevi-axios';
+import { moneviAxios } from '@/api/configuration/monevi-axios';
 import { MoneviPath } from '@/api/path/path';
 
 export interface TransactionApi {

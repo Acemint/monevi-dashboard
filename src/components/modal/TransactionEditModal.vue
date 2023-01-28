@@ -59,7 +59,13 @@
                 <div class="input-group-prepend">
                   <span class="input-group-text">Rp</span>
                 </div>
-                <input v-model="amount" id="jumlah" type="text" class="form-control" name="jumlah" aria-label="Jumlah (dalam rupiah)" />
+                <input
+                  v-model="amount"
+                  id="jumlah"
+                  type="text"
+                  class="form-control"
+                  name="jumlah"
+                  aria-label="Jumlah (dalam rupiah)" />
               </div>
             </div>
 
@@ -82,7 +88,7 @@
 </template>
 
 <script lang="ts">
-  import moneviAxios from '@/api/configuration/monevi-axios';
+  import { moneviAxios } from '@/api/configuration/monevi-axios';
   import { MoneviDisplayFormatter } from '@/api/methods/monevi-display-formatter';
   import { MoneviPath } from '@/api/path/path';
   import type { MoneviBodyEditTransaction, MoneviParamsEditTransaction } from '@/api/model/monevi-config';
@@ -112,7 +118,9 @@
           return;
         }
         this.date = new Date(this.transaction.transactionDate).toISOString().substring(0, 10);
-        var generalLedgerAccountType = MoneviDisplayFormatter.convertGeneralLedgerAccountTypeForDisplay(this.transaction.generalLedgerAccountType);
+        var generalLedgerAccountType = MoneviDisplayFormatter.convertGeneralLedgerAccountTypeForDisplay(
+          this.transaction.generalLedgerAccountType
+        );
         if (generalLedgerAccountType != null) {
           this.generalLedgerAccountType = generalLedgerAccountType;
         }
@@ -169,7 +177,9 @@
           body.name = this.transactionName;
           body.transactionDate = MoneviDateFormatter.formatDate(this.date);
           body.amount = this.amount;
-          body.generalLedgerAccountType = MoneviEnumConverter.convertGeneralLedgerAccountType(this.generalLedgerAccountType);
+          body.generalLedgerAccountType = MoneviEnumConverter.convertGeneralLedgerAccountType(
+            this.generalLedgerAccountType
+          );
           body.entryPosition = MoneviEnumConverter.convertEntryPosition(this.entryPosition);
           body.type = MoneviEnumConverter.convertTransactionType(this.transactionType);
           body.description = this.description;

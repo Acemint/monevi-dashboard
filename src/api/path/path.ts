@@ -29,6 +29,8 @@ const WITH_PROGRAM: string = '/program-exists';
 const WITH_REPORT: string = '/report-exists';
 const CONVERT_EXCEL = '/convert-excel';
 const HISTORY: string = '/history';
+const WALLET: string = '/wallet';
+const CALCULATE: string = '/calculate';
 
 export { MONEVI_BASE_URL };
 
@@ -62,6 +64,7 @@ class MoneviPath {
   static LOCK_PROGRAM_PATH = PROGRAM + LOCK;
   static DELETE_PROGRAM_PATH = PROGRAM + DELETE;
   static GET_HISTORIES_PATH = HISTORY + GET_ALL;
+  static GET_WALLET_AMOUNT_PATH = WALLET + CALCULATE;
 }
 
 export { MoneviPath };

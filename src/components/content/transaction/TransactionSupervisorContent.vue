@@ -53,13 +53,12 @@
                       {{ formatRupiah(item.amount, item.entryPosition) }}
                     </td>
                     <td>
-                      <button
-                        v-if="item.proof != ''"
-                        class="btn btn-primary"
+                      <img
                         v-on:click="openImageModal"
-                        v-bind:data-index="index">
-                        <i style="pointer-events: none" class="far fa-eye"></i>
-                      </button>
+                        id="buktiTransaksi"
+                        v-bind:src="formatProof(item.proof)"
+                        onerror="this.style.display = 'none'"
+                        v-bind:data-index="index" />
                     </td>
                   </tr>
                 </table>
@@ -142,6 +141,10 @@
           entryPosition,
           type
         );
+      },
+
+      formatProof(proof: any) {
+        return atob(proof);
       },
 
       formatGeneralLedgerAccountType(generalLedgerAccountType: string) {

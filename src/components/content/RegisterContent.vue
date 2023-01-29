@@ -74,6 +74,7 @@
                   <div class="form-group col-6">
                     <label>Periode</label>
                     <select v-model="periodYear" class="form-control selectric" required autofocus>
+                      <option>2021</option>
                       <option>2022</option>
                       <option>2023</option>
                     </select>

@@ -49,7 +49,7 @@
         body.reportId = this.reportId;
         body.userId = this.userId;
         body.comment = this.comment;
-        console.log(body);
+
         return moneviAxios
           .post(MoneviPath.REJECT_REPORT_PATH, body)
           .then((response) => {

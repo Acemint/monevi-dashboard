@@ -136,7 +136,6 @@
         try {
           await this.getRegions();
           await this.getOrganizations();
-          console.log(this.organizations, this.regions);
         } catch (error) {
           this.$router.push({ name: FrontendRouteName.Error.ERROR_500 });
         }

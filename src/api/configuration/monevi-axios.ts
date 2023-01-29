@@ -32,17 +32,4 @@ moneviAxios.interceptors.response.use(
   }
 );
 
-moneviAxios.interceptors.request.use((request) => {
-  // console.log('Starting Request', JSON.stringify(request, null, 2))
-  console.log('REQ', JSON.stringify(request, null, 2));
-  console.log('Starting Request Params', JSON.stringify(request.params, null, 2));
-  console.log('Starting Request Body', JSON.stringify(request.data, null, 2));
-  return request;
-});
-
-moneviAxios.interceptors.response.use((response) => {
-  console.log('Response:', JSON.stringify(response.data, null, 2));
-  return response;
-});
-
 export { moneviAxios };

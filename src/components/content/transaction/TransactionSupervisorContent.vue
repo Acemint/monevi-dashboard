@@ -131,7 +131,6 @@
           return;
         }
         this.transactions = await transactionApi.getTransactions(this.$route.query.organization!.toString(), this.date);
-        console.log(this.transactions);
         return;
       },
 

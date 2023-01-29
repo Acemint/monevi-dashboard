@@ -154,7 +154,6 @@
     methods: {
       async getPrograms() {
         this.programs = await programApi.getPrograms(this.organizationRegionId, this.periodYear);
-        console.log(this.programs);
       },
 
       validateRole() {

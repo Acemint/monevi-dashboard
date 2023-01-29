@@ -148,7 +148,6 @@
           this.organizationRegionId!,
           MoneviDateFormatter.minusMonth(this.date!)
         );
-        console.log(this.previousMonthTransactions);
       },
 
       getSumPreviousMonthBalance() {

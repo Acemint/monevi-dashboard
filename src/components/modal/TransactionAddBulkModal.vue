@@ -21,7 +21,7 @@
               class="form-control"
               type="file"
               id="formFile"
-              accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
+              />
           </div>
           <p>
             Berikut
@@ -75,13 +75,13 @@
         }
 
         var data = await transactionApi.convertExcel(this.organizationRegionId!, this.inputFile!);
-        if (data == null) {
-          alert('Unable to process file, make sure the extension is correct');
-          // Reset input file
-          const inputFile: any = this.$refs.inputFile;
-          inputFile.value = '';
-          return;
-        }
+        // if (data == null) {
+        //   alert('Unable to process file, make sure the extension is correct');
+        //   // Reset input file
+        //   const inputFile: any = this.$refs.inputFile;
+        //   inputFile.value = '';
+        //   return;
+        // }
         // alert about some unprocessed data
         if (data.skippedRow != 0) {
           const message = `Terdapat ${

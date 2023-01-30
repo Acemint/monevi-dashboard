@@ -21,7 +21,7 @@
               class="form-control"
               type="file"
               id="formFile"
-              accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
+              />
           </div>
           <p>
             Berikut

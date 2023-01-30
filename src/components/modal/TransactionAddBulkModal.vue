@@ -21,7 +21,7 @@
               class="form-control"
               type="file"
               id="formFile"
-              accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
+              />
           </div>
           <p>
             Berikut
@@ -30,8 +30,8 @@
           </p>
         </div>
         <div class="modal-footer bg-whitesmoke br">
-          <button v-on:click="closeModal" ref="closeModalButton" type="button" class="btn btn-secondary">Tutup</button>
-          <button v-on:click="sendReport" type="button" class="btn btn-danger">Tambah Transaksi</button>
+          <button v-on:click="closeModal" ref="closeModalButton" type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+          <button v-on:click="sendReport" type="button" class="btn btn-primary">Tambah Transaksi</button>
         </div>
       </div>
     </div>
@@ -73,7 +73,6 @@
         if (this.inputFile == undefined) {
           alert('File should not be empty');
         }
-
         var data = await transactionApi
           .convertExcel(this.organizationRegionId!, this.inputFile!)
           .then((response) => {
@@ -90,7 +89,6 @@
               return;
             }
           });
-
         // alert about some unprocessed data
         if (data.skippedRow != 0) {
           const message = `Terdapat ${

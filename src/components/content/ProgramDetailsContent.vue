@@ -46,7 +46,7 @@
                           ref="lockButton"
                           v-bind:data-index="index"
                           class="btn btn-primary">
-                          <i class="far fa-lock"></i>
+                          <i class="fas fa-regular fa-lock"></i>
                         </button>
                         <button
                           v-on:click="openEditProgramModal"

@@ -72,7 +72,12 @@
             <div class="form-group">
               <label class="col-form-label text-md-left">Bukti Transaksi*</label>
               <div class="mb-3">
-                <input v-on:change="loadImage" class="form-control" type="file" id="formFile" /><br />
+                <input
+                  v-on:change="loadImage"
+                  class="form-control"
+                  type="file"
+                  id="formFile"
+                  accept="image/gif, image/jpeg, image/png" /><br />
                 <img v-if="imageSrc != '#'" v-bind:src="imageSrc" ref="sample" style="width: 100%" />
               </div>
             </div>

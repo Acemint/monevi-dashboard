@@ -9,6 +9,10 @@ const moneviAxios = axios.create({
   baseURL: MONEVI_BASE_URL,
 });
 
+const moneviAxiosFile = axios.create({
+  baseURL: MONEVI_BASE_URL,
+});
+
 moneviAxios.interceptors.request.use(async (config) => {
   var token = MoneviCookieHandler.getUserData();
   if (token.accessToken != '' && token.accessToken != undefined) {
@@ -29,4 +33,4 @@ moneviAxios.interceptors.response.use(undefined, (error) => {
   }
 });
 
-export { moneviAxios };
+export { moneviAxios, moneviAxiosFile };

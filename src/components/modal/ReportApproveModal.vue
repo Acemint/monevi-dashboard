@@ -5,7 +5,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title">Kirim Laporan</h5>
-            <button type="button" class="close" aria-label="Close">
+            <button v-on:click="closeModal" type="button" class="close" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
@@ -29,7 +29,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title">Setujui Laporan</h5>
-            <button type="button" class="close" aria-label="Close">
+            <button v-on:click="closeModal" type="button" class="close" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
@@ -53,7 +53,7 @@
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title">Setujui Laporan</h5>
-            <button type="button" class="close" aria-label="Close">
+            <button v-on:click="closeModal" type="button" class="close" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>

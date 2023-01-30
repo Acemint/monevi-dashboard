@@ -92,6 +92,7 @@ export class TransactionApiImpl implements TransactionApi {
         return response.data.values;
       })
       .catch((error) => {
+        console.log(error);
         console.error('Internal Server Error, unable to get transactions data');
         return null;
       });

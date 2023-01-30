@@ -38,7 +38,7 @@
                       <td v-bind:class="[item.entryPosition == 'CREDIT' ? 'text-danger' : 'text-primary']">
                         {{ formatRupiah(item.amount, item.entryPosition) }}
                       </td>
-                      <td style="min-width: 245px">
+                      <td style="min-width: 300px">
                         <div class="mb-3">
                           <label class="col-form-label text-md-left"></label>
                           <input
@@ -54,6 +54,7 @@
                           onerror="this.style.display = 'none'"
                           v-bind:data-index="index"
                           style="width: 100%" />
+                        </div>
                       </td>
                     </tr>
                   </template>

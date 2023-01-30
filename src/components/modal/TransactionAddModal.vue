@@ -48,7 +48,7 @@
             </div>
 
             <div class="form-group">
-              <label for="keterangan">Keterangan</label>
+              <label for="keterangan">Keterangan*</label>
               <input v-model="description" id="keterangan" type="text" class="form-control" name="keterangan" />
               <div class="invalid-feedback"></div>
             </div>
@@ -69,7 +69,7 @@
               </div>
             </div>
 
-            <div class="form-group">
+            <div class="form-group" style="margin-bottom: 8px!important;">
               <label class="col-form-label text-md-left">Bukti Transaksi*</label>
               <div class="mb-3">
                 <input
@@ -82,6 +82,7 @@
                 <img v-if="imageSrc != ''" v-bind:src="imageSrc" style="width: 100%" />
               </div>
             </div>
+            <p class="text-danger" ref="errorMessageText" style="margin: 0px; padding: 0px;"></p>
           </form>
         </div>
         <div class="modal-footer bg-whitesmoke br">
@@ -184,12 +185,13 @@
             this.$emit('successUpdate');
           })
           .catch((error) => {
-            alert('Gagal menambahkan transaksi');
-            for (const key in error.response.data.errorFields) {
-              var errorMessage = error.response.data.errorFields[key];
-              alert(errorMessage);
-              break;
-            }
+              for (const key in error.response.data.errorFields) {
+                var errorMessage = error.response.data.errorFields[key];
+                var errorHtml: any = this.$refs.errorMessageText;
+                errorHtml.innerHTML = "";
+                errorHtml.innerHTML = errorMessage;
+                break;
+              }
           });
       },
 

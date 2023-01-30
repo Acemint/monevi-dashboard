@@ -48,7 +48,7 @@
             </div>
 
             <div class="form-group">
-              <label for="keterangan">Keterangan</label>
+              <label for="keterangan">Keterangan*</label>
               <input v-model="description" id="keterangan" type="text" class="form-control" name="keterangan" />
               <div class="invalid-feedback"></div>
             </div>

@@ -4,7 +4,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">Hapus Transaksi</h5>
-          <button v-on:click="closeModal" type="button" class="close" aria-label="Close">
+          <button v-on:click="closeModal" ref="closeModalButton" type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
@@ -55,7 +55,6 @@
             },
           })
           .then((response) => {
-            alert('Successfully delete the transaction');
             if (!(this.$refs.closeModalButton instanceof HTMLButtonElement)) {
               return;
             }

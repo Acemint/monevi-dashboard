@@ -32,12 +32,29 @@
                       <td>{{ item.name }}</td>
                       <td>{{ formatTransactionType(item.type) }}</td>
                       <td>{{ item.description }}</td>
-                      <td v-bind:class="[item.entryPosition == 'CREDIT' ? 'text-danger' : 'text-primary']">{{ formatRupiah(item.amount, item.entryPosition) }}</td>
+                      <td v-bind:class="[item.entryPosition == 'CREDIT' ? 'text-danger' : 'text-primary']">
+                        {{ formatRupiah(item.amount, item.entryPosition) }}
+                      </td>
                       <td style="min-width: 300px">
                         <div class="mb-3">
                           <label class="col-form-label text-md-left"></label>
-                          <input v-on:change="loadImage" accept="image/jpeg, image/png" class="form-control" type="file" id="formFile" v-bind:data-index="index" />
-                          <img v-on:click="openImageModal" v-bind:src="item.proof" onerror='this.style.display = "none"' v-bind:data-index="index" style="width: 100%" />
+                          <input
+                            v-on:change="loadImage"
+                            class="form-control"
+                            type="file"
+                            id="formFile"
+                            v-bind:data-index="index" />
+                            <img
+                          v-on:click="openImageModal"
+                          v-bind:src="item.proof"
+                          onerror="this.style.display = 'none'"
+                          v-bind:data-index="index"
+                          style="width: 100%" /><img
+                          v-on:click="openImageModal"
+                          v-bind:src="item.proof"
+                          onerror="this.style.display = 'none'"
+                          v-bind:data-index="index"
+                          style="width: 100%" />
                         </div>
                       </td>
                     </tr>
@@ -47,7 +64,9 @@
             </div>
           </div>
           <div class="modal-footer bg-whitesmoke br">
-            <button v-on:click="closeModal" ref="closeModalButton" type="button" class="btn btn-secondary">Tutup</button>
+            <button v-on:click="closeModal" ref="closeModalButton" type="button" class="btn btn-secondary">
+              Tutup
+            </button>
             <button v-on:click="submitTransaction" type="button" class="btn btn-primary">Impor Transaksi</button>
           </div>
         </template>
@@ -150,7 +169,6 @@
 
           transactionRequests.push(transactionRequest);
         }
-        console.log(transactionRequests);
         return transactionRequests;
       },
 
@@ -169,7 +187,9 @@
       },
 
       formatRupiah(amount: number, entryPosition: string = 'DEBIT') {
-        return MoneviDisplayFormatter.toRupiah(MoneviDisplayFormatter.determineNumberByPositionType(amount, entryPosition));
+        return MoneviDisplayFormatter.toRupiah(
+          MoneviDisplayFormatter.determineNumberByPositionType(amount, entryPosition)
+        );
       },
 
       formatTransactionDate(dateInMillis: number) {

@@ -5,7 +5,7 @@
       "files": ["*.vue"],
       "options": {
         "tabWidth": 2,
-        "printWidth": 1000,
+        "printWidth": 120,
         "semi": true,
         "bracketSameLine": true,
         "vueIndentScriptAndStyle": true,

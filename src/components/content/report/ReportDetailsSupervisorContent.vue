@@ -6,7 +6,9 @@
         <div class="breadcrumb-item active">
           <router-link :to="getRouteToReportSelect()">Pilih Laporan</router-link>
         </div>
-        <div v-if="organizationRegion.id != ''" class="breadcrumb-item">Laporan {{ organizationRegion.organizationName }}</div>
+        <div v-if="organizationRegion.id != ''" class="breadcrumb-item">
+          Laporan {{ organizationRegion.organizationName }}
+        </div>
         <div v-else class="breadcrumb-item">Laporan {{ organizationRegion.organizationName }}</div>
         <div class="breadcrumb-item">
           <router-link :to="getRouteToTransactionDetail()">Detail Transaksi</router-link>
@@ -25,7 +27,10 @@
         <div class="col-12">
           <div class="card">
             <div class="card-body">
-              <p>Data transaksi tidak dapat dilihat dikarenakan belum ada laporan yang dikirim oleh Ketua {{ organizationRegion.organizationName }}</p>
+              <p>
+                Data transaksi tidak dapat dilihat dikarenakan belum ada laporan yang dikirim oleh Ketua
+                {{ organizationRegion.organizationName }}
+              </p>
             </div>
           </div>
         </div>
@@ -37,7 +42,10 @@
         <div class="col-12">
           <div class="card">
             <div class="card-header">
-              <h4>Laporan Keuangan Kas dan Bank UKM {{ organizationRegion.organizationName }} {{ organizationRegion.regionName }} per Bulan {{ formatDateToMonth(date) }}</h4>
+              <h4>
+                Laporan Keuangan Kas dan Bank UKM {{ organizationRegion.organizationName }}
+                {{ organizationRegion.regionName }} per Bulan {{ formatDateToMonth(date) }}
+              </h4>
               <div class="card-header-action">
                 <button class="btn btn-primary" v-on:click="navigateToTransactionPage">Lihat Detail Transaksi</button>
               </div>
@@ -70,7 +78,9 @@
                       <template v-for="categoryData in entryPositionData.data.values()">
                         <tr>
                           <td>{{ categoryData.index }}. {{ categoryData.identifier }}</td>
-                          <td>{{ formatAmountToRupiah(entryPositionData.data.getByName(categoryData.identifier).amount) }}</td>
+                          <td>
+                            {{ formatAmountToRupiah(entryPositionData.data.getByName(categoryData.identifier).amount) }}
+                          </td>
                           <td></td>
                         </tr>
                       </template>
@@ -85,7 +95,13 @@
                     <tr>
                       <td>Saldo {{ generalLedgerData.identifier }} per Bulan {{ formatDateToMonth(date) }}</td>
                       <td></td>
-                      <td>{{ formatAmountToRupiah(sumGeneralLedgerAccount(generalLedgerData) + generalLedgerData.data.previousMonthAmount) }}</td>
+                      <td>
+                        {{
+                          formatAmountToRupiah(
+                            sumGeneralLedgerAccount(generalLedgerData) + generalLedgerData.data.previousMonthAmount
+                          )
+                        }}
+                      </td>
                     </tr>
                     <tr>
                       <td>Hasil {{ generalLedgerData.identifier }} Opname</td>
@@ -95,7 +111,15 @@
                     <tr>
                       <td>Selisih Saldo Buku vs {{ generalLedgerData.identifier }} Opname</td>
                       <td></td>
-                      <td>{{ formatAmountToRupiah(sumGeneralLedgerAccount(generalLedgerData) + generalLedgerData.data.previousMonthAmount - generalLedgerData.data.opnameAmount) }}</td>
+                      <td>
+                        {{
+                          formatAmountToRupiah(
+                            sumGeneralLedgerAccount(generalLedgerData) +
+                              generalLedgerData.data.previousMonthAmount -
+                              generalLedgerData.data.opnameAmount
+                          )
+                        }}
+                      </td>
                     </tr>
                     <tr>
                       <td></td>
@@ -118,8 +142,17 @@
       </div>
     </template>
   </section>
-  <ReportApproveModal ref="reportApproveModal" v-on:success-update="initData" v-bind:role="userAccount.role" v-bind:reportId="reportSummary.reportId" v-bind:userId="userAccount.id" />
-  <ReportRejectModal ref="reportRejectModal" v-on:success-update="initData" v-bind:reportId="reportSummary.reportId" v-bind:userId="userAccount.id" />
+  <ReportApproveModal
+    ref="reportApproveModal"
+    v-on:success-update="initData"
+    v-bind:role="userAccount.role"
+    v-bind:reportId="reportSummary.reportId"
+    v-bind:userId="userAccount.id" />
+  <ReportRejectModal
+    ref="reportRejectModal"
+    v-on:success-update="initData"
+    v-bind:reportId="reportSummary.reportId"
+    v-bind:userId="userAccount.id" />
 </template>
 
 <script lang="ts">
@@ -131,7 +164,7 @@
   import { MoneviDateFormatter } from '@/api/methods/monevi-date-formatter';
   import { MoneviDisplayFormatter } from '@/api/methods/monevi-display-formatter';
   import { MoneviCookieHandler } from '@/api/methods/monevi-cookie-handler';
-  import { organizationApi } from '@/api/service/organization-api';
+  import { organizationRegionApi } from '@/api/service/organization-region-api';
   import { reportApi } from '@/api/service/report-api';
 
   export default {
@@ -147,7 +180,9 @@
     methods: {
       async updateDate(date: string) {
         this.date = date;
-        this.organizationRegion = await organizationApi.getOrganization(this.$route.query.organization!.toString());
+        this.organizationRegion = await organizationRegionApi.getOrganization(
+          this.$route.query.organization!.toString()
+        );
         if (this.organizationRegion.id == '') {
           return;
         }
@@ -188,7 +223,10 @@
       },
 
       navigateToTransactionPage() {
-        this.$router.push({ name: FrontendRouteName.Transaction.ROOT, query: { period: this.formatDateToMonth(this.date), organization: this.$route.query.organization } });
+        this.$router.push({
+          name: FrontendRouteName.Transaction.ROOT,
+          query: { period: this.formatDateToMonth(this.date), organization: this.$route.query.organization },
+        });
       },
 
       approveReport() {
@@ -202,7 +240,11 @@
       },
 
       getPreviousMonthFromCurrentMonth(date: string): string {
-        return MoneviDateFormatter.formatDate(MoneviDateFormatter.fromDMYtoMYDDate(MoneviDateFormatter.minusMonth(date)), ' ', true);
+        return MoneviDateFormatter.formatDate(
+          MoneviDateFormatter.fromDMYtoMYDDate(MoneviDateFormatter.minusMonth(date)),
+          ' ',
+          true
+        );
       },
 
       formatDateToMonth(date: string): string {
@@ -226,7 +268,10 @@
       },
 
       getRouteToTransactionDetail(): any {
-        return { name: FrontendRouteName.Transaction.ROOT, query: { period: this.formatDateToMonth(this.date), organization: this.organizationRegion.id } };
+        return {
+          name: FrontendRouteName.Transaction.ROOT,
+          query: { period: this.formatDateToMonth(this.date), organization: this.organizationRegion.id },
+        };
       },
     },
     components: { ReportRejectModal, ReportApproveModal, MonthNavigator },

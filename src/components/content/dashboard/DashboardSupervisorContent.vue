@@ -5,12 +5,16 @@
     </div>
 
     <div class="row">
+      <ReportUnapprovedBySupervisorCard />
+    </div>
+
+    <div class="row">
       <div class="col">
         <div class="card">
           <div class="card-header">
             <h4>Recent Activities</h4>
           </div>
-          <div class="card-body">
+          <div class="card-body" v-if="histories.length != 0">
             <ul class="list-unstyled list-unstyled-border">
               <template v-for="history of histories">
                 <li class="media">
@@ -24,6 +28,10 @@
               </template>
             </ul>
           </div>
+
+          <div class="card-body" v-else>
+            <p>Belum ada aktivitas yang dapat dilihat</p>
+          </div>
         </div>
       </div>
     </div>
@@ -35,6 +43,7 @@
   import { MoneviDateFormatter } from '@/api/methods/monevi-date-formatter';
   import { historyApi } from '@/api/service/history-api';
   import { getHistoryMessage } from '@/util/history-util';
+  import ReportUnapprovedBySupervisorCard from '@/components/card/ReportUnapprovedBySupervisorCard.vue';
 
   export default {
     async beforeMount() {
@@ -61,5 +70,6 @@
         return MoneviDateFormatter.formatDate(date);
       },
     },
+    components: { ReportUnapprovedBySupervisorCard },
   };
 </script>

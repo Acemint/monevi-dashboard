@@ -3,7 +3,9 @@
     <div class="section-header" style="justify-content: space-between">
       <h1>Program Kerja</h1>
       <div style="display: flex">
-        <div class="section-header-button" v-if="userAccount.role === 'ROLE_CHAIRMAN' || userAccount.role === 'ROLE_TREASURER'">
+        <div
+          class="section-header-button"
+          v-if="userAccount.role === 'ROLE_CHAIRMAN' || userAccount.role === 'ROLE_TREASURER'">
           <button class="btn btn-primary" v-on:click="openNewProgramModal">Tambah Program Kerja</button>
         </div>
       </div>
@@ -38,14 +40,45 @@
                       <td>{{ formatDate(item.startDate!) }}</td>
                       <td>{{ formatDate(item.endDate!) }}</td>
                       <td v-if="userAccount.role == 'ROLE_SUPERVISOR'">
-                        <button v-if="item.lockedProgram == false" v-on:click="openLockProgramModal" ref="lockButton" v-bind:data-index="index" class="btn btn-primary"><i class="far fa-lock"></i></button>
-                        <button v-on:click="openEditProgramModal" ref="editButton" v-bind:data-index="index" class="btn btn-primary"><i class="far fa-edit"></i></button>
-                        <button v-on:click="openDeleteProgramModal" ref="deleteButton" v-bind:data-index="index" class="btn btn-danger"><i class="far fa-trash-alt"></i></button>
+                        <button
+                          v-if="item.lockedProgram == false"
+                          v-on:click="openLockProgramModal"
+                          ref="lockButton"
+                          v-bind:data-index="index"
+                          class="btn btn-primary">
+                          <i class="far fa-lock"></i>
+                        </button>
+                        <button
+                          v-on:click="openEditProgramModal"
+                          ref="editButton"
+                          v-bind:data-index="index"
+                          class="btn btn-primary">
+                          <i class="far fa-edit"></i>
+                        </button>
+                        <button
+                          v-on:click="openDeleteProgramModal"
+                          ref="deleteButton"
+                          v-bind:data-index="index"
+                          class="btn btn-danger">
+                          <i class="far fa-trash-alt"></i>
+                        </button>
                       </td>
                       <td v-else>
                         <template v-if="item.lockedProgram != true">
-                          <button v-on:click="openEditProgramModal" ref="editButton" v-bind:data-index="index" class="btn btn-primary">Ubah</button>
-                          <button v-on:click="openDeleteProgramModal" ref="deleteButton" v-bind:data-index="index" class="btn btn-danger">Hapus</button>
+                          <button
+                            v-on:click="openEditProgramModal"
+                            ref="editButton"
+                            v-bind:data-index="index"
+                            class="btn btn-primary">
+                            Ubah
+                          </button>
+                          <button
+                            v-on:click="openDeleteProgramModal"
+                            ref="deleteButton"
+                            v-bind:data-index="index"
+                            class="btn btn-danger">
+                            Hapus
+                          </button>
                         </template>
                         <template v-else>
                           <p>Sudah dikunci oleh pengawas</p>
@@ -65,10 +98,22 @@
     </div>
   </section>
 
-  <ProgramLockModal v-bind:program="selectedProgram" v-bind:userAccount="userAccount" v-on:success-update="getPrograms" ref="lockProgramModal" />
-  <ProgramEditModal v-bind:program="selectedProgram" v-bind:userAccount="userAccount" v-on:success-update="getPrograms" ref="editProgramModal" />
+  <ProgramLockModal
+    v-bind:program="selectedProgram"
+    v-bind:userAccount="userAccount"
+    v-on:success-update="getPrograms"
+    ref="lockProgramModal" />
+  <ProgramEditModal
+    v-bind:program="selectedProgram"
+    v-bind:userAccount="userAccount"
+    v-on:success-update="getPrograms"
+    ref="editProgramModal" />
   <ProgramDeleteModal v-bind:program="selectedProgram" v-on:success-update="getPrograms" ref="deleteProgramModal" />
-  <ProgramAddProgramKerjaModal v-bind:organizationRegionId="organizationRegionId" v-bind:userId="userAccount.id" v-on:success-update="getPrograms" ref="addProgramModal" />
+  <ProgramAddProgramKerjaModal
+    v-bind:organizationRegionId="organizationRegionId"
+    v-bind:userId="userAccount.id"
+    v-on:success-update="getPrograms"
+    ref="addProgramModal" />
 </template>
 
 <script lang="ts">
@@ -109,7 +154,6 @@
     methods: {
       async getPrograms() {
         this.programs = await programApi.getPrograms(this.organizationRegionId, this.periodYear);
-        console.log(this.programs);
       },
 
       validateRole() {

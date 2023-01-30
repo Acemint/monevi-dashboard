@@ -13,7 +13,7 @@
         </div>
         <div class="modal-footer bg-whitesmoke br">
           <button v-on:click="deleteTransaction" type="button" class="btn btn-danger">Yes</button>
-          <button v-on:click="closeModal" ref="closeModalButton" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+          <button v-on:click="closeModal" ref="closeModalButton" type="button" class="btn btn-secondary">Cancel</button>
         </div>
       </div>
     </div>
@@ -21,7 +21,7 @@
 </template>
 
 <script lang="ts">
-  import moneviAxios from '@/api/configuration/monevi-axios';
+  import { moneviAxios } from '@/api/configuration/monevi-axios';
   import type { MoneviParamsDeleteTransaction } from '@/api/model/monevi-config';
   import { MoneviPath } from '@/api/path/path';
 

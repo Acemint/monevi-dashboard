@@ -1,4 +1,4 @@
-const MONEVI_BASE_URL: string = 'http://localhost:8080/api/monevi';
+const MONEVI_BASE_URL: string = import.meta.env.VITE_MONEVI_BACKEND_URL;
 const REGIONS: string = '/region';
 const ORGANIZATIONS: string = '/organization';
 const ORGANIZATION_REGION: string = '/organization-region';
@@ -29,13 +29,10 @@ const WITH_PROGRAM: string = '/program-exists';
 const WITH_REPORT: string = '/report-exists';
 const CONVERT_EXCEL = '/convert-excel';
 const HISTORY: string = '/history';
+const WALLET: string = '/wallet';
+const CALCULATE: string = '/calculate';
 
-const GET_REGIONS_PATH: string = REGIONS + GET_ALL;
-const GET_ORGANIZATIONS_PATH: string = ORGANIZATIONS + GET_ALL;
-const LOGIN_PATH: string = USER + AUTH + LOGIN;
-const CREATE_NEW_PROGRAM_PATH: string = PROGRAM + CREATE_NEW;
-
-export { MONEVI_BASE_URL, GET_REGIONS_PATH, GET_ORGANIZATIONS_PATH, LOGIN_PATH, CREATE_NEW_PROGRAM_PATH };
+export { MONEVI_BASE_URL };
 
 class MoneviPath {
   static GET_ORGANIZATIONS_PATH = ORGANIZATIONS + GET_ALL;
@@ -44,10 +41,10 @@ class MoneviPath {
   static GET_ORGANIZATION_REGION_PATH = ORGANIZATION_REGION;
   static CREATE_NEW_ORGANIZATION_PATH = ORGANIZATIONS + CREATE_NEW;
   static GET_REGIONS_PATH = REGIONS + GET_ALL;
-  static REQUEST_RESET_PASSWORD_PATH = USER + AUTH + REQUEST_RESET_PASSWORD;
-  static RESET_PASSWORD_PATH = USER + AUTH + RESET_PASSWORD;
-  static REGISTER_STUDENT_PATH = USER + REGISTER + STUDENT;
-  static LOGIN_PATH = USER + AUTH + LOGIN;
+  static REQUEST_RESET_PASSWORD_PATH = AUTH + REQUEST_RESET_PASSWORD;
+  static RESET_PASSWORD_PATH = AUTH + RESET_PASSWORD;
+  static REGISTER_STUDENT_PATH = AUTH + REGISTER + STUDENT;
+  static LOGIN_PATH = AUTH + LOGIN;
   static GET_STUDENTS_PATH = USER + FIND_ALL_STUDENT;
   static APPROVE_STUDENT_PATH = USER + SUPERVISOR + APPROVE_STUDENT;
   static DECLINE_STUDENT_PATH = USER + SUPERVISOR + DECLINE_STUDENT;
@@ -67,6 +64,7 @@ class MoneviPath {
   static LOCK_PROGRAM_PATH = PROGRAM + LOCK;
   static DELETE_PROGRAM_PATH = PROGRAM + DELETE;
   static GET_HISTORIES_PATH = HISTORY + GET_ALL;
+  static GET_WALLET_AMOUNT_PATH = WALLET + CALCULATE;
 }
 
 export { MoneviPath };

@@ -1,8 +1,8 @@
-import { fileURLToPath, URL } from 'node:url'
-import { resolve }  from 'path';
+import { fileURLToPath, URL } from 'node:url';
+import { resolve } from 'path';
 
-import { defineConfig } from 'vite'
-import vue from '@vitejs/plugin-vue'
+import { defineConfig, resolveBaseUrl } from 'vite';
+import vue from '@vitejs/plugin-vue';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -10,7 +10,8 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
-      'public': fileURLToPath(new URL('./public', import.meta.url)),
-    }
-  }
-})
+      public: fileURLToPath(new URL('./public', import.meta.url)),
+      node_modules: fileURLToPath(new URL('./node_modules', import.meta.url)),
+    },
+  },
+});

@@ -25,7 +25,9 @@
                     <td>{{ item.organizationAbbreviation }}</td>
                     <td>{{ item.periodYear }}</td>
                     <td>
-                      <button v-on:click="selectProgram($event)" v-bind:data-index="index" class="btn btn-primary">Lihat Program Kerja</button>
+                      <button v-on:click="selectProgram($event)" v-bind:data-index="index" class="btn btn-primary">
+                        Lihat Program Kerja
+                      </button>
                     </td>
                   </tr>
                 </template>
@@ -60,7 +62,7 @@
 <script lang="ts">
   import type { OrganizationWithProgram } from '@/api/model/monevi-model';
   import type { MoneviParamsGetOrganizationsWithPrograms } from '@/api/model/monevi-config';
-  import moneviAxios from '@/api/configuration/monevi-axios';
+  import { moneviAxios } from '@/api/configuration/monevi-axios';
   import { MoneviPath } from '@/api/path/path';
   import { FrontendRouteName } from '@/constants/path';
 
@@ -116,7 +118,13 @@
           return;
         }
         var index = parseInt(indexAttribute);
-        this.$router.push({ name: FrontendRouteName.Program.DETAILS, query: { organization: this.organizations[index].organizationRegionId, periodYear: this.organizations[index].periodYear } });
+        this.$router.push({
+          name: FrontendRouteName.Program.DETAILS,
+          query: {
+            organization: this.organizations[index].organizationRegionId,
+            periodYear: this.organizations[index].periodYear,
+          },
+        });
       },
     },
   };

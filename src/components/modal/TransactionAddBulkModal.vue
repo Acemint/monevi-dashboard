@@ -4,17 +4,30 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">Impor Transaksi</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <button type="button" class="close" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
         <div class="modal-body">
           <p>Seret dan lepaskan file .xlsx atau unggah dari komputer Anda.</p>
           <div class="mb-3">
-            <label for="formFile" class="form-label">File Anda setidaknya harus berisi tanggal, dompet, jenis transaksi, transaksi, kategori, dan jumlah. Ukuran file maksimum adalah 2 MB.</label>
-            <input ref="inputFile" v-on:change="loadFile" class="form-control" type="file" id="formFile" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
+            <label for="formFile" class="form-label"
+              >File Anda setidaknya harus berisi tanggal, dompet, jenis transaksi, transaksi, kategori, dan jumlah.
+              Ukuran file maksimum adalah 2 MB.</label
+            >
+            <input
+              ref="inputFile"
+              v-on:change="loadFile"
+              class="form-control"
+              type="file"
+              id="formFile"
+              accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
           </div>
-          <p>Berikut <a download href="public/src/template/monevi_template_bulk_add_transaction.xlsx">file contoh</a> template untuk impor transaksi.</p>
+          <p>
+            Berikut
+            <a download href="public/src/template/monevi_template_bulk_add_transaction.xlsx">file contoh</a> template
+            untuk impor transaksi.
+          </p>
         </div>
         <div class="modal-footer bg-whitesmoke br">
           <button v-on:click="closeModal" ref="closeModalButton" type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
@@ -57,13 +70,11 @@
       },
 
       async sendReport(event: Event) {
-        console.log(this.inputFile);
         if (this.inputFile == undefined) {
           alert('File should not be empty');
         }
 
         var data = await transactionApi.convertExcel(this.organizationRegionId!, this.inputFile!);
-        console.log(data);
         if (data == null) {
           alert('Unable to process file, make sure the extension is correct');
           // Reset input file
@@ -73,7 +84,9 @@
         }
         // alert about some unprocessed data
         if (data.skippedRow != 0) {
-          const message = `Terdapat ${data.skippedRow} baris yang tidak dapat diproses oleh sistem. Baris terletak di ${data.skippedRowList.toString()}`;
+          const message = `Terdapat ${
+            data.skippedRow
+          } baris yang tidak dapat diproses oleh sistem. Baris terletak di ${data.skippedRowList.toString()}`;
           alert(message);
         }
 

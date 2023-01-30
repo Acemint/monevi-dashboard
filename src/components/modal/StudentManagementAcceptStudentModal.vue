@@ -4,7 +4,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">Terima Pengurus</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <button type="button" class="close" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
@@ -21,7 +21,7 @@
 </template>
 
 <script lang="ts">
-  import moneviAxios from '@/api/configuration/monevi-axios';
+  import { moneviAxios } from '@/api/configuration/monevi-axios';
   import type { MoneviParamsAcceptStudent } from '@/api/model/monevi-config';
   import { MoneviPath } from '@/api/path/path';
   import StudentManagementContent from '../content/StudentManagementContent.vue';

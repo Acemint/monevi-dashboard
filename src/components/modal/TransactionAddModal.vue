@@ -4,7 +4,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">Tambah Transaksi</h5>
-          <button v-on:click="closeModal" type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <button v-on:click="closeModal" type="button" class="close" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
@@ -59,14 +59,25 @@
                 <div class="input-group-prepend">
                   <span class="input-group-text">Rp</span>
                 </div>
-                <input v-model="amount" id="jumlah" type="number" class="form-control" name="jumlah" aria-label="Jumlah (dalam rupiah)" />
+                <input
+                  v-model="amount"
+                  id="jumlah"
+                  type="text"
+                  class="form-control"
+                  name="jumlah"
+                  aria-label="Jumlah (dalam rupiah)" />
               </div>
             </div>
 
             <div class="form-group" style="margin-bottom: 8px!important;">
               <label class="col-form-label text-md-left">Bukti Transaksi*</label>
-              <div class="mb-3" style="margin-bottom: 0px!important;">
-                <input v-on:change="loadImage"  accept="image/jpeg, image/png" class="form-control" type="file" id="formFile" /><br />
+              <div class="mb-3">
+                <input
+                  v-on:change="loadImage"
+                  class="form-control"
+                  type="file"
+                  id="formFile"
+                  accept="image/gif, image/jpeg, image/png" /><br />
                 <img v-if="imageSrc != '#'" v-bind:src="imageSrc" ref="sample" style="width: 100%" />
               </div>
             </div>
@@ -74,7 +85,7 @@
           </form>
         </div>
         <div class="modal-footer bg-whitesmoke br">
-          <button v-on:click="closeModal" ref="closeModalButton" type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+          <button v-on:click="closeModal" ref="closeModalButton" type="button" class="btn btn-secondary">Tutup</button>
           <button v-on:click="submitTransaction" type="button" class="btn btn-primary">Tambah Transaksi</button>
         </div>
       </div>
@@ -87,7 +98,7 @@
   import type { MoneviBodyCreateTransaction } from '@/api/model/monevi-config';
   import { MoneviDateFormatter } from '@/api/methods/monevi-date-formatter';
   import { MoneviEnumConverter } from '@/api/methods/monevi-enum-converter';
-  import moneviAxios from '@/api/configuration/monevi-axios';
+  import { moneviAxios } from '@/api/configuration/monevi-axios';
 
   export default {
     data: function () {
@@ -142,7 +153,9 @@
           body.name = this.transactionName;
           body.transactionDate = MoneviDateFormatter.formatDate(this.date);
           body.amount = this.amount;
-          body.generalLedgerAccountType = MoneviEnumConverter.convertGeneralLedgerAccountType(this.generalLedgerAccountType);
+          body.generalLedgerAccountType = MoneviEnumConverter.convertGeneralLedgerAccountType(
+            this.generalLedgerAccountType
+          );
           body.entryPosition = MoneviEnumConverter.convertEntryPosition(this.entryPosition);
           body.type = MoneviEnumConverter.convertTransactionType(this.transactionType);
           body.description = this.description;
@@ -173,7 +186,14 @@
       },
 
       resetData() {
-        (this.date = 'NaN/NaN/NaN'), (this.generalLedgerAccountType = 'Bank'), (this.entryPosition = 'Debit'), (this.transactionName = ''), (this.transactionType = 'Non Rutin'), (this.description = ''), (this.amount = 0), (this.imageSrc = '#');
+        (this.date = 'NaN/NaN/NaN'),
+          (this.generalLedgerAccountType = 'Bank'),
+          (this.entryPosition = 'Debit'),
+          (this.transactionName = ''),
+          (this.transactionType = 'Non Rutin'),
+          (this.description = ''),
+          (this.amount = 0),
+          (this.imageSrc = '#');
       },
     },
   };

@@ -20,7 +20,10 @@
     </div>
 
     <template v-if="date != 'N/A'">
-      <TransactionGeneralData v-bind:transactions="transactions" v-bind:organizationRegionId="organizationRegion.id" v-bind:date="date" />
+      <TransactionGeneralData
+        v-bind:transactions="transactions"
+        v-bind:organizationRegionId="organizationRegion.id"
+        v-bind:date="date" />
       <TransactionFilter v-on:filter-change="getTransactions" />
 
       <div class="row">
@@ -46,11 +49,16 @@
                     <td>{{ item.name }}</td>
                     <td>{{ formatTransactionType(item.type) }}</td>
                     <td>{{ item.description }}</td>
-                    <td v-bind:class="[item.entryPosition == 'CREDIT' ? 'text-danger' : 'text-primary']">{{ formatRupiah(item.amount, item.entryPosition) }}</td>
+                    <td v-bind:class="[item.entryPosition == 'CREDIT' ? 'text-danger' : 'text-primary']">
+                      {{ formatRupiah(item.amount, item.entryPosition) }}
+                    </td>
                     <td>
-                      <button v-if="item.proof != ''" class="btn btn-primary" v-on:click="openImageModal" v-bind:data-index="index">
-                        <i style="pointer-events: none" class="far fa-eye"></i>
-                      </button>
+                      <img
+                        v-on:click="openImageModal"
+                        id="buktiTransaksi"
+                        v-bind:src="formatProof(item.proof)"
+                        onerror="this.style.display = 'none'"
+                        v-bind:data-index="index" />
                     </td>
                   </tr>
                 </table>
@@ -66,7 +74,10 @@
         <div class="col-12">
           <div class="card">
             <div class="card-body">
-              <p>Belum ada laporan yang disetujui oleh Ketua organisasi {{ organizationRegion.organizationName }} untuk bulan {{ formatDateToMonth(date) }}</p>
+              <p>
+                Belum ada laporan yang disetujui oleh Ketua organisasi {{ organizationRegion.organizationName }} untuk
+                bulan {{ formatDateToMonth(date) }}
+              </p>
             </div>
           </div>
         </div>
@@ -92,7 +103,7 @@
   import ImageModal from '@/components/modal/ImageModal.vue';
   import { MoneviCookieHandler } from '@/api/methods/monevi-cookie-handler';
   import { transactionApi } from '@/api/service/transaction-api';
-  import { organizationApi } from '@/api/service/organization-api';
+  import { organizationRegionApi } from '@/api/service/organization-region-api';
 
   export default {
     data: function () {
@@ -108,7 +119,9 @@
       async updateDate(date: string): Promise<void> {
         let userData = MoneviCookieHandler.getUserData();
 
-        this.organizationRegion = await organizationApi.getOrganization(this.$route.query.organization!.toString());
+        this.organizationRegion = await organizationRegionApi.getOrganization(
+          this.$route.query.organization!.toString()
+        );
         if (this.organizationRegion.id == '') {
           return;
         }
@@ -117,12 +130,21 @@
           return;
         }
         this.transactions = await transactionApi.getTransactions(this.$route.query.organization!.toString(), this.date);
-        console.log(this.transactions);
         return;
       },
 
       async getTransactions(generalLedgerAccount: string, entryPosition: string, type: string): Promise<void> {
-        this.transactions = await transactionApi.getTransactions(this.organizationRegion.id, this.date, generalLedgerAccount, entryPosition, type);
+        this.transactions = await transactionApi.getTransactions(
+          this.organizationRegion.id,
+          this.date,
+          generalLedgerAccount,
+          entryPosition,
+          type
+        );
+      },
+
+      formatProof(proof: any) {
+        return atob(proof);
       },
 
       formatGeneralLedgerAccountType(generalLedgerAccountType: string) {
@@ -130,7 +152,9 @@
       },
 
       formatRupiah(amount: number, entryPosition: string = 'DEBIT') {
-        return MoneviDisplayFormatter.toRupiah(MoneviDisplayFormatter.determineNumberByPositionType(amount, entryPosition));
+        return MoneviDisplayFormatter.toRupiah(
+          MoneviDisplayFormatter.determineNumberByPositionType(amount, entryPosition)
+        );
       },
 
       formatTransactionDate(dateInMillis: number) {
@@ -170,7 +194,10 @@
       },
 
       getRouteToReportDetail() {
-        return { name: FrontendRouteName.Report.DETAILS, query: { period: this.formatDateToMonth(this.date), organization: this.organizationRegion.id } };
+        return {
+          name: FrontendRouteName.Report.DETAILS,
+          query: { period: this.formatDateToMonth(this.date), organization: this.organizationRegion.id },
+        };
       },
     },
 

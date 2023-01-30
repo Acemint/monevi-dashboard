@@ -4,7 +4,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">Ubah Program</h5>
-          <button v-on:click="closeModal" type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <button v-on:click="closeModal" type="button" class="close" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
@@ -51,7 +51,7 @@
         </div>
         <div class="modal-footer bg-whitesmoke br">
           <button v-on:click="editProgram" type="button" class="btn btn-primary">Ubah</button>
-          <button v-on:click="closeModal" ref="closeModalButton" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+          <button v-on:click="closeModal" ref="closeModalButton" type="button" class="btn btn-secondary">Cancel</button>
         </div>
       </div>
     </div>

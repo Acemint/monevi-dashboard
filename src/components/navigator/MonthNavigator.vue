@@ -3,20 +3,36 @@
     <nav class="d-inline-block">
       <ul class="pagination mb-0">
         <li v-bind:class="[currentDateIndex == 0 ? 'disabled' : '', 'page-item']">
-          <a v-on:click="navigateDateByButton($event)" id="navigate-page-left" class="page-link" href="#" tabindex="-1"><i class="fas fa-chevron-left"></i></a>
+          <a v-on:click="navigateDateByButton($event)" id="navigate-page-left" class="page-link" href="#" tabindex="-1"
+            ><i class="fas fa-chevron-left"></i
+          ></a>
         </li>
 
         <li class="page-item">
-          <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <button
+            class="btn btn-primary dropdown-toggle"
+            type="button"
+            id="dropdownMenuButton"
+            data-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="false">
             {{ formatDateToMonth(dates[currentDateIndex]) }}
           </button>
           <div class="dropdown-menu">
-            <a v-on:click="navigateDateByDropdown($event)" v-for="item in dates" v-bind:data-date="item" class="dropdown-item"> {{ formatDateToMonth(item) }}</a>
+            <a
+              v-on:click="navigateDateByDropdown($event)"
+              v-for="item in dates"
+              v-bind:data-date="item"
+              class="dropdown-item">
+              {{ formatDateToMonth(item) }}</a
+            >
           </div>
         </li>
 
         <li v-bind:class="[currentDateIndex == dates.length - 1 ? 'disabled' : '', 'page-item']">
-          <a v-on:click="navigateDateByButton($event)" id="navigate-page-right" class="page-link" href="#"><i class="fas fa-chevron-right"></i></a>
+          <a v-on:click="navigateDateByButton($event)" id="navigate-page-right" class="page-link" href="#"
+            ><i class="fas fa-chevron-right"></i
+          ></a>
         </li>
       </ul>
     </nav>
@@ -26,7 +42,7 @@
 </template>
 
 <script lang="ts">
-  import moneviAxios from '@/api/configuration/monevi-axios';
+  import { moneviAxios } from '@/api/configuration/monevi-axios';
   import { MoneviCookieHandler } from '@/api/methods/monevi-cookie-handler';
   import { MoneviDateFormatter } from '@/api/methods/monevi-date-formatter';
   import type { MoneviParamsGetReports } from '@/api/model/monevi-config';
@@ -56,7 +72,10 @@
         params.organizationRegionId = userData.organizationRegionId;
         params.startDate = START_DATE;
         params.endDate = END_DATE;
-        dates = MoneviDateFormatter.getMonthsFromDatesBetween(MoneviDateFormatter.fromDMYtoMYDDate(START_DATE), MoneviDateFormatter.fromDMYtoMYDDate(END_DATE));
+        dates = MoneviDateFormatter.getMonthsFromDatesBetween(
+          MoneviDateFormatter.fromDMYtoMYDDate(START_DATE),
+          MoneviDateFormatter.fromDMYtoMYDDate(END_DATE)
+        );
       } else if (userData.role == 'ROLE_CHAIRMAN') {
         params.organizationRegionId = userData.organizationRegionId;
         params.startDate = START_DATE;
@@ -75,7 +94,11 @@
         for (var report of response.data.values) {
           // only return dates that are available to be seen on respective roles
           if (userData.role == 'ROLE_CHAIRMAN') {
-            if (report.status == 'UNAPPROVED' || report.status == 'APPROVED_BY_CHAIRMAN' || report.status == 'APPROVED_BY_SUPERVISOR') {
+            if (
+              report.status == 'UNAPPROVED' ||
+              report.status == 'APPROVED_BY_CHAIRMAN' ||
+              report.status == 'APPROVED_BY_SUPERVISOR'
+            ) {
               dates.push(MoneviDateFormatter.formatDate(report.periodDate));
             }
           } else if (userData.role == 'ROLE_SUPERVISOR') {

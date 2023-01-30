@@ -1,14 +1,14 @@
-const INDEX = "/";
-const DASHBOARD = "/dashboard";
-const REGISTER = "/register";
-const LOGIN = "/login";
-const FORGOT_PASSWORD = "/forgot-password";
-const STUDENT_MANAGEMENT = "/student-management";
-const REPORT = "/report";
+const INDEX = '/';
+const DASHBOARD = '/dashboard';
+const REGISTER = '/register';
+const LOGIN = '/login';
+const FORGOT_PASSWORD = '/forgot-password';
+const STUDENT_MANAGEMENT = '/student-management';
+const REPORT = '/report';
 const ORGANIZATION = '/organization';
 
-const NOT_FOUND = "/:pathMatch(.*)*";
-const UNAUTHORIZED = "/403-unauthorized";
+const NOT_FOUND = '/:pathMatch(.*)*';
+const UNAUTHORIZED = '/403-unauthorized';
 
 export default {
   INDEX: INDEX,
@@ -20,74 +20,64 @@ export default {
   ORGANIZATION: ORGANIZATION,
   STUDENT_MANAGEMENT: STUDENT_MANAGEMENT,
   NOT_FOUND: NOT_FOUND,
-  UNAUTHORIZED: UNAUTHORIZED
-}
+  UNAUTHORIZED: UNAUTHORIZED,
+};
 
 class FrontendPath {
+  static LOGIN = '/login';
+  static RESET_PASSSWORD = '/reset-password';
+  static ORGANIZATION = '/organization';
 
-  static LOGIN = "/login";
-  static RESET_PASSSWORD = "/reset-password";
-  static ORGANIZATION = "/organization";
-
-  static Transaction = class MoneviTransactionPath { 
-
-    static ROOT = "/transaksi";
-
-  }
+  static Transaction = class MoneviTransactionPath {
+    static ROOT = '/transaksi';
+  };
 
   static Report = class MoneviReportPath {
-
-    static ROOT = "/laporan";
-    static DETAILS = "details";
-
-  }
+    static ROOT = '/laporan';
+    static DETAILS = 'details';
+  };
 
   static Program = class MoneviProgramPath {
-      
-    static ROOT = "/program-kerja";
-    static DETAILS = "details";
+    static ROOT = '/program-kerja';
+    static DETAILS = 'details';
+  };
 
-  }
-
+  static Error = class FrontendErrorPath {
+    static ERROR_404 = '/404-not-found';
+    static ERROR_403 = '/403-unauthorized';
+    static ERROR_500 = '/500-internal-server-error';
+  };
 }
 
 class FrontendRouteName {
-
-  static DASHBOARD = "dashboard";
-  static LOGIN = "login";
-  static REGISTER = "register";
-  static FORGOT_PASSWORD = "forgot-password";
-  static RESET_PASSWORD = "reset-password";
-  static STUDENT_MANAGEMENT = "student-management";
-  static ORGANIZATION = "organization";
+  static INDEX = 'index';
+  static DASHBOARD = 'dashboard';
+  static LOGIN = 'login';
+  static REGISTER = 'register';
+  static FORGOT_PASSWORD = 'forgot-password';
+  static RESET_PASSWORD = 'reset-password';
+  static STUDENT_MANAGEMENT = 'student-management';
+  static ORGANIZATION = 'organization';
 
   static Error = class FrontendErrorRouteName {
-    
-    static ERROR_404 = "404"
-    static ERROR_403 = "403"
-  
-  }
+    static ERROR_404 = '404';
+    static ERROR_403 = '403';
+    static ERROR_500 = '500';
+  };
 
   static Transaction = class FrontendRouteNameTransaction {
-
-    static ROOT = "transaction";
-
-  }
+    static ROOT = 'transaction';
+  };
 
   static Report = class FrontendRouteNameReport {
-
-    static ROOT = "report";
-    static DETAILS = "report-details";
-
-  }
+    static ROOT = 'report';
+    static DETAILS = 'report-details';
+  };
 
   static Program = class FrontendRouteNameProgram {
-
-    static ROOT = "program";
-    static DETAILS = "progrma-details";
-    
-  }
-
+    static ROOT = 'program';
+    static DETAILS = 'progrma-details';
+  };
 }
 
-export { FrontendPath, FrontendRouteName }
+export { FrontendPath, FrontendRouteName };

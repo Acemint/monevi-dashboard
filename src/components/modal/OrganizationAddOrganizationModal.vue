@@ -18,22 +18,37 @@
 
             <div class="form-group">
               <label for="namaok">Singkatan Nama Organisasi Kemahasiswaan*</label>
-              <input v-model="organizationAbbreviation" id="namaok" type="text" class="form-control" name="namaok" placeholder="(contoh: HIMTI)" />
+              <input
+                v-model="organizationAbbreviation"
+                id="namaok"
+                type="text"
+                class="form-control"
+                name="namaok"
+                placeholder="(contoh: HIMTI)" />
               <div class="invalid-feedback"></div>
             </div>
 
             <div class="form-group">
               <label>Area Kampus*</label>
               <div class="form-check" v-for="region of regions">
-                <input type="checkbox" v-bind:id="region.name" v-model="regionCheckbox" v-bind:value="region.name" class="form-check-input" />
+                <input
+                  type="checkbox"
+                  v-bind:id="region.name"
+                  v-model="regionCheckbox"
+                  v-bind:value="region.name"
+                  class="form-check-input" />
                 <label class="form-check-label" v-bind:for="region.name"> Binus @{{ region.name }} </label>
               </div>
             </div>
           </form>
         </div>
         <div class="modal-footer bg-whitesmoke br">
-          <button ref="closeModalButton" v-on:click="closeModal($event)" type="button" class="btn btn-secondary">Tutup</button>
-          <button v-on:click="addOrganization($event)" type="button" class="btn btn-primary">Tambah Organisasi Kemahasiswaan</button>
+          <button ref="closeModalButton" v-on:click="closeModal($event)" type="button" class="btn btn-secondary">
+            Tutup
+          </button>
+          <button v-on:click="addOrganization($event)" type="button" class="btn btn-primary">
+            Tambah Organisasi Kemahasiswaan
+          </button>
         </div>
       </div>
     </div>
@@ -41,7 +56,7 @@
 </template>
 
 <script lang="ts">
-  import moneviAxios from '@/api/configuration/monevi-axios';
+  import { moneviAxios } from '@/api/configuration/monevi-axios';
   import type { Region } from '@/api/model/monevi-model';
   import type { MoneviBodyCreateOrganization } from '@/api/model/monevi-config';
   import { MoneviPath } from '@/api/path/path';

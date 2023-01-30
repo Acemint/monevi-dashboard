@@ -1,28 +1,24 @@
-import moneviAxios from "../configuration/monevi-axios";
-import type { MoneviParamsGetOrganizationRegion } from "@/api/model/monevi-config";
-import { MoneviPath } from "../path/path";
-
+import { moneviAxios } from '../configuration/monevi-axios';
+import { MoneviPath } from '../path/path';
 
 export interface OrganizationApi {
-  getOrganization(organizationRegionId: string): any;
+  getOrganizations(regionName: string | null, searchTerm: string | null): any;
 }
 
 export class OrganizationApiImpl implements OrganizationApi {
-
-  async getOrganization(organizationRegionId: string): Promise<any> {
-    var params = {} as MoneviParamsGetOrganizationRegion;
-    params.id = organizationRegionId;
-    return await moneviAxios
-      .get(MoneviPath.GET_ORGANIZATION_REGION_PATH, { params })
-      .then((response) => {
-        return response.data.value;
-      })
-      .catch((error) => {
-        return null;
-      });
+  async getOrganizations(regionName: string | null = null, searchTerm: string | null = null): Promise<any> {
+    var params = {} as { regionName: string; searchTerm: string };
+    if (regionName != null && regionName != '') {
+      params.regionName = regionName;
+    }
+    if (searchTerm != null) {
+      params.searchTerm = searchTerm;
+    }
+    return await moneviAxios.get(MoneviPath.GET_ORGANIZATIONS_PATH, {
+      params: params,
+    });
   }
-
 }
 
 let organizationApi = new OrganizationApiImpl();
-export { organizationApi }
+export { organizationApi };

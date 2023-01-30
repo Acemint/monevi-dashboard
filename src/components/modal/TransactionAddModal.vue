@@ -60,9 +60,9 @@
                   <span class="input-group-text">Rp</span>
                 </div>
                 <input
-                  v-model="amount"
+                  v-model.number="amount"
+                  type="number"
                   id="jumlah"
-                  type="text"
                   class="form-control"
                   name="jumlah"
                   aria-label="Jumlah (dalam rupiah)" />
@@ -74,11 +74,12 @@
               <div class="mb-3">
                 <input
                   v-on:change="loadImage"
+                  ref="inputImage"
                   class="form-control"
                   type="file"
                   id="formFile"
                   accept="image/gif, image/jpeg, image/png" /><br />
-                <img v-if="imageSrc != '#'" v-bind:src="imageSrc" ref="sample" style="width: 100%" />
+                <img v-if="imageSrc != ''" v-bind:src="imageSrc" style="width: 100%" />
               </div>
             </div>
           </form>
@@ -108,9 +109,19 @@
         transactionName: '',
         transactionType: 'Non Rutin',
         description: '',
-        amount: 0,
-        imageSrc: '#',
+        amount: '',
+        imageSrc: '' as any,
       };
+    },
+
+    watch: {
+      date(newDate, oldDate) {
+        var tzOffset = new Date().getTimezoneOffset() * 60000;
+        if (Date.now() - tzOffset < new Date(newDate).getTime()) {
+          alert('Tidak bisa memasukkan tanggal yang melewati hari ini');
+          this.date = '';
+        }
+      },
     },
 
     props: {
@@ -129,6 +140,59 @@
         transactionDeleteModal.modal('hide');
       },
 
+      loadImage(event: any) {
+        var files: FileList = event.target.files;
+        const reader = new FileReader();
+        reader.readAsDataURL(files[0]);
+        reader.addEventListener('load', () => {
+          this.imageSrc = reader.result;
+        });
+      },
+
+      async submitTransaction() {
+        var body = {} as MoneviBodyCreateTransaction;
+        if (this.imageSrc == '') {
+          alert('Bukti transaksi diperlukan');
+          return;
+        }
+        if (parseFloat(this.amount) <= 0) {
+          alert('Angka tidak boleh lebih kecil dibanding 1');
+          return;
+        }
+        if (this.transactionName.length <= 3) {
+          alert('Panjang nama transaksi harus melebihi 3 huruf');
+          return;
+        }
+        body.organizationRegionId = this.organizationRegionId!;
+        body.name = this.transactionName;
+        body.transactionDate = MoneviDateFormatter.formatDate(this.date);
+        body.amount = parseFloat(this.amount);
+        body.generalLedgerAccountType = MoneviEnumConverter.convertGeneralLedgerAccountType(
+          this.generalLedgerAccountType
+        );
+        body.entryPosition = MoneviEnumConverter.convertEntryPosition(this.entryPosition);
+        body.type = MoneviEnumConverter.convertTransactionType(this.transactionType);
+        body.description = this.description;
+        body.proof = this.imageSrc;
+
+        return await moneviAxios
+          .post(MoneviPath.CREATE_NEW_TRANSACTION_PATH, new Array<MoneviBodyCreateTransaction>(body))
+          .then((response) => {
+            alert('Sukses menambahkan transaksi');
+            var closeModalButton: any = this.$refs.closeModalButton;
+            closeModalButton.click();
+            this.$emit('successUpdate');
+          })
+          .catch((error) => {
+            alert('Gagal menambahkan transaksi');
+            for (const key in error.response.data.errorFields) {
+              var errorMessage = error.response.data.errorFields[key];
+              alert(errorMessage);
+              break;
+            }
+          });
+      },
+
       clearData() {
         this.date = '';
         this.generalLedgerAccountType = 'Bank';
@@ -136,73 +200,10 @@
         this.transactionName = '';
         this.transactionType = 'Non Rutin';
         this.description = '';
-        this.amount = 0;
-        this.imageSrc = '#';
-      },
-
-      loadImage(event: any) {
-        if (event.target != null) {
-          var files: FileList = event.target.files;
-          if (files.length != 0) {
-            this.imageSrc = URL.createObjectURL(files[0]);
-          }
-        }
-      },
-
-      async submitTransaction() {
-        let blob = await fetch(this.imageSrc).then((r) => r.blob());
-
-        const reader = new FileReader();
-        reader.readAsDataURL(blob);
-        reader.addEventListener('load', () => {
-          var body = {} as MoneviBodyCreateTransaction;
-          if (this.organizationRegionId == undefined) {
-            console.error('Organization is not defined');
-            return;
-          }
-          body.organizationRegionId = this.organizationRegionId;
-          body.name = this.transactionName;
-          body.transactionDate = MoneviDateFormatter.formatDate(this.date);
-          body.amount = this.amount;
-          body.generalLedgerAccountType = MoneviEnumConverter.convertGeneralLedgerAccountType(
-            this.generalLedgerAccountType
-          );
-          body.entryPosition = MoneviEnumConverter.convertEntryPosition(this.entryPosition);
-          body.type = MoneviEnumConverter.convertTransactionType(this.transactionType);
-          body.description = this.description;
-          body.proof = reader.result;
-          return moneviAxios
-            .post(MoneviPath.CREATE_NEW_TRANSACTION_PATH, new Array<MoneviBodyCreateTransaction>(body))
-            .then((response) => {
-              alert('success in creating transaction');
-              URL.revokeObjectURL(this.imageSrc);
-              this.imageSrc = '#';
-              if (!(this.$refs.closeModalButton instanceof HTMLButtonElement)) {
-                return;
-              }
-              this.$refs.closeModalButton.click();
-              this.$emit('successUpdate');
-              this.resetData();
-            })
-            .catch((error) => {
-              for (const key in error.response.data.errorFields) {
-                var errorMessage = error.response.data.errorFields[key];
-                alert(errorMessage);
-                break;
-              }
-            });
-        });
-      },
-
-      resetData() {
-        (this.date = 'NaN/NaN/NaN'),
-          (this.generalLedgerAccountType = 'Bank'),
-          (this.entryPosition = 'Debit'),
-          (this.transactionName = ''),
-          (this.transactionType = 'Non Rutin'),
-          (this.description = ''),
-          (this.amount = 0),
-          (this.imageSrc = '#');
+        this.amount = '';
+        this.imageSrc = '';
+        var inputImage: any = this.$refs.inputImage;
+        inputImage.value = '';
       },
     },
   };

@@ -23,9 +23,9 @@
                   <span class="input-group-text">Rp</span>
                 </div>
                 <input
-                  v-model="budget"
+                  v-model.number="budget"
                   id="budget"
-                  type="text"
+                  type="number"
                   class="form-control"
                   name="budget"
                   aria-label="Bugdet (dalam rupiah)" />
@@ -39,9 +39,9 @@
                   <span class="input-group-text">Rp</span>
                 </div>
                 <input
-                  v-model="subsidy"
+                  v-model.number="subsidy"
                   id="subsidi"
-                  type="text"
+                  type="number"
                   class="form-control"
                   name="subsidi"
                   aria-label="Jumlah Subsidi (dalam rupiah)" />
@@ -80,8 +80,8 @@
     data: function () {
       return {
         programName: '',
-        budget: 0,
-        subsidy: 0,
+        budget: '',
+        subsidy: '',
         startDate: '',
         endDate: '',
       };
@@ -92,23 +92,55 @@
       userId: String,
     },
 
+    watch: {
+      startDate(newDate, oldDate) {
+        var tzOffset = new Date().getTimezoneOffset() * 60000;
+        var todayDate = new Date();
+        todayDate.setHours(0);
+        todayDate.setMinutes(0);
+        todayDate.setSeconds(0);
+        todayDate.setMilliseconds(0);
+        if (new Date(newDate).getTime() < todayDate.getTime() - tzOffset) {
+          alert('Tidak bisa memasukkan tanggal yang sudah lewat');
+          this.startDate = '';
+        }
+      },
+
+      endDate(newDate, oldDate) {
+        var tzOffset = new Date().getTimezoneOffset() * 60000;
+        var todayDate = new Date();
+        todayDate.setHours(0);
+        todayDate.setMinutes(0);
+        todayDate.setSeconds(0);
+        todayDate.setMilliseconds(0);
+        if (new Date(newDate).getTime() < todayDate.getTime() - tzOffset) {
+          alert('Tidak bisa memasukkan tanggal yang sudah lewat');
+          this.endDate = '';
+        }
+      },
+    },
+
     methods: {
       async submitNewProgram(event: Event) {
         event.preventDefault();
         var body = {} as MoneviBodyCreateProgram;
-        if (this.organizationRegionId == undefined) {
-          console.error('internal server error, organization region is not found');
+        if (this.programName == '') {
+          alert('Mohon nama program kerja');
           return;
         }
-        if (this.userId == undefined) {
-          console.error('internal server error, user id is not found');
+        if (this.startDate == '' || this.endDate == '') {
+          alert('Mohon masukkan tanggal mulai dan tanggal selesai program kerja');
           return;
         }
-        body.userId = this.userId;
-        body.organizationRegionId = this.organizationRegionId;
+        if (this.budget == '' || this.subsidy == '') {
+          alert('Budget maupun subsidi tidak boleh kosong');
+          return;
+        }
+        body.userId = this.userId!;
+        body.organizationRegionId = this.organizationRegionId!;
         body.programName = this.programName;
-        body.budget = this.budget;
-        body.subsidy = this.subsidy;
+        body.budget = parseFloat(this.budget);
+        body.subsidy = parseFloat(this.subsidy);
         body.startDate = MoneviDateFormatter.formatDate(this.startDate);
         body.endDate = MoneviDateFormatter.formatDate(this.endDate);
         await moneviAxios
@@ -117,10 +149,11 @@
             if (this.$refs.closeModalButton instanceof HTMLButtonElement) {
               this.$refs.closeModalButton.click();
             }
+            alert('Berhasil membuat program kerja');
             this.$emit('successUpdate');
-            this.resetData();
           })
           .catch((error) => {
+            alert('Gagal menambahkan program kerja');
             if (error.response.status == 400) {
               for (const key in error.response.data.errorFields) {
                 var errorMessage = error.response.data.errorFields[key];
@@ -134,10 +167,11 @@
       },
 
       resetData() {
-        (this.programName = ''), (this.budget = 0), (this.subsidy = 0), (this.startDate = ''), (this.endDate = '');
+        (this.programName = ''), (this.budget = ''), (this.subsidy = ''), (this.startDate = ''), (this.endDate = '');
       },
 
       showModal() {
+        this.resetData();
         var addProgramModal: JQuery<HTMLDivElement> = $('#addProgramModal');
         addProgramModal.modal('show');
       },

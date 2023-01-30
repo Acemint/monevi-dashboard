@@ -22,7 +22,13 @@
                 <div class="input-group-prepend">
                   <span class="input-group-text">Rp</span>
                 </div>
-                <input v-model="budget" id="budget" type="text" class="form-control" name="budget" aria-label="Bugdet (dalam rupiah)" />
+                <input
+                  v-model.number="budget"
+                  id="budget"
+                  type="number"
+                  class="form-control"
+                  name="budget"
+                  aria-label="Bugdet (dalam rupiah)" />
               </div>
             </div>
 
@@ -32,7 +38,13 @@
                 <div class="input-group-prepend">
                   <span class="input-group-text">Rp</span>
                 </div>
-                <input v-model="subsidy" id="subsidi" type="text" class="form-control" name="subsidi" aria-label="Jumlah Subsidi (dalam rupiah)" />
+                <input
+                  v-model.number="subsidy"
+                  id="subsidi"
+                  type="number"
+                  class="form-control"
+                  name="subsidi"
+                  aria-label="Jumlah Subsidi (dalam rupiah)" />
               </div>
             </div>
 
@@ -66,8 +78,8 @@
     data: function () {
       return {
         programName: '',
-        budget: 0,
-        subsidy: 0,
+        budget: '',
+        subsidy: '',
         startDate: '',
         endDate: '',
       };
@@ -78,8 +90,35 @@
         this.programName = newProgram.name;
         this.budget = newProgram.budget;
         this.subsidy = newProgram.subsidy;
-        this.startDate = new Date(newProgram.startDate).toISOString().substring(0, 10);
-        this.endDate = new Date(newProgram.endDate).toISOString().substring(0, 10);
+        var tzoffset = new Date().getTimezoneOffset() * 60000;
+        this.startDate = new Date(newProgram.startDate - tzoffset).toISOString().substring(0, 10);
+        this.endDate = new Date(newProgram.endDate - tzoffset).toISOString().substring(0, 10);
+      },
+
+      startDate(newDate, oldDate) {
+        var tzOffset = new Date().getTimezoneOffset() * 60000;
+        var todayDate = new Date();
+        todayDate.setHours(0);
+        todayDate.setMinutes(0);
+        todayDate.setSeconds(0);
+        todayDate.setMilliseconds(0);
+        if (new Date(newDate).getTime() < todayDate.getTime() - tzOffset) {
+          alert('Tidak bisa memasukkan tanggal yang sudah lewat');
+          this.startDate = '';
+        }
+      },
+
+      endDate(newDate, oldDate) {
+        var tzOffset = new Date().getTimezoneOffset() * 60000;
+        var todayDate = new Date();
+        todayDate.setHours(0);
+        todayDate.setMinutes(0);
+        todayDate.setSeconds(0);
+        todayDate.setMilliseconds(0);
+        if (new Date(newDate).getTime() < todayDate.getTime() - tzOffset) {
+          alert('Tidak bisa memasukkan tanggal yang sudah lewat');
+          this.endDate = '';
+        }
       },
     },
 
@@ -102,10 +141,28 @@
       async editProgram(event: Event) {
         event.preventDefault();
 
-        var updateProgramRequest = {} as { name: string; budget: number; subsidy: number; startDate: string; endDate: string };
+        if (this.programName == '') {
+          alert('Mohon nama program kerja');
+          return;
+        }
+        if (this.startDate == '' || this.endDate == '') {
+          alert('Mohon masukkan tanggal mulai dan tanggal selesai program kerja');
+          return;
+        }
+        if (this.budget == '' || this.subsidy == '') {
+          alert('Budget maupun subsidi tidak boleh kosong');
+          return;
+        }
+        var updateProgramRequest = {} as {
+          name: string;
+          budget: number;
+          subsidy: number;
+          startDate: string;
+          endDate: string;
+        };
         updateProgramRequest.name = this.programName;
-        updateProgramRequest.budget = this.budget;
-        updateProgramRequest.subsidy = this.subsidy;
+        updateProgramRequest.budget = parseFloat(this.budget);
+        updateProgramRequest.subsidy = parseFloat(this.subsidy);
         updateProgramRequest.startDate = MoneviDateFormatter.formatDate(this.startDate);
         updateProgramRequest.endDate = MoneviDateFormatter.formatDate(this.endDate);
 

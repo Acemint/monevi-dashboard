@@ -30,8 +30,8 @@
           </p>
         </div>
         <div class="modal-footer bg-whitesmoke br">
-          <button v-on:click="closeModal" ref="closeModalButton" type="button" class="btn btn-secondary">Tutup</button>
-          <button v-on:click="sendReport" type="button" class="btn btn-danger">Tambah Transaksi</button>
+          <button v-on:click="closeModal" ref="closeModalButton" type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+          <button v-on:click="sendReport" type="button" class="btn btn-primary">Tambah Transaksi</button>
         </div>
       </div>
     </div>

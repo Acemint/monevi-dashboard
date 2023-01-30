@@ -19,17 +19,14 @@ moneviAxios.interceptors.request.use(async (config) => {
   return config;
 });
 
-moneviAxios.interceptors.response.use(
-  (response) => {
-    return response;
-  },
-  (error) => {
-    if (error.response.status == 401) {
-      alert('Session has expired, please re-login');
-      authorizationApi.logout();
-      router.push({ name: FrontendRouteName.LOGIN });
-    }
+moneviAxios.interceptors.response.use(undefined, (error) => {
+  if (error.response.status == 401) {
+    alert('Session has expired, please re-login');
+    authorizationApi.logout();
+    router.push({ name: FrontendRouteName.LOGIN });
+  } else {
+    return Promise.reject(error);
   }
-);
+});
 
 export { moneviAxios };

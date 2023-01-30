@@ -211,7 +211,7 @@
         if (currentMonthReports == undefined || currentMonthReports.length == 0) {
           return false;
         }
-        if (currentMonthReports[0].status == 'NOT_SENT') {
+        if (currentMonthReports[0].status == 'NOT_SENT' || currentMonthReports[0].status == 'DECLINED') {
           return false;
         }
         return true;

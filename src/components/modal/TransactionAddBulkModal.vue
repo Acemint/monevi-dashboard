@@ -4,7 +4,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">Impor Transaksi</h5>
-          <button type="button" class="close" aria-label="Close">
+          <button v-on:click="closeModal" type="button" class="close" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
@@ -73,15 +73,22 @@
         if (this.inputFile == undefined) {
           alert('File should not be empty');
         }
+        var data = await transactionApi
+          .convertExcel(this.organizationRegionId!, this.inputFile!)
+          .then((response) => {
+            return response.data.value;
+          })
+          .catch((error) => {
+            for (const key in error.response.data.errorFields) {
+              var errorMessage = error.response.data.errorFields[key];
+              alert(errorMessage);
 
-        var data = await transactionApi.convertExcel(this.organizationRegionId!, this.inputFile!);
-        // if (data == null) {
-        //   alert('Unable to process file, make sure the extension is correct');
-        //   // Reset input file
-        //   const inputFile: any = this.$refs.inputFile;
-        //   inputFile.value = '';
-        //   return;
-        // }
+              // Reset input file
+              const inputFile: any = this.$refs.inputFile;
+              inputFile.value = '';
+              return;
+            }
+          });
         // alert about some unprocessed data
         if (data.skippedRow != 0) {
           const message = `Terdapat ${

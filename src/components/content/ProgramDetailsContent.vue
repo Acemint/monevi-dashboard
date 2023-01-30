@@ -38,9 +38,9 @@
                       <td>{{ formatDate(item.startDate!) }}</td>
                       <td>{{ formatDate(item.endDate!) }}</td>
                       <td v-if="userAccount.role == 'ROLE_SUPERVISOR'">
-                        <button v-if="item.lockedProgram == false" v-on:click="openLockProgramModal" ref="lockButton" v-bind:data-index="index" class="btn btn-primary">Kunci</button>
-                        <button v-on:click="openEditProgramModal" ref="editButton" v-bind:data-index="index" class="btn btn-primary">Ubah</button>
-                        <button v-on:click="openDeleteProgramModal" ref="deleteButton" v-bind:data-index="index" class="btn btn-danger">Hapus</button>
+                        <button v-if="item.lockedProgram == false" v-on:click="openLockProgramModal" ref="lockButton" v-bind:data-index="index" class="btn btn-primary"><i class="far fa-lock"></i></button>
+                        <button v-on:click="openEditProgramModal" ref="editButton" v-bind:data-index="index" class="btn btn-primary"><i class="far fa-edit"></i></button>
+                        <button v-on:click="openDeleteProgramModal" ref="deleteButton" v-bind:data-index="index" class="btn btn-danger"><i class="far fa-trash-alt"></i></button>
                       </td>
                       <td v-else>
                         <template v-if="item.lockedProgram != true">

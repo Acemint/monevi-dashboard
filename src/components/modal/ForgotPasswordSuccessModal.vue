@@ -4,7 +4,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">Lupa Password</h5>
-          <button type="button" class="close" aria-label="Close">
+          <button v-on:click="closeModal($event)" type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>

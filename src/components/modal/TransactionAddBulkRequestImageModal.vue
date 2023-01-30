@@ -4,7 +4,7 @@
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">Impor Transaksi</h5>
-          <button type="button" aria-label="Close">
+          <button type="button" class="close" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
@@ -35,7 +35,7 @@
                       <td v-bind:class="[item.entryPosition == 'CREDIT' ? 'text-danger' : 'text-primary']">
                         {{ formatRupiah(item.amount, item.entryPosition) }}
                       </td>
-                      <td style="min-width: 245px">
+                      <td style="min-width: 300px">
                         <div class="mb-3">
                           <label class="col-form-label text-md-left"></label>
                           <input
@@ -44,14 +44,18 @@
                             type="file"
                             id="formFile"
                             v-bind:data-index="index" />
-                          <br />
-                        </div>
-                        <img
+                            <img
+                          v-on:click="openImageModal"
+                          v-bind:src="item.proof"
+                          onerror="this.style.display = 'none'"
+                          v-bind:data-index="index"
+                          style="width: 100%" /><img
                           v-on:click="openImageModal"
                           v-bind:src="item.proof"
                           onerror="this.style.display = 'none'"
                           v-bind:data-index="index"
                           style="width: 100%" />
+                        </div>
                       </td>
                     </tr>
                   </template>

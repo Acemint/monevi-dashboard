@@ -119,6 +119,7 @@
 
     methods: {
       showModal() {
+        this.clearData();
         var transactionAddModal: JQuery<HTMLDivElement> = $('#transactionAddModal');
         transactionAddModal.modal('show');
       },
@@ -126,6 +127,17 @@
       closeModal(event: Event) {
         var transactionDeleteModal: JQuery<HTMLDivElement> = $('#transactionAddModal');
         transactionDeleteModal.modal('hide');
+      },
+
+      clearData() {
+        this.date = '';
+        this.generalLedgerAccountType = 'Bank';
+        this.entryPosition = 'Debit';
+        this.transactionName = '';
+        this.transactionType = 'Non Rutin';
+        this.description = '';
+        this.amount = 0;
+        this.imageSrc = '#';
       },
 
       loadImage(event: any) {

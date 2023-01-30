@@ -80,8 +80,15 @@
       },
 
       closeModal(event: Event) {
+        this.clearData();
         var addOrganizationModal: JQuery<HTMLDivElement> = $('#addOrganizationModal');
         addOrganizationModal.modal('hide');
+      },
+
+      clearData() {
+        this.regionCheckbox = [];
+        this.organizationAbbreviation = '';
+        this.organizationAbbreviation = '';
       },
 
       addOrganization(event: MouseEvent) {

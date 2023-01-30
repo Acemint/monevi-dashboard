@@ -70,14 +70,14 @@
                             ref="editButton"
                             v-bind:data-index="index"
                             class="btn btn-primary">
-                            Ubah
+                            <i class="far fa-edit"></i>
                           </button>
                           <button
                             v-on:click="openDeleteProgramModal"
                             ref="deleteButton"
                             v-bind:data-index="index"
                             class="btn btn-danger">
-                            Hapus
+                            <i class="far fa-trash-alt"></i>
                           </button>
                         </template>
                         <template v-else>

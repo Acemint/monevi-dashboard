@@ -25,13 +25,18 @@
     </template>
 
     <template v-else>
+      <div class="alert alert-primary" role="alert">
+        {{ formatReportStatus(reportSummary.reportStatus!) }}
+      </div>
       <div class="row">
         <div class="col-12">
           <div class="card">
             <div class="card-header">
               <h4>
-                Laporan Keuangan Kas dan Bank UKM {{ organizationRegion.organizationName }}
-                {{ organizationRegion.regionName }} per Bulan {{ formatDateToMonth(date) }}
+                Laporan Keuangan Kas dan Bank UKM <br>
+                {{ organizationRegion.organizationName }}
+                {{ organizationRegion.regionName }} <br>
+                per Bulan {{ formatDateToMonth(date) }}
               </h4>
               <div class="card-header-action">
                 <button class="btn btn-primary" v-on:click="navigateToTransactionPage">Lihat Detail Transaksi</button>
@@ -39,7 +44,6 @@
             </div>
 
             <div class="card-body">
-              <p>{{ formatReportStatus(reportSummary.reportStatus!) }}</p>
               <div class="table-responsive">
                 <table class="table table-striped table-bordered" id="table-1">
                   <template v-for="generalLedgerData of reportSummary.values()">

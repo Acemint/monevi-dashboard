@@ -55,15 +55,15 @@ class MoneviDisplayFormatter {
 
   static convertReportStatusForDisplay(status: string, role: string): string {
     if (status === 'NOT_SENT') {
-      return 'Laporan ini belum dikirim, klik submit jika data opname sudah sesuai dengan data transaksi';
+      return '<div class="alert alert-danger" role="alert">Laporan ini belum dikirim, klik submit jika data opname sudah sesuai dengan data transaksi</div>';
     } else if (status === 'DECLINED') {
-      return 'Laporan ini telah ditolak, harap kirim ulang setelah diperbaiki';
+      return '<div class="alert alert-danger" role="alert">Laporan ini telah ditolak, harap kirim ulang setelah diperbaiki</div>';
     } else if (status === 'UNAPPROVED') {
-      return 'Laporan ini menunggu persetujuan oleh ketua';
+      return '<div class="alert alert-warning" role="alert">Laporan ini menunggu persetujuan oleh ketua</div>';
     } else if (status === 'APPROVED_BY_CHAIRMAN') {
-      return 'Laporan ini menunggu persetujuan oleh pengawas';
+      return '<div class="alert alert-warning" role="alert">Laporan ini menunggu persetujuan oleh pengawas</div>';
     } else if (status === 'APPROVED_BY_SUPERVISOR') {
-      return 'Laporan ini sudah disetujui oleh pengawas';
+      return '<div class="alert alert-success" role="alert">Laporan ini sudah disetujui oleh pengawas</div>';
     }
     return '';
   }

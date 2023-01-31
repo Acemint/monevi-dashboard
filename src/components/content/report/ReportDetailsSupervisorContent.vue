@@ -38,6 +38,7 @@
     </template>
 
     <template v-else>
+      {{ formatReportStatus(reportSummary.reportStatus!) }}
       <div class="row">
         <div class="col-12">
           <div class="card">
@@ -54,7 +55,6 @@
             </div>
 
             <div class="card-body" v-if="reportSummary.reportId != ''">
-              <p>{{ formatReportStatus(reportSummary.reportStatus!) }}</p>
               <div class="table-responsive">
                 <table class="table table-striped table-bordered" id="table-1">
                   <template v-for="generalLedgerData of reportSummary.values()">

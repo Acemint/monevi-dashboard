@@ -1,10 +1,13 @@
 <template>
   <div class="modal fade bd-example-modal-xl" tabindex="-1" role="dialog" id="transactionAddBulkRequestImageModal">
-    <div class="modal-dialog modal-lg" style="width: 1600px" role="document">
+    <div
+      class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-xl"
+      style="max-width: 1600px"
+      role="document">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">Impor Transaksi</h5>
-          <button type="button" class="close" aria-label="Close">
+          <button v-on:click="closeModal" type="button" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
@@ -27,7 +30,7 @@
                   <template v-for="(item, index) in processedTransactions">
                     <tr ref="transactionsDisplay">
                       <td>{{ index + 1 }}</td>
-                      <td>{{ formatTransactionDate(item.transactionDate) }}</td>
+                      <td>{{ item.transactionDate }}</td>
                       <td>{{ formatGeneralLedgerAccountType(item.generalLedgerAccountType) }}</td>
                       <td>{{ item.name }}</td>
                       <td>{{ formatTransactionType(item.type) }}</td>
@@ -44,13 +47,9 @@
                             type="file"
                             id="formFile"
                             v-bind:data-index="index" />
-                            <img
-                          v-on:click="openImageModal"
-                          v-bind:src="item.proof"
-                          onerror="this.style.display = 'none'"
-                          v-bind:data-index="index"
-                          style="width: 100%" /><img
-                          v-on:click="openImageModal"
+                          <br />
+                        </div>
+                        <img
                           v-bind:src="item.proof"
                           onerror="this.style.display = 'none'"
                           v-bind:data-index="index"
@@ -73,8 +72,6 @@
       </div>
     </div>
   </div>
-
-  <ImageModal ref="imageModal" v-bind:imageSrc="currentImageSrc" />
 </template>
 
 <script lang="ts">
@@ -91,12 +88,7 @@
       organizationRegionId: String,
     },
 
-    data: function () {
-      return {
-        inputFile: undefined,
-        currentImageSrc: '',
-      };
-    },
+    data: function () {},
 
     methods: {
       showModal() {
@@ -170,16 +162,6 @@
           transactionRequests.push(transactionRequest);
         }
         return transactionRequests;
-      },
-
-      openImageModal(event: any) {
-        var index = parseInt(event.currentTarget.getAttribute('data-index'));
-        var imageProof: any = this.processedTransactions![index].proof;
-        this.currentImageSrc = imageProof;
-        this.$nextTick(() => {
-          var imageModal: any = this.$refs.imageModal;
-          imageModal.showModal();
-        });
       },
 
       formatGeneralLedgerAccountType(generalLedgerAccountType: string) {

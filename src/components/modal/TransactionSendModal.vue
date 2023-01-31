@@ -18,9 +18,9 @@
                   <span class="input-group-text">Rp</span>
                 </div>
                 <input
-                  v-model="cashOpname"
+                  v-model.number="cashOpname"
                   id="jumlah"
-                  type="text"
+                  type="number"
                   class="form-control"
                   name="jumlah"
                   aria-label="Jumlah (dalam rupiah)" />
@@ -33,9 +33,9 @@
                   <span class="input-group-text">Rp</span>
                 </div>
                 <input
-                  v-model="bankOpname"
+                  v-model.number="bankOpname"
                   id="jumlah"
-                  type="text"
+                  type="number"
                   class="form-control"
                   name="jumlah"
                   aria-label="Jumlah (dalam rupiah)" />
@@ -46,7 +46,14 @@
 
         <div class="modal-footer bg-whitesmoke br">
           <button v-on:click="sendReport" type="button" class="btn btn-primary">Yes</button>
-          <button v-on:click="closeModal" ref="closeModalButton" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+          <button
+            v-on:click="closeModal"
+            ref="closeModalButton"
+            type="button"
+            class="btn btn-secondary"
+            data-dismiss="modal">
+            Cancel
+          </button>
         </div>
       </div>
     </div>
@@ -55,7 +62,6 @@
 
 <script lang="ts">
   import { moneviAxios } from '@/api/configuration/monevi-axios';
-  import { MoneviDateFormatter } from '@/api/methods/monevi-date-formatter';
   import type { MoneviBodySubmitReport } from '@/api/model/monevi-config';
   import { MoneviPath } from '@/api/path/path';
   import { FrontendRouteName } from '@/constants/path';
@@ -69,13 +75,14 @@
 
     data: function () {
       return {
-        bankOpname: 0,
-        cashOpname: 0,
+        bankOpname: '',
+        cashOpname: '',
       };
     },
 
     methods: {
       showModal() {
+        this.initData();
         var transactionSendModal: JQuery<HTMLDivElement> = $('#transactionSendModal');
         transactionSendModal.modal('show');
       },
@@ -85,12 +92,17 @@
         transactionSendModal.modal('hide');
       },
 
+      initData() {
+        this.bankOpname = '';
+        this.cashOpname = '';
+      },
+
       sendReport() {
         var body = {} as MoneviBodySubmitReport;
         body.userId = this.userId!;
         body.date = this.date!;
         body.organizationRegionId = this.organizationRegionId!;
-        body.opnameData = { BANK: this.bankOpname, CASH: this.cashOpname };
+        body.opnameData = { BANK: parseFloat(this.bankOpname), CASH: parseFloat(this.cashOpname) };
         moneviAxios
           .post(MoneviPath.SUBMIT_REPORT_PATH, body)
           .then((response) => {
@@ -107,7 +119,6 @@
               alert(errorMessage);
               break;
             }
-            console.error('Internal Server Error, Unable to Submit Report');
           });
       },
     },

@@ -129,7 +129,7 @@
                 <div>
                   <button
                     v-on:click="approveReport"
-                    v-bind:class="[isBalanced() ? '' : 'disabled', 'btn btn-primary']"
+                    v-bind:class="[isBalanceValue == true ? '' : 'disabled', 'btn btn-primary']"
                     type="button"
                     class="btn btn-primary">
                     Kirim Laporan
@@ -169,6 +169,7 @@
         organizationRegion: new MoneviOrganizationRegion(),
         date: '',
         userAccount: MoneviCookieHandler.getUserData(),
+        isBalanceValue: false,
       };
     },
 
@@ -181,14 +182,11 @@
       async initData() {
         this.organizationRegion = await organizationRegionApi.getOrganization(this.userAccount.organizationRegionId);
         this.reportSummary = await reportApi.summarizeReport(this.userAccount.organizationRegionId, this.date);
+        this.setIsBalanceValue();
       },
 
-      isBalanced() {
+      setIsBalanceValue() {
         for (var generalLedger of this.reportSummary.values()) {
-          console.log('PREV MONTH', generalLedger.data.previousMonthAmount);
-          console.log(generalLedger.data.opnameAmount);
-          console.log(this.sumGeneralLedgerAccount(generalLedger));
-
           if (
             generalLedger.data.opnameAmount !=
             this.sumGeneralLedgerAccount(generalLedger) + generalLedger.data.previousMonthAmount
@@ -196,6 +194,7 @@
             return false;
           }
         }
+        return true;
       },
 
       sumGeneralLedgerAccount(generalLedgers: any): number {
@@ -232,7 +231,7 @@
       },
 
       approveReport() {
-        if (this.isBalanced() == false) {
+        if (this.isBalanceValue == false) {
           alert('Hasil opname dan saldo buku tidak seimbang, harap cek kembali');
           return;
         }

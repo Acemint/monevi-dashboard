@@ -28,6 +28,7 @@
     </template>
 
     <template v-else>
+      {{ formatReportStatus(reportSummary.reportStatus!) }}
       <div class="row">
         <div class="col-12">
           <div class="card">
@@ -42,7 +43,6 @@
             </div>
 
             <div class="card-body">
-              <p>{{ formatReportStatus(reportSummary.reportStatus!) }}</p>
               <template v-if="reportSummary.reportStatus == 'DECLINED'">
                 <p>Komentar Oleh: {{ reportSummary.commentedBy }}</p>
                 <p>Komentar: {{ reportSummary.comment }}</p>

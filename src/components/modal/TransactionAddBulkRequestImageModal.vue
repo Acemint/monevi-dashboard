@@ -1,9 +1,6 @@
 <template>
   <div class="modal fade bd-example-modal-xl" tabindex="-1" role="dialog" id="transactionAddBulkRequestImageModal">
-    <div
-      class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-xl"
-      style="max-width: 1600px"
-      role="document">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-xl" role="document">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">Impor Transaksi</h5>
@@ -83,14 +80,19 @@
 
   export default {
     props: {
-      processedTransactions: Array<Transaction>,
+      processedTransactions: Array<any>,
       organizationRegionId: String,
     },
 
-    data: function () {},
+    data: function () {
+      return {
+        processedTransactionsChild: [] as Array<any>,
+      };
+    },
 
     methods: {
       showModal() {
+        this.processedTransactionsChild = this.processedTransactions!;
         var transactionAddBulkRequestImageModal: JQuery<HTMLDivElement> = $('#transactionAddBulkRequestImageModal');
         transactionAddBulkRequestImageModal.modal('show');
       },
@@ -150,7 +152,7 @@
           var transactionRequest = {} as MoneviBodyCreateTransaction;
           transactionRequest.organizationRegionId = this.organizationRegionId!;
           transactionRequest.name = transaction.name;
-          transactionRequest.transactionDate = MoneviDateFormatter.formatDate(transaction.transactionDate);
+          transactionRequest.transactionDate = transaction.transactionDate;
           transactionRequest.amount = transaction.amount;
           transactionRequest.generalLedgerAccountType = transaction.generalLedgerAccountType;
           transactionRequest.entryPosition = transaction.entryPosition;

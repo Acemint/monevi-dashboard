@@ -21,7 +21,7 @@
                   <img class="mr-3 rounded-circle" width="50" src="@/assets/img/avatar/avatar-1.png" alt="avatar" />
                   <div class="media-body">
                     <div class="float-right text-primary">{{ formatDate(history.createdDate) }}</div>
-                    <div class="media-title">{{ history.userName }}</div>
+                    <div class="media-title">{{ history.userName }} [{{ history.organizationName }}]</div>
                     <span class="text-small text-muted">{{ getHistoryMessage(history) }}</span>
                   </div>
                 </li>
@@ -63,7 +63,13 @@
       },
 
       getHistoryMessage(history: any) {
-        return getHistoryMessage(this.userAccount.role, history.remarks, history.reportPeriod);
+        return getHistoryMessage(
+          this.userAccount.role,
+          history.remarks,
+          history.reportPeriod,
+          history.userName,
+          history.organizationName
+        );
       },
 
       formatDate(date: any) {

@@ -35,7 +35,7 @@ function getHistoryMessageForChairman(status: string, period: string) {
   } else if (status == 'DECLINED') {
     return `Laporan untuk bulan ${period} telah ditolak`;
   } else if (status == 'APPROVED_BY_CHAIRMAN') {
-    return `Laporan untuk bulan ${period} sudah disetujui oleh pengawas`;
+    return `Laporan untuk bulan ${period} telah dikirim ke pengawas`;
   } else if (status == 'APPROVED_BY_SUPERVISOR') {
     return `Laporan untuk bulan ${period} sudah disetujui oleh pengawas`;
   }

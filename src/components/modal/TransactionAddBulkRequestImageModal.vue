@@ -54,7 +54,6 @@
                           onerror="this.style.display = 'none'"
                           v-bind:data-index="index"
                           style="width: 100%" />
-                        </div>
                       </td>
                     </tr>
                   </template>

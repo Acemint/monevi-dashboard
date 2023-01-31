@@ -20,6 +20,9 @@ moneviAxios.interceptors.request.use(async (config) => {
       Authorization: `${token.type} ${token.accessToken}`,
     };
   }
+  console.log(token.accessToken)
+  console.log('Starting Request Params', JSON.stringify(config, null, 2));
+  console.log('Starting Request Body', JSON.stringify(config.data, null, 2));
   return config;
 });
 

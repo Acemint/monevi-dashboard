@@ -40,6 +40,7 @@
                           <label class="col-form-label text-md-left"></label>
                           <input
                             v-on:change="loadImage"
+                            ref="inputImage"
                             class="form-control"
                             type="file"
                             id="formFile"
@@ -73,7 +74,6 @@
 <script lang="ts">
   import { MoneviDateFormatter } from '@/api/methods/monevi-date-formatter';
   import { MoneviDisplayFormatter } from '@/api/methods/monevi-display-formatter';
-  import type { Transaction } from '@/api/model/monevi-model';
   import ImageModal from '@/components/modal/ImageModal.vue';
   import { transactionApi } from '@/api/service/transaction-api';
   import type { MoneviBodyCreateTransaction } from '@/api/model/monevi-config';
@@ -84,15 +84,15 @@
       organizationRegionId: String,
     },
 
-    data: function () {
-      return {
-        processedTransactionsChild: [] as Array<any>,
-      };
-    },
-
     methods: {
       showModal() {
-        this.processedTransactionsChild = this.processedTransactions!;
+        var inputImages: any = this.$refs.inputImage;
+        if (inputImages != undefined) {
+          for (var inputImage of inputImages) {
+            inputImage.value = '';
+          }
+        }
+
         var transactionAddBulkRequestImageModal: JQuery<HTMLDivElement> = $('#transactionAddBulkRequestImageModal');
         transactionAddBulkRequestImageModal.modal('show');
       },
@@ -124,16 +124,20 @@
           return;
         }
         var transactionRequests = this.generateTransactionRequest();
-        await transactionApi.addTransaction(transactionRequests).catch((error) => {
-          for (const key in error.response.data.errorFields) {
-            var errorMessage = error.response.data.errorFields[key];
-            alert(errorMessage);
-            break;
-          }
-        });
-        var closeModalButton: any = this.$refs.closeModalButton;
-        closeModalButton.click();
-        this.$emit('successUpdate');
+        await transactionApi
+          .addTransaction(transactionRequests)
+          .then((response) => {
+            var closeModalButton: any = this.$refs.closeModalButton;
+            closeModalButton.click();
+            this.$emit('successUpdate');
+          })
+          .catch((error) => {
+            for (const key in error.response.data.errorFields) {
+              var errorMessage = error.response.data.errorFields[key];
+              alert(errorMessage);
+              break;
+            }
+          });
       },
 
       validateImagesComplete(): boolean {

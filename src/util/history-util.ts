@@ -21,7 +21,7 @@ function getHistoryMessageForTreasurer(status: string, period: string) {
   if (status == 'DECLINED') {
     return `Laporan untuk bulan ${period} telah ditolak`;
   } else if (status == 'UNAPPROVED') {
-    return `Laporan untuk bulan ${period} menunggu ketua`;
+    return `Laporan untuk bulan ${period} telah dikirim ke ketua`;
   } else if (status == 'APPROVED_BY_CHAIRMAN') {
     return `Laporan untuk bulan ${period} sudah disetujui oleh ketua, menunggu persetujuan pengawas`;
   } else if (status == 'APPROVED_BY_SUPERVISOR') {

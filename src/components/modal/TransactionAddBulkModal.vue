@@ -21,16 +21,23 @@
               class="form-control"
               type="file"
               id="formFile"
-              />
+              accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
           </div>
           <p>
             Berikut
-            <a download href="public/src/template/monevi_template_bulk_add_transaction.xlsx">file contoh</a> template
-            untuk impor transaksi.
+            <a download v-bind:href="xlsxFile">file contoh</a>
+            template untuk impor transaksi.
           </p>
         </div>
         <div class="modal-footer bg-whitesmoke br">
-          <button v-on:click="closeModal" ref="closeModalButton" type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+          <button
+            v-on:click="closeModal"
+            ref="closeModalButton"
+            type="button"
+            class="btn btn-secondary"
+            data-dismiss="modal">
+            Tutup
+          </button>
           <button v-on:click="sendReport" type="button" class="btn btn-primary">Tambah Transaksi</button>
         </div>
       </div>
@@ -51,6 +58,7 @@
     data: function () {
       return {
         inputFile: undefined,
+        xlsxFile: new URL('@/template/monevi_template_bulk_add_transaction.xlsx', import.meta.url).href,
       };
     },
 

@@ -191,10 +191,10 @@
             generalLedger.data.opnameAmount !=
             this.sumGeneralLedgerAccount(generalLedger) + generalLedger.data.previousMonthAmount
           ) {
-            return false;
+            this.isBalanceValue = false;
           }
         }
-        return true;
+        this.isBalanceValue = true;
       },
 
       sumGeneralLedgerAccount(generalLedgers: any): number {

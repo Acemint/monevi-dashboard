@@ -11,10 +11,10 @@
         <div class="modal-body">
           <p>Seret dan lepaskan file .xlsx atau unggah dari komputer Anda.</p>
           <div class="mb-3">
-            <label for="formFile" class="form-label"
-              >File Anda setidaknya harus berisi tanggal, dompet, jenis transaksi, transaksi, kategori, dan jumlah.
-              Ukuran file maksimum adalah 2 MB.</label
-            >
+            <label for="formFile" class="form-label">
+              File Anda setidaknya harus berisi tanggal, dompet, jenis transaksi, transaksi, kategori, dan jumlah.
+              Ukuran file maksimum adalah 2 MB.
+            </label>
             <input
               ref="inputFile"
               v-on:change="loadFile"

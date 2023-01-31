@@ -21,19 +21,10 @@ export interface TransactionApi {
 
 export class TransactionApiImpl implements TransactionApi {
   async addTransaction(transactions: MoneviBodyCreateTransaction[]): Promise<any> {
-    return moneviAxios
-      .post(MoneviPath.CREATE_NEW_TRANSACTION_PATH, transactions)
-      .then((response) => {
-        alert('success in creating transaction');
-        return response.data.values;
-      })
-      .catch((error) => {
-        for (const key in error.response.data.errorFields) {
-          var errorMessage = error.response.data.errorFields[key];
-          alert(errorMessage);
-          break;
-        }
-      });
+    return moneviAxios.post(MoneviPath.CREATE_NEW_TRANSACTION_PATH, transactions).then((response) => {
+      alert('success in creating transaction');
+      return response.data.values;
+    });
   }
 
   async convertExcel(organizationRegionId: string, excelFile: File): Promise<any> {

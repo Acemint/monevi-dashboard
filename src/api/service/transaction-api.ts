@@ -1,8 +1,9 @@
 import type { MoneviParamsGetTransactions, MoneviBodyCreateTransaction } from '@/api/model/monevi-config';
 import { MoneviDateFormatter } from '@/api/methods/monevi-date-formatter';
 import { MoneviEnumConverter } from '@/api/methods/monevi-enum-converter';
-import { moneviAxios } from '@/api/configuration/monevi-axios';
+import { moneviAxios, moneviAxiosFile } from '@/api/configuration/monevi-axios';
 import { MoneviPath } from '@/api/path/path';
+import { MoneviCookieHandler } from '../methods/monevi-cookie-handler';
 
 export interface TransactionApi {
   getTransactions(
@@ -42,23 +43,16 @@ export class TransactionApiImpl implements TransactionApi {
     var body = {} as { excelFile: File };
     body.excelFile = excelFile;
 
-    return await moneviAxios
-      .post(MoneviPath.CONVERT_EXCEL_PATH, body, {
-        params: params,
-        paramsSerializer: {
-          indexes: null,
-        },
-        headers: {
-          'content-type': 'multipart/form-data',
-        },
-      })
-      .then((response) => {
-        return response.data.value;
-      })
-      .catch((error) => {
-        console.error(error);
-        return null;
-      });
+    return await moneviAxiosFile.post(MoneviPath.CONVERT_EXCEL_PATH, body, {
+      params: params,
+      paramsSerializer: {
+        indexes: null,
+      },
+      headers: {
+        Authorization: `Bearer ${MoneviCookieHandler.getUserData().accessToken}`,
+        'content-type': 'multipart/form-data',
+      },
+    });
   }
 
   async getTransactions(

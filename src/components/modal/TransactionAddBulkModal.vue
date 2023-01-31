@@ -64,6 +64,8 @@
 
     methods: {
       showModal() {
+        const inputFile: any = this.$refs.inputFile;
+        inputFile.value = '';
         var transactionAddBulkModal: JQuery<HTMLDivElement> = $('#transactionAddBulkModal');
         transactionAddBulkModal.modal('show');
       },
@@ -90,10 +92,6 @@
             for (const key in error.response.data.errorFields) {
               var errorMessage = error.response.data.errorFields[key];
               alert(errorMessage);
-
-              // Reset input file
-              const inputFile: any = this.$refs.inputFile;
-              inputFile.value = '';
               return;
             }
           });

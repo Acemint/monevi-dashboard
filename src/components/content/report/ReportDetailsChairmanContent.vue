@@ -177,7 +177,10 @@
 
       isBalanced() {
         for (var generalLedger of this.reportSummary.values()) {
-          if (generalLedger.data.opnameAmount != this.sumGeneralLedgerAccount(generalLedger)) {
+          if (
+            generalLedger.data.opnameAmount !=
+            this.sumGeneralLedgerAccount(generalLedger) + generalLedger.data.previousMonthAmount
+          ) {
             return false;
           }
         }

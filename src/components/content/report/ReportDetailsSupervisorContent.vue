@@ -38,16 +38,14 @@
     </template>
 
     <template v-else>
-      {{ formatReportStatus(reportSummary.reportStatus!) }}
+      <div v-html="formatReportStatus(reportSummary.reportStatus!)"></div>
       <div class="row">
         <div class="col-12">
           <div class="card">
             <div class="card-header">
               <h4>
-                Laporan Keuangan Kas dan Bank UKM <br>
-                {{ organizationRegion.organizationName }}
-                {{ organizationRegion.regionName }} <br>
-                per Bulan {{ formatDateToMonth(date) }}
+                Laporan Keuangan Kas dan Bank UKM {{ organizationRegion.organizationName }}
+                {{ organizationRegion.regionName }} per Bulan {{ formatDateToMonth(date) }}
               </h4>
               <div class="card-header-action">
                 <button class="btn btn-primary" v-on:click="navigateToTransactionPage">Lihat Detail Transaksi</button>

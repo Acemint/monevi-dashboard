@@ -53,7 +53,7 @@ class MoneviDisplayFormatter {
     return null;
   }
 
-  static convertReportStatusForDisplay(status: string, role: string): string {
+  static convertReportStatusForDisplay(status: string, role: string): any {
     if (status === 'NOT_SENT') {
       return `<div class="alert alert-danger" role="alert">Laporan ini belum dikirim, klik submit jika data opname sudah sesuai dengan data transaksi</div>`;
     } else if (status === 'DECLINED') {

@@ -38,7 +38,7 @@
     </template>
 
     <template v-else>
-      {{ formatReportStatus(reportSummary.reportStatus!) }}
+      <template v-html="formatReportStatus(reportSummary.reportStatus!)" />
       <div class="row">
         <div class="col-12">
           <div class="card">

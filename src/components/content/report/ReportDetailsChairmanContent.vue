@@ -175,21 +175,6 @@
         this.reportSummary = await reportApi.summarizeReport(this.userAccount.organizationRegionId, this.date);
       },
 
-      isBalanced() {
-        for (var generalLedger of this.reportSummary.values()) {
-          console.log('PREV MONTH', generalLedger.data.previousMonthAmount);
-          console.log(generalLedger.data.opnameAmount);
-          console.log(this.sumGeneralLedgerAccount(generalLedger));
-
-          if (
-            generalLedger.data.opnameAmount !=
-            this.sumGeneralLedgerAccount(generalLedger) + generalLedger.data.previousMonthAmount
-          ) {
-            return false;
-          }
-        }
-      },
-
       sumGeneralLedgerAccount(generalLedgers: any): number {
         var total = 0;
         var entryPositions = generalLedgers.data.values();
@@ -224,10 +209,6 @@
       },
 
       approveReport() {
-        if (this.isBalanced() == false) {
-          alert('Hasil opname dan saldo buku tidak seimbang, harap cek kembali');
-          return;
-        }
         var reportApproveModal: any = this.$refs.reportApproveModal;
         reportApproveModal.showModal();
       },

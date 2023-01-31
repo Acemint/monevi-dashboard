@@ -185,11 +185,17 @@
 
       isBalanced() {
         for (var generalLedger of this.reportSummary.values()) {
-          if (generalLedger.data.opnameAmount != this.sumGeneralLedgerAccount(generalLedger)) {
+          console.log('PREV MONTH', generalLedger.data.previousMonthAmount);
+          console.log(generalLedger.data.opnameAmount);
+          console.log(this.sumGeneralLedgerAccount(generalLedger));
+
+          if (
+            generalLedger.data.opnameAmount !=
+            this.sumGeneralLedgerAccount(generalLedger) + generalLedger.data.previousMonthAmount
+          ) {
             return false;
           }
         }
-        return true;
       },
 
       sumGeneralLedgerAccount(generalLedgers: any): number {

@@ -45,8 +45,8 @@ function getHistoryMessageForSupervisor(status: string, period: string, userName
   if (status == 'APPROVED_BY_CHAIRMAN') {
     return `Laporan untuk bulan ${period} menunggu persetujuanmu`;
   } else if (status == 'APPROVED_BY_SUPERVISOR') {
-    return `Laporan untuk bulan ${period} telah disetujui oleh ${userName} [${organiazationName}]`;
+    return `Laporan ${organiazationName} untuk bulan ${period} telah disetujui oleh ${userName}`;
   } else if (status == 'DECLINED') {
-    return `Laporan untuk bulan ${period} telah ditolak oleh ${userName} [${organiazationName}]`;
+    return `Laporan ${organiazationName} untuk bulan ${period} telah ditolak oleh ${userName}`;
   }
 }

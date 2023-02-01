@@ -45,8 +45,8 @@
         </div>
 
         <div class="modal-footer bg-whitesmoke br">
-          <button v-on:click="sendReport" type="button" class="btn btn-primary">Yes</button>
           <button v-on:click="closeModal" ref="closeModalButton" type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+          <button v-on:click="sendReport" type="button" class="btn btn-primary">Yes</button>
         </div>
       </div>
     </div>

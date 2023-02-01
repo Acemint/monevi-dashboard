@@ -12,8 +12,8 @@
           <p>Apakah Anda benar-benar ingin menghapus program kerja {{ program!.name }}?</p>
         </div>
         <div class="modal-footer bg-whitesmoke br">
-          <button v-on:click="deleteProgram" type="button" class="btn btn-danger">Yes</button>
           <button v-on:click="closeModal" ref="closeModalButton" type="button" class="btn btn-secondary">Cancel</button>
+          <button v-on:click="deleteProgram" type="button" class="btn btn-danger">Yes</button>
         </div>
       </div>
     </div>

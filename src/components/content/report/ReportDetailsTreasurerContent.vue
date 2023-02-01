@@ -15,7 +15,7 @@
           <div class="card">
             <div class="card-header">
               <h4>
-                Laporan Keuangan Kas dan Bank UKM {{ organizationRegion.organizationName }}
+                Laporan Keuangan Kas dan Bank {{ organizationRegion.organizationName }}
                 {{ organizationRegion.regionName }} per Bulan {{ formatDateToMonth(date) }}
               </h4>
             </div>
@@ -29,6 +29,12 @@
 
     <template v-else>
       <div v-html="formatReportStatus(reportSummary.reportStatus!)"></div>
+      <template v-if="reportSummary.reportStatus == 'DECLINED'">
+        <div class="alert alert-danger" role="alert">
+          Komentar Oleh: {{ reportSummary.commentedBy }} <br />
+          Komentar: {{ reportSummary.comment }}
+        </div>
+      </template>
       <div class="row">
         <div class="col-12">
           <div class="card">
@@ -43,11 +49,6 @@
             </div>
 
             <div class="card-body">
-              <template v-if="reportSummary.reportStatus == 'DECLINED'">
-                <p>Komentar Oleh: {{ reportSummary.commentedBy }}</p>
-                <p>Komentar: {{ reportSummary.comment }}</p>
-              </template>
-
               <div class="table-responsive">
                 <table class="table table-striped table-bordered" id="table-1">
                   <template v-for="generalLedgerData of reportSummary.values()">
@@ -116,16 +117,11 @@
                         }}
                       </td>
                     </tr>
-                    <tr>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </tr>
                   </template>
                   <tr>
-                    <td>Total Kas dan Bank</td>
+                    <td style="font-weight: 800">Total Kas dan Bank</td>
                     <td></td>
-                    <td>{{ formatAmountToRupiah(sumBankAndCash(reportSummary)) }}</td>
+                    <td style="font-weight: 800">{{ formatAmountToRupiah(sumBankAndCash(reportSummary)) }}</td>
                   </tr>
                 </table>
               </div>

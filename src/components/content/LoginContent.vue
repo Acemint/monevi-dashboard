@@ -43,6 +43,7 @@
                     required />
                   <div class="invalid-feedback">please fill in your password</div>
                 </div>
+                <p class="text-danger" ref="errorMessageText" style="margin: 0px; padding: 0px"></p>
 
                 <div class="form-group">
                   <div class="custom-control custom-checkbox">
@@ -85,7 +86,9 @@
           })
           .catch((error: any) => {
             if (error.response.status == 401) {
-              alert('Username / Password yang Anda masukkan salah');
+              var errorHtml: any = this.$refs.errorMessageText;
+              errorHtml.innerHTML = '';
+              errorHtml.innerHTML = 'Username / Password yang Anda masukkan salah';
             }
           });
       },

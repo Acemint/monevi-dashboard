@@ -31,7 +31,7 @@
           <div class="card">
             <div class="card-header">
               <h4>
-                Laporan Keuangan Kas dan Bank UKM {{ organizationRegion.organizationName }}
+                Laporan Keuangan Kas dan Bank {{ organizationRegion.organizationName }}
                 {{ organizationRegion.regionName }} per Bulan {{ formatDateToMonth(date) }}
               </h4>
               <div class="card-header-action">
@@ -108,12 +108,13 @@
                         }}
                       </td>
                     </tr>
-                    <tr>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </tr>
                   </template>
+                  <tr>
+                    <td style="font-weight: 800;">Total Kas dan Bank</td>
+                    <td></td>
+                    <td style="font-weight: 800;">
+                    </td>
+                  </tr>
                 </table>
               </div>
 

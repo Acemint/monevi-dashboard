@@ -1,4 +1,4 @@
-import { moneviAxios } from '../configuration/monevi-axios';
+import { moneviAxios, moneviAxiosLogin } from '../configuration/monevi-axios';
 import { MoneviCookieHandler } from '../methods/monevi-cookie-handler';
 import type { MoneviBodyRegisterStudent } from '../model/monevi-config';
 import { MoneviPath } from '../path/path';
@@ -27,7 +27,7 @@ export class AuthorizationApiImpl implements AuthorizationApi {
     body.username = username;
     body.password = password;
 
-    return moneviAxios.post(MoneviPath.LOGIN_PATH, body).then((response) => {
+    return moneviAxiosLogin.post(MoneviPath.LOGIN_PATH, body).then((response) => {
       var user = response.data.value;
 
       MoneviCookieHandler.setCookie('id', user.id);

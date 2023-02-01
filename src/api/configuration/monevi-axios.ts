@@ -5,6 +5,10 @@ import { MoneviCookieHandler } from '../methods/monevi-cookie-handler';
 import { MONEVI_BASE_URL } from '../path/path';
 import { authorizationApi } from '../service/authorization-api';
 
+const moneviAxiosLogin = axios.create({
+  baseURL: MONEVI_BASE_URL,
+});
+
 const moneviAxios = axios.create({
   baseURL: MONEVI_BASE_URL,
 });
@@ -33,4 +37,4 @@ moneviAxios.interceptors.response.use(undefined, (error) => {
   }
 });
 
-export { moneviAxios, moneviAxiosFile };
+export { moneviAxios, moneviAxiosFile, moneviAxiosLogin };

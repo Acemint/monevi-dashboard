@@ -114,6 +114,11 @@
                       <td></td>
                     </tr>
                   </template>
+                  <tr>
+                    <td>Total Kas dan Bank</td>
+                    <td></td>
+                    <td>{{ formatAmountToRupiah(sumBankAndCash(reportSummary)) }}</td>
+                  </tr>
                 </table>
               </div>
 
@@ -173,6 +178,14 @@
       async initData() {
         this.organizationRegion = await organizationRegionApi.getOrganization(this.userAccount.organizationRegionId);
         this.reportSummary = await reportApi.summarizeReport(this.userAccount.organizationRegionId, this.date);
+      },
+
+      sumBankAndCash(reportSummary: any) {
+        var total = 0;
+        for (var generalLedger of reportSummary.values()) {
+          total += this.sumGeneralLedgerAccount(generalLedger) + generalLedger.data.previousMonthAmount;
+        }
+        return total;
       },
 
       sumGeneralLedgerAccount(generalLedgers: any): number {

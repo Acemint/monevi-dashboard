@@ -29,6 +29,12 @@
 
     <template v-else>
       <div v-html="formatReportStatus(reportSummary.reportStatus!)"></div>
+      <template v-if="reportSummary.reportStatus == 'DECLINED'">
+        <div class="alert alert-danger" role="alert">
+          Komentar Oleh: {{ reportSummary.commentedBy }} <br>
+          Komentar: {{ reportSummary.comment }}
+        </div>
+      </template>
       <div class="row">
         <div class="col-12">
           <div class="card">
@@ -43,11 +49,6 @@
             </div>
 
             <div class="card-body">
-              <template v-if="reportSummary.reportStatus == 'DECLINED'">
-                <p>Komentar Oleh: {{ reportSummary.commentedBy }}</p>
-                <p>Komentar: {{ reportSummary.comment }}</p>
-              </template>
-
               <div class="table-responsive">
                 <table class="table table-striped table-bordered" id="table-1">
                   <template v-for="generalLedgerData of reportSummary.values()">

@@ -61,7 +61,13 @@
       },
 
       getHistoryMessage(history: any) {
-        return getHistoryMessage(this.userAccount.role, history.remarks, history.reportPeriod);
+        return getHistoryMessage(
+          this.userAccount.role,
+          history.remarks,
+          history.reportPeriod,
+          history.userName,
+          history.organizationName
+        );
       },
 
       formatDate(date: any) {

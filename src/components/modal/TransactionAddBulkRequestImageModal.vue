@@ -1,10 +1,10 @@
 <template>
   <div class="modal fade bd-example-modal-xl" tabindex="-1" role="dialog" id="transactionAddBulkRequestImageModal">
-    <div class="modal-dialog modal-lg" style="width: 1600px" role="document">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-xl" role="document">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">Impor Transaksi</h5>
-          <button type="button" class="close" aria-label="Close">
+          <button v-on:click="closeModal" type="button" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
@@ -27,7 +27,7 @@
                   <template v-for="(item, index) in processedTransactions">
                     <tr ref="transactionsDisplay">
                       <td>{{ index + 1 }}</td>
-                      <td>{{ formatTransactionDate(item.transactionDate) }}</td>
+                      <td>{{ item.transactionDate }}</td>
                       <td>{{ formatGeneralLedgerAccountType(item.generalLedgerAccountType) }}</td>
                       <td>{{ item.name }}</td>
                       <td>{{ formatTransactionType(item.type) }}</td>
@@ -40,22 +40,18 @@
                           <label class="col-form-label text-md-left"></label>
                           <input
                             v-on:change="loadImage"
+                            ref="inputImage"
                             class="form-control"
                             type="file"
                             id="formFile"
                             v-bind:data-index="index" />
-                            <img
-                          v-on:click="openImageModal"
-                          v-bind:src="item.proof"
-                          onerror="this.style.display = 'none'"
-                          v-bind:data-index="index"
-                          style="width: 100%" /><img
-                          v-on:click="openImageModal"
+                          <br />
+                        </div>
+                        <img
                           v-bind:src="item.proof"
                           onerror="this.style.display = 'none'"
                           v-bind:data-index="index"
                           style="width: 100%" />
-                        </div>
                       </td>
                     </tr>
                   </template>
@@ -73,33 +69,30 @@
       </div>
     </div>
   </div>
-
-  <ImageModal ref="imageModal" v-bind:imageSrc="currentImageSrc" />
 </template>
 
 <script lang="ts">
   import { MoneviDateFormatter } from '@/api/methods/monevi-date-formatter';
   import { MoneviDisplayFormatter } from '@/api/methods/monevi-display-formatter';
-  import type { Transaction } from '@/api/model/monevi-model';
   import ImageModal from '@/components/modal/ImageModal.vue';
   import { transactionApi } from '@/api/service/transaction-api';
   import type { MoneviBodyCreateTransaction } from '@/api/model/monevi-config';
 
   export default {
     props: {
-      processedTransactions: Array<Transaction>,
+      processedTransactions: Array<any>,
       organizationRegionId: String,
-    },
-
-    data: function () {
-      return {
-        inputFile: undefined,
-        currentImageSrc: '',
-      };
     },
 
     methods: {
       showModal() {
+        var inputImages: any = this.$refs.inputImage;
+        if (inputImages != undefined) {
+          for (var inputImage of inputImages) {
+            inputImage.value = '';
+          }
+        }
+
         var transactionAddBulkRequestImageModal: JQuery<HTMLDivElement> = $('#transactionAddBulkRequestImageModal');
         transactionAddBulkRequestImageModal.modal('show');
       },
@@ -131,16 +124,20 @@
           return;
         }
         var transactionRequests = this.generateTransactionRequest();
-        await transactionApi.addTransaction(transactionRequests).catch((error) => {
-          for (const key in error.response.data.errorFields) {
-            var errorMessage = error.response.data.errorFields[key];
-            alert(errorMessage);
-            break;
-          }
-        });
-        var closeModalButton: any = this.$refs.closeModalButton;
-        closeModalButton.click();
-        this.$emit('successUpdate');
+        await transactionApi
+          .addTransaction(transactionRequests)
+          .then((response) => {
+            var closeModalButton: any = this.$refs.closeModalButton;
+            closeModalButton.click();
+            this.$emit('successUpdate');
+          })
+          .catch((error) => {
+            for (const key in error.response.data.errorFields) {
+              var errorMessage = error.response.data.errorFields[key];
+              alert(errorMessage);
+              break;
+            }
+          });
       },
 
       validateImagesComplete(): boolean {
@@ -159,7 +156,7 @@
           var transactionRequest = {} as MoneviBodyCreateTransaction;
           transactionRequest.organizationRegionId = this.organizationRegionId!;
           transactionRequest.name = transaction.name;
-          transactionRequest.transactionDate = MoneviDateFormatter.formatDate(transaction.transactionDate);
+          transactionRequest.transactionDate = transaction.transactionDate;
           transactionRequest.amount = transaction.amount;
           transactionRequest.generalLedgerAccountType = transaction.generalLedgerAccountType;
           transactionRequest.entryPosition = transaction.entryPosition;
@@ -170,16 +167,6 @@
           transactionRequests.push(transactionRequest);
         }
         return transactionRequests;
-      },
-
-      openImageModal(event: any) {
-        var index = parseInt(event.currentTarget.getAttribute('data-index'));
-        var imageProof: any = this.processedTransactions![index].proof;
-        this.currentImageSrc = imageProof;
-        this.$nextTick(() => {
-          var imageModal: any = this.$refs.imageModal;
-          imageModal.showModal();
-        });
       },
 
       formatGeneralLedgerAccountType(generalLedgerAccountType: string) {

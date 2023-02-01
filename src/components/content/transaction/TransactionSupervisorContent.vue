@@ -173,10 +173,7 @@
         return MoneviDateFormatter.formatMonthAndYearToDateDMY(date);
       },
 
-      openImageModal(event: Event) {
-        if (!(event.currentTarget instanceof HTMLButtonElement)) {
-          return;
-        }
+      openImageModal(event: any) {
         var dataIndex = event.currentTarget.getAttribute('data-index');
         if (dataIndex == null) {
           return;

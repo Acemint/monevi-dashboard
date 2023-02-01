@@ -11,26 +11,33 @@
         <div class="modal-body">
           <p>Seret dan lepaskan file .xlsx atau unggah dari komputer Anda.</p>
           <div class="mb-3">
-            <label for="formFile" class="form-label"
-              >File Anda setidaknya harus berisi tanggal, dompet, jenis transaksi, transaksi, kategori, dan jumlah.
-              Ukuran file maksimum adalah 2 MB.</label
-            >
+            <label for="formFile" class="form-label">
+              File Anda setidaknya harus berisi tanggal, dompet, jenis transaksi, transaksi, kategori, dan jumlah.
+              Ukuran file maksimum adalah 2 MB.
+            </label>
             <input
               ref="inputFile"
               v-on:change="loadFile"
               class="form-control"
               type="file"
               id="formFile"
-              />
+              accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
           </div>
           <p>
             Berikut
-            <a download href="public/src/template/monevi_template_bulk_add_transaction.xlsx">file contoh</a> template
-            untuk impor transaksi.
+            <a download v-bind:href="xlsxFile">file contoh</a>
+            template untuk impor transaksi.
           </p>
         </div>
         <div class="modal-footer bg-whitesmoke br">
-          <button v-on:click="closeModal" ref="closeModalButton" type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+          <button
+            v-on:click="closeModal"
+            ref="closeModalButton"
+            type="button"
+            class="btn btn-secondary"
+            data-dismiss="modal">
+            Tutup
+          </button>
           <button v-on:click="sendReport" type="button" class="btn btn-primary">Tambah Transaksi</button>
         </div>
       </div>
@@ -51,11 +58,14 @@
     data: function () {
       return {
         inputFile: undefined,
+        xlsxFile: new URL('@/template/monevi_template_bulk_add_transaction.xlsx', import.meta.url).href,
       };
     },
 
     methods: {
       showModal() {
+        const inputFile: any = this.$refs.inputFile;
+        inputFile.value = '';
         var transactionAddBulkModal: JQuery<HTMLDivElement> = $('#transactionAddBulkModal');
         transactionAddBulkModal.modal('show');
       },
@@ -82,10 +92,6 @@
             for (const key in error.response.data.errorFields) {
               var errorMessage = error.response.data.errorFields[key];
               alert(errorMessage);
-
-              // Reset input file
-              const inputFile: any = this.$refs.inputFile;
-              inputFile.value = '';
               return;
             }
           });

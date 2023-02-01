@@ -25,16 +25,14 @@
     </template>
 
     <template v-else>
-      {{ formatReportStatus(reportSummary.reportStatus!) }}
+      <div v-html="formatReportStatus(reportSummary.reportStatus!)"></div>
       <div class="row">
         <div class="col-12">
           <div class="card">
             <div class="card-header">
               <h4>
-                Laporan Keuangan Kas dan Bank UKM
-                {{ organizationRegion.organizationName }}
-                {{ organizationRegion.regionName }}
-                per Bulan {{ formatDateToMonth(date) }}
+                Laporan Keuangan Kas dan Bank UKM {{ organizationRegion.organizationName }}
+                {{ organizationRegion.regionName }} per Bulan {{ formatDateToMonth(date) }}
               </h4>
               <div class="card-header-action">
                 <button class="btn btn-primary" v-on:click="navigateToTransactionPage">Lihat Detail Transaksi</button>
@@ -177,14 +175,6 @@
         this.reportSummary = await reportApi.summarizeReport(this.userAccount.organizationRegionId, this.date);
       },
 
-      isBalanced() {
-        for (var generalLedger of this.reportSummary.values()) {
-          if (generalLedger.data.opnameAmount != this.sumGeneralLedgerAccount(generalLedger)) {
-            return false;
-          }
-        }
-      },
-
       sumGeneralLedgerAccount(generalLedgers: any): number {
         var total = 0;
         var entryPositions = generalLedgers.data.values();
@@ -219,10 +209,6 @@
       },
 
       approveReport() {
-        if (this.isBalanced() == false) {
-          alert('Hasil opname dan saldo buku tidak seimbang, harap cek kembali');
-          return;
-        }
         var reportApproveModal: any = this.$refs.reportApproveModal;
         reportApproveModal.showModal();
       },

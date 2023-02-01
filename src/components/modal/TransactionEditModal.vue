@@ -60,9 +60,9 @@
                   <span class="input-group-text">Rp</span>
                 </div>
                 <input
-                  v-model="amount"
+                  v-model.number="amount"
                   id="jumlah"
-                  type="text"
+                  type="number"
                   class="form-control"
                   name="jumlah"
                   aria-label="Jumlah (dalam rupiah)" />
@@ -78,7 +78,7 @@
                   type="file"
                   id="formFile"
                   accept="image/gif, image/jpeg, image/png" /><br />
-                <img ref="sample" src="#" style="width: 100%" />
+                <img v-if="imageSrc != ''" v-bind:src="imageSrc" style="width: 100%" />
               </div>
             </div>
           </form>
@@ -109,7 +109,8 @@
         transactionName: '',
         transactionType: 'Non Rutin',
         description: '',
-        amount: 0,
+        amount: '',
+        imageSrc: '' as any,
       };
     },
 
@@ -117,12 +118,23 @@
       transaction: Object,
     },
 
+    watch: {
+      date(newDate, oldDate) {
+        var tzOffset = new Date().getTimezoneOffset() * 60000;
+        if (Date.now() - tzOffset < new Date(newDate).getTime()) {
+          alert('Tidak bisa memasukkan tanggal yang melewati hari ini');
+          this.date = '';
+        }
+      },
+    },
+
     methods: {
       initializeExistingValues() {
         if (this.transaction == undefined) {
           return;
         }
-        this.date = new Date(this.transaction.transactionDate).toISOString().substring(0, 10);
+        var tzoffset = new Date().getTimezoneOffset() * 60000;
+        this.date = new Date(this.transaction.transactionDate - tzoffset).toISOString().substring(0, 10);
         var generalLedgerAccountType = MoneviDisplayFormatter.convertGeneralLedgerAccountTypeForDisplay(
           this.transaction.generalLedgerAccountType
         );
@@ -140,10 +152,7 @@
         this.transactionName = this.transaction.name;
         this.amount = this.transaction.amount;
         this.description = this.transaction.description;
-        var imagePlaceholder: any = this.$refs.sample;
-        if (imagePlaceholder instanceof HTMLImageElement) {
-          imagePlaceholder.src = atob(this.transaction.proof);
-        }
+        this.imageSrc = atob(this.transaction.proof);
       },
 
       showModal() {
@@ -152,58 +161,63 @@
       },
 
       closeModal(event: Event) {
-        var transactionDeleteModal: JQuery<HTMLDivElement> = $('#transactionDeleteModal');
+        var transactionDeleteModal: JQuery<HTMLDivElement> = $('#transactionEditModal');
         transactionDeleteModal.modal('hide');
       },
 
       loadImage(event: any) {
-        if (event.target != null) {
-          var files: FileList = event.target.files;
-          var displayImage: any = this.$refs.sample;
-          if (files.length != 0) {
-            displayImage.src = URL.createObjectURL(files[0]);
-          }
-        }
+        var files: FileList = event.target.files;
+        const reader = new FileReader();
+        reader.readAsDataURL(files[0]);
+        reader.addEventListener('load', () => {
+          this.imageSrc = reader.result;
+        });
       },
 
       async editTransaction() {
-        var imageHTMLElement: any = this.$refs.sample;
-        let blob = await fetch(imageHTMLElement.src).then((r) => r.blob());
+        if (this.imageSrc == '') {
+          alert('Bukti transaksi diperlukan');
+          return;
+        }
+        if (parseFloat(this.amount) <= 0) {
+          alert('Angka tidak boleh lebih kecil dibanding 1');
+          return;
+        }
+        if (this.transactionName.length <= 3) {
+          alert('Panjang nama transaksi harus melebihi 3 huruf');
+          return;
+        }
 
-        const reader = new FileReader();
-        reader.readAsDataURL(blob);
-        reader.addEventListener('load', () => {
-          var params = {} as MoneviParamsEditTransaction;
-          var body = {} as MoneviBodyEditTransaction;
-          if (this.transaction == undefined) {
-            return;
-          }
-          params.transactionId = this.transaction.id;
-          body.name = this.transactionName;
-          body.transactionDate = MoneviDateFormatter.formatDate(this.date);
-          body.amount = this.amount;
-          body.generalLedgerAccountType = MoneviEnumConverter.convertGeneralLedgerAccountType(
-            this.generalLedgerAccountType
-          );
-          body.entryPosition = MoneviEnumConverter.convertEntryPosition(this.entryPosition);
-          body.type = MoneviEnumConverter.convertTransactionType(this.transactionType);
-          body.description = this.description;
-          body.proof = reader.result;
-          return moneviAxios
-            .put(MoneviPath.EDIT_TRANSACTION_PATH, body, { params: params })
-            .then((response) => {
-              alert('Success in updating transaction');
-              URL.revokeObjectURL(imageHTMLElement.src);
-              if (!(this.$refs.closeModalButton instanceof HTMLButtonElement)) {
-                return;
-              }
-              this.$refs.closeModalButton.click();
-              this.$emit('successUpdate');
-            })
-            .catch((error) => {
-              alert('Failed to update transaction');
-            });
-        });
+        var params = {} as MoneviParamsEditTransaction;
+        var body = {} as MoneviBodyEditTransaction;
+        params.transactionId = this.transaction!.id;
+        body.name = this.transactionName;
+        body.transactionDate = MoneviDateFormatter.formatDate(this.date);
+        body.amount = parseFloat(this.amount);
+        body.generalLedgerAccountType = MoneviEnumConverter.convertGeneralLedgerAccountType(
+          this.generalLedgerAccountType
+        );
+        body.entryPosition = MoneviEnumConverter.convertEntryPosition(this.entryPosition);
+        body.type = MoneviEnumConverter.convertTransactionType(this.transactionType);
+        body.description = this.description == undefined ? '' : this.description;
+        body.proof = this.imageSrc;
+
+        return await moneviAxios
+          .put(MoneviPath.EDIT_TRANSACTION_PATH, body, { params: params })
+          .then((response) => {
+            alert('Sukses mengubah transaksi');
+            var closeModalButton: any = this.$refs.closeModalButton;
+            closeModalButton.click();
+            this.$emit('successUpdate');
+          })
+          .catch((error) => {
+            alert('Gagal mengubah transaksi');
+            for (const key in error.response.data.errorFields) {
+              var errorMessage = error.response.data.errorFields[key];
+              alert(errorMessage);
+              break;
+            }
+          });
       },
     },
   };

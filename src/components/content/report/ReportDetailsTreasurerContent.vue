@@ -28,16 +28,14 @@
     </template>
 
     <template v-else>
-      {{ formatReportStatus(reportSummary.reportStatus!) }}
+      <div v-html="formatReportStatus(reportSummary.reportStatus!)"></div>
       <div class="row">
         <div class="col-12">
           <div class="card">
             <div class="card-header">
               <h4>
-                Laporan Keuangan Kas dan Bank UKM <br>
-                {{ organizationRegion.organizationName }}
-                {{ organizationRegion.regionName }} <br>
-                per Bulan {{ formatDateToMonth(date) }}
+                Laporan Keuangan Kas dan Bank UKM {{ organizationRegion.organizationName }}
+                {{ organizationRegion.regionName }} per Bulan {{ formatDateToMonth(date) }}
               </h4>
               <div class="card-header-action">
                 <button class="btn btn-primary" v-on:click="navigateToTransactionPage">Lihat Detail Transaksi</button>
@@ -131,7 +129,7 @@
                 <div>
                   <button
                     v-on:click="approveReport"
-                    v-bind:class="[isBalanced() ? '' : 'disabled', 'btn btn-primary']"
+                    v-bind:class="[isBalanceValue == true ? '' : 'disabled', 'btn btn-primary']"
                     type="button"
                     class="btn btn-primary">
                     Kirim Laporan
@@ -171,6 +169,7 @@
         organizationRegion: new MoneviOrganizationRegion(),
         date: '',
         userAccount: MoneviCookieHandler.getUserData(),
+        isBalanceValue: false,
       };
     },
 
@@ -183,15 +182,19 @@
       async initData() {
         this.organizationRegion = await organizationRegionApi.getOrganization(this.userAccount.organizationRegionId);
         this.reportSummary = await reportApi.summarizeReport(this.userAccount.organizationRegionId, this.date);
+        this.setIsBalanceValue();
       },
 
-      isBalanced() {
+      setIsBalanceValue() {
         for (var generalLedger of this.reportSummary.values()) {
-          if (generalLedger.data.opnameAmount != this.sumGeneralLedgerAccount(generalLedger)) {
-            return false;
+          if (
+            generalLedger.data.opnameAmount !=
+            this.sumGeneralLedgerAccount(generalLedger) + generalLedger.data.previousMonthAmount
+          ) {
+            this.isBalanceValue = false;
           }
         }
-        return true;
+        this.isBalanceValue = true;
       },
 
       sumGeneralLedgerAccount(generalLedgers: any): number {
@@ -228,7 +231,7 @@
       },
 
       approveReport() {
-        if (this.isBalanced() == false) {
+        if (this.isBalanceValue == false) {
           alert('Hasil opname dan saldo buku tidak seimbang, harap cek kembali');
           return;
         }

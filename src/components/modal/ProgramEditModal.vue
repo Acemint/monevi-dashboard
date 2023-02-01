@@ -62,8 +62,8 @@
           </form>
         </div>
         <div class="modal-footer bg-whitesmoke br">
-          <button v-on:click="editProgram" type="button" class="btn btn-primary">Ubah</button>
           <button v-on:click="closeModal" ref="closeModalButton" type="button" class="btn btn-secondary">Cancel</button>
+          <button v-on:click="editProgram" type="button" class="btn btn-primary">Ubah</button>
         </div>
       </div>
     </div>

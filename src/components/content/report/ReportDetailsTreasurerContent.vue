@@ -193,6 +193,7 @@
             this.sumGeneralLedgerAccount(generalLedger) + generalLedger.data.previousMonthAmount
           ) {
             this.isBalanceValue = false;
+            return;
           }
         }
         this.isBalanceValue = true;

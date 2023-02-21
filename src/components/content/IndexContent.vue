@@ -8,6 +8,9 @@
         <span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navcol-1">
+        <ul class="navbar-nav mx-auto navbar-right">
+          <li class="nav-item"></li>
+        </ul>
         <a class="btn btn-outline-primary shadow" role="button" href="/login">Login</a>
         <a class="btn btn-primary shadow" role="button" href="/register">Register</a>
       </div>

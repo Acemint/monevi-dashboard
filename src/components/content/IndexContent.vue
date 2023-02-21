@@ -8,9 +8,7 @@
         <span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navcol-1">
-        <ul class="navbar-nav mx-auto navbar-right">
-          <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
-        </ul>
+        <a class="btn btn-outline-primary shadow" role="button" href="/login">Login</a>
         <a class="btn btn-primary shadow" role="button" href="/register">Register</a>
       </div>
     </div>
@@ -223,10 +221,9 @@
               </h2>
               <div class="accordion-collapse collapse show item-1" role="tabpanel" data-bs-parent="#accordion-1">
                 <div class="accordion-body">
-                  <p>
+                  <p class="mb-0">
                     Monevi adalah sebuah platform yang digunakan untuk mengatur keuangan organisasi yang berada di Universitas Bina Nusantara.
                   </p>
-                  <p class="mb-0">Commodo rutrum quisque curabitur habitasse, suspendisse etiam.</p>
                 </div>
               </div>
             </div>
@@ -246,7 +243,7 @@
                 <div class="accordion-body">
                   <p class="mb-0">
                     Untuk melakukan login, user dengan role Bendahara atau Ketua harus menunggu pendaftarannya diterima oleh Pengawas. Pemberitahuan penerimaan akun  akan diberikan melalui email yang didaftarkan.
-Sedangkan user dengan role Pengawas hanya dapat melakukan login setelah melakukan penggantian password melalui link yang dikirimkan pada email. .
+Sedangkan user dengan role Pengawas hanya dapat melakukan login setelah melakukan penggantian password melalui link yang dikirimkan pada email.
                   </p>
                 </div>
               </div>

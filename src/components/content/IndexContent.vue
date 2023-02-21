@@ -22,7 +22,6 @@
               Teratur dan Transparan dengan&nbsp;<span class="underline">Monevi</span>.
             </h1>
             <p></p>
-            <a class="btn btn-primary shadow" role="button" href="/register ">Register</a>
           </div>
         </div>
         <div class="col-12 col-lg-10 mx-auto">

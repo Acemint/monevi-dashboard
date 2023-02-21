@@ -11,7 +11,7 @@
         <ul class="navbar-nav mx-auto navbar-right">
           <li class="nav-item"></li>
         </ul>
-        <a class="btn btn-outline-primary shadow" role="button" href="/login">Login</a>
+        <a class="btn btn-outline-primary" role="button" href="/login">Login</a>
         <a class="btn btn-primary shadow" role="button" href="/register">Register</a>
       </div>
     </div>
